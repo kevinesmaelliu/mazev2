@@ -22,12 +22,12 @@
 
   .tab-connector::before {
     left: -20px;
-    background: radial-gradient(circle at 0 0, transparent 20px, hsl(var(--muted)) 20px);
+    background: radial-gradient(circle at 0 0, transparent 20px, var(--muted) 20px);
   }
 
   .tab-connector::after {
     right: -20px;
-    background: radial-gradient(circle at 100% 0, transparent 20px, hsl(var(--muted)) 20px);
+    background: radial-gradient(circle at 100% 0, transparent 20px, var(--muted) 20px);
   }
 }
 
