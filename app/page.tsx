@@ -2,14 +2,13 @@
 
 import { useState } from "react"
 import { CanvasHeader } from "@/components/layout/canvas-header"
-import { EmptyStateModal } from "@/components/empty-state-modal"
 import { UploadDesignModal } from "@/components/upload-design-modal"
 import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 
 export default function Home() {
-  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(true)
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
@@ -101,11 +100,16 @@ export default function Home() {
             websiteUrl={importedUrl}
             onClear={() => setImportedUrl(undefined)}
           />
-          <EmptyStateModal
-            open={!importedUrl}
-            onOpenChange={setShowUploadModal}
-            onUploadComplete={handleUploadComplete}
-          />
+          {!importedUrl && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
+              <UploadDesignModal
+                open={showUploadModal}
+                onOpenChange={setShowUploadModal}
+                onUploadComplete={handleUploadComplete}
+                embedded
+              />
+            </div>
+          )}
         </div>
 
         {/* Sidebar - anchored to right */}
@@ -121,11 +125,13 @@ export default function Home() {
         />
       </div>
 
-      <UploadDesignModal
-        open={showUploadModal}
-        onOpenChange={setShowUploadModal}
-        onUploadComplete={handleUploadComplete}
-      />
+      {importedUrl && (
+        <UploadDesignModal
+          open={showUploadModal}
+          onOpenChange={setShowUploadModal}
+          onUploadComplete={handleUploadComplete}
+        />
+      )}
     </div>
   )
 }
