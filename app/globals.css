@@ -8,24 +8,26 @@
   }
 
   /* Tab connector - creates seamless round-out border transition to content area
-     Technique from: https://css-tricks.com/tabs-with-round-out-borders/ */
+     Technique from: https://css-tricks.com/tabs-with-round-out-borders/
+     Larger circles (20px) with box-shadow bridge for visual connection */
   .tab-connector::before,
   .tab-connector::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    width: 16px;
-    height: 16px;
+    bottom: -2px;
+    width: 20px;
+    height: 20px;
     background-color: inherit;
-    border-radius: 8px;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .tab-connector::before {
-    left: -16px;
+    left: -20px;
   }
 
   .tab-connector::after {
-    right: -16px;
+    right: -20px;
   }
 }
 
