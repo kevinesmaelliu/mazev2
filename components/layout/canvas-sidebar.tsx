@@ -53,7 +53,7 @@ export function CanvasSidebar({
   }
 
   return (
-    <aside className="w-96 border-l border-border bg-card flex flex-col">
+    <aside className="w-96 border-l border-border bg-sidebar flex flex-col">
       <Tabs defaultValue="test" className="flex-1 flex flex-col">
         {/* Tabs Header */}
         <div className="px-4 py-3 border-b border-border">
