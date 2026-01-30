@@ -164,13 +164,15 @@ function UploadOption({
 
 function StepOneContent() {
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-8">
-      <div className="flex h-24 w-24 items-center justify-center rounded-lg bg-muted">
-        <Download className="h-10 w-10 text-muted-foreground" />
-      </div>
-      <div className="text-center">
-        <p className="font-medium text-foreground">Drag files here</p>
-        <p className="text-sm text-muted-foreground">PNG, JPG, or SVG files</p>
+    <div className="flex min-h-[280px] items-center justify-center">
+      <div className="flex w-full flex-col items-center justify-center gap-4 rounded-lg border-2 border-dashed border-border bg-muted/50 px-6 py-12">
+        <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-background">
+          <Download className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <div className="text-center">
+          <p className="text-base font-medium text-foreground">Drag files here</p>
+          <p className="text-sm text-muted-foreground">PNG, JPG, or SVG files</p>
+        </div>
       </div>
     </div>
   )
@@ -184,31 +186,33 @@ interface StepTwoContentProps {
 
 function StepTwoContent({ url, onUrlChange, onSubmit }: StepTwoContentProps) {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 1:</p>
-        <p className="text-sm text-muted-foreground">
-          Paste the URL of the website you want to test
-        </p>
+    <div className="flex min-h-[280px] flex-col justify-between space-y-8">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 1:</p>
+          <p className="text-sm text-muted-foreground">
+            Paste the URL of the website you want to test
+          </p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 2:</p>
+          <p className="text-sm text-muted-foreground">
+            Name the site and we&apos;ll capture the entire page
+          </p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 3:</p>
+          <p className="text-sm text-muted-foreground">
+            Add questions and create your test
+          </p>
+        </div>
       </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 2:</p>
-        <p className="text-sm text-muted-foreground">
-          Name the site and we&apos;ll capture the entire page
-        </p>
-      </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 3:</p>
-        <p className="text-sm text-muted-foreground">
-          Add questions and create your test
-        </p>
-      </div>
-      <div className="space-y-4 border-t border-border pt-4">
+      <div className="space-y-3">
         <Input
           placeholder="https://example.com"
           value={url}
           onChange={(e) => onUrlChange(e.target.value)}
-          className="bg-input"
+          className="bg-card"
         />
         <Button
           onClick={onSubmit}
@@ -232,31 +236,33 @@ interface StepThreeContentProps {
 
 function StepThreeContent({ url, onUrlChange, onSubmit }: StepThreeContentProps) {
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 1:</p>
-        <p className="text-sm text-muted-foreground">
-          Make sure your Figma file has link sharing enabled
-        </p>
+    <div className="flex min-h-[280px] flex-col justify-between space-y-8">
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 1:</p>
+          <p className="text-sm text-muted-foreground">
+            Make sure your Figma file has link sharing enabled
+          </p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 2:</p>
+          <p className="text-sm text-muted-foreground">
+            Copy the share link from Figma
+          </p>
+        </div>
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-foreground">Step 3:</p>
+          <p className="text-sm text-muted-foreground">
+            All frames will be imported as separate artboards
+          </p>
+        </div>
       </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 2:</p>
-        <p className="text-sm text-muted-foreground">
-          Copy the share link from Figma
-        </p>
-      </div>
-      <div className="space-y-2">
-        <p className="text-sm font-medium text-foreground">Step 3:</p>
-        <p className="text-sm text-muted-foreground">
-          All frames will be imported as separate artboards
-        </p>
-      </div>
-      <div className="space-y-4 border-t border-border pt-4">
+      <div className="space-y-3">
         <Input
           placeholder="https://figma.com/file/..."
           value={url}
           onChange={(e) => onUrlChange(e.target.value)}
-          className="bg-input"
+          className="bg-card"
         />
         <Button
           onClick={onSubmit}
