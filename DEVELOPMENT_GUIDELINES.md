@@ -492,6 +492,24 @@ import { Button } from "@/components/ui/button"
 
 ---
 
+## Design Exceptions
+
+### Exception: UploadDesignModal Hardcoded Colors
+
+**Location:** `components/upload-design-modal.tsx` - Canvas and URL/Figma preview cards
+
+**Rationale:** The upload modal cards contain hardcoded brand colors (`blue-500`, `purple-500`, `pink-500`, `red-500`, `yellow-500`, `green-500`) for visual illustration elements only. These colors are part of the visual preview mockups and do not appear in the actual UI structure or content areas.
+
+**Context:** The browser window mockup in the URL/Figma card uses standard browser chrome colors (red/yellow/green dots) for visual authenticity. The canvas preview uses blue/purple/pink to create an appealing, illustrative design pattern. These are decorative elements only and do NOT represent design tokens.
+
+**Specific Elements:**
+- Canvas preview: Blue circle marker, purple-to-pink gradient sphere
+- Browser mockup: Red/yellow/green traffic light dots, purple-pink gradient content placeholder
+
+**Note:** This exception applies ONLY to decorative preview elements within this specific modal. All functional UI elements (buttons, inputs, backgrounds) use proper design tokens. This does NOT establish a precedent for other components.
+
+---
+
 ## Component Development Workflow
 
 ### 1. Check for Existing Components
