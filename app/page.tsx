@@ -2,13 +2,14 @@
 
 import { useState } from "react"
 import { CanvasHeader } from "@/components/layout/canvas-header"
+import { EmptyStateModal } from "@/components/empty-state-modal"
 import { UploadDesignModal } from "@/components/upload-design-modal"
 import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 
 export default function Home() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(false)
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
@@ -88,7 +89,7 @@ export default function Home() {
           }
         }}
         onSave={() => console.log("Save clicked")}
-        onPublish={() => setModalOpen(true)}
+        onPublish={() => setShowUploadModal(true)}
         onProfileClick={() => console.log("Profile clicked")}
       />
 
@@ -115,9 +116,15 @@ export default function Home() {
         />
       </div>
 
+      <EmptyStateModal
+        open={!importedUrl}
+        onOpenChange={setShowUploadModal}
+        onUploadComplete={handleUploadComplete}
+      />
+
       <UploadDesignModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
+        open={showUploadModal}
+        onOpenChange={setShowUploadModal}
         onUploadComplete={handleUploadComplete}
       />
     </div>
