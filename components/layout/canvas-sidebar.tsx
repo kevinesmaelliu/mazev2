@@ -109,17 +109,15 @@ export function CanvasSidebar({
                     <>
                       <BlockAddButton onAdd={() => handleAddBlockAtIndex(0)} />
                       {blocks.map((block, index) => (
-                        <div key={block.id}>
-                          <div className="py-1">
-                            <TestBlockEditor
-                              block={block}
-                              onChange={(updatedBlock) =>
-                                handleUpdateBlock(block.id, updatedBlock)
-                              }
-                              onDelete={() => handleDeleteBlock(block.id)}
-                              blockNumber={index + 1}
-                            />
-                          </div>
+                        <div key={block.id} className="space-y-2">
+                          <TestBlockEditor
+                            block={block}
+                            onChange={(updatedBlock) =>
+                              handleUpdateBlock(block.id, updatedBlock)
+                            }
+                            onDelete={() => handleDeleteBlock(block.id)}
+                            blockNumber={index + 1}
+                          />
                           <BlockAddButton
                             onAdd={() => handleAddBlockAtIndex(index + 1)}
                           />

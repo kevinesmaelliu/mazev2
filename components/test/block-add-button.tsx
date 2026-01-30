@@ -11,8 +11,8 @@ interface BlockAddButtonProps {
  */
 export function BlockAddButton({ onAdd }: BlockAddButtonProps) {
   return (
-    <div className="relative h-0 group/add">
-      <div className="absolute inset-x-0 -top-2 flex items-center opacity-0 group-hover/add:opacity-100 transition-all duration-200 z-10">
+    <div className="relative h-px group/add">
+      <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 flex items-center opacity-0 group-hover/add:opacity-100 transition-all duration-200 z-10">
         <div className="flex-1 h-px bg-primary/40 group-hover/add:bg-primary/60 transition-colors duration-200" />
         <button
           onClick={onAdd}
