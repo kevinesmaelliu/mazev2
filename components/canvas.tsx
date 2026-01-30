@@ -14,11 +14,11 @@ export function Canvas({ websiteUrl, onClear }: CanvasProps) {
 
   if (!websiteUrl) {
     return (
-      <div className="w-full h-screen bg-background flex items-center justify-center border-t border-border">
+      <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
         <div className="text-center">
           <p className="text-muted-foreground">No design loaded</p>
           <p className="text-sm text-muted-foreground mt-2">
-            Click "Open Upload Modal" to import a design
+            Click &quot;Open Upload Modal&quot; to import a design
           </p>
         </div>
       </div>
@@ -26,7 +26,7 @@ export function Canvas({ websiteUrl, onClear }: CanvasProps) {
   }
 
   return (
-    <div className="w-full h-screen bg-background border-t border-border flex flex-col">
+    <div className="w-full h-full bg-background border-t border-border flex flex-col">
       {/* Header with close button */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">

@@ -1,15 +1,24 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { CanvasHeader } from "@/components/layout/canvas-header"
 import { UploadDesignModal } from "@/components/upload-design-modal"
 import { Canvas } from "@/components/canvas"
+import { TestBlocksSidebar } from "@/components/test/test-blocks-sidebar"
+
+interface TestBlock {
+  id: string
+  label: string
+  type: "first-click" | "task" | "preference"
+  question: string
+}
 
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false)
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
+  const [testTitle, setTestTitle] = useState("")
+  const [blocks, setBlocks] = useState<TestBlock[]>([])
 
   const canvasPages = [
     { id: "canvas-1", name: "Canvas" },
@@ -20,6 +29,30 @@ export default function Home() {
     if (data.method === "url" && data.websiteUrl) {
       setImportedUrl(data.websiteUrl)
     }
+  }
+
+  const handleAddBlock = () => {
+    const newBlock: TestBlock = {
+      id: `block-${Date.now()}`,
+      label: `Q${blocks.length + 1}`,
+      type: "task",
+      question: "",
+    }
+    setBlocks([...blocks, newBlock])
+  }
+
+  const handleUpdateBlock = (id: string, updates: Partial<TestBlock>) => {
+    setBlocks(blocks.map((block) => (block.id === id ? { ...block, ...updates } : block)))
+  }
+
+  const handleDeleteBlock = (id: string) => {
+    const newBlocks = blocks.filter((block) => block.id !== id)
+    // Update labels after deletion
+    const updatedBlocks = newBlocks.map((block, index) => ({
+      ...block,
+      label: `Q${index + 1}`,
+    }))
+    setBlocks(updatedBlocks)
   }
 
   return (
@@ -44,11 +77,27 @@ export default function Home() {
         onProfileClick={() => console.log("Profile clicked")}
       />
 
-      {/* Canvas */}
-      <Canvas
-        websiteUrl={importedUrl}
-        onClear={() => setImportedUrl(undefined)}
-      />
+      {/* Main content area with canvas and sidebar */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Canvas - takes remaining space */}
+        <div className="flex-1 overflow-auto">
+          <Canvas
+            websiteUrl={importedUrl}
+            onClear={() => setImportedUrl(undefined)}
+          />
+        </div>
+
+        {/* Sidebar - anchored to right */}
+        <TestBlocksSidebar
+          testTitle={testTitle}
+          onTestTitleChange={setTestTitle}
+          blocks={blocks}
+          onAddBlock={handleAddBlock}
+          onUpdateBlock={handleUpdateBlock}
+          onDeleteBlock={handleDeleteBlock}
+          credits={50}
+        />
+      </div>
 
       <UploadDesignModal
         open={modalOpen}
