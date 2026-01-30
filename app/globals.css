@@ -14,20 +14,20 @@
   .tab-connector::after {
     content: "";
     position: absolute;
-    bottom: 0;
-    width: 12px;
-    height: 12px;
+    bottom: -16px;
+    width: 20px;
+    height: 20px;
     background: transparent;
   }
 
   .tab-connector::before {
-    left: -12px;
-    background: radial-gradient(circle at 0 0, transparent 12px, hsl(var(--muted)) 12px);
+    left: -20px;
+    background: radial-gradient(circle at 0 0, transparent 20px, hsl(var(--muted)) 20px);
   }
 
   .tab-connector::after {
-    right: -12px;
-    background: radial-gradient(circle at 100% 0, transparent 12px, hsl(var(--muted)) 12px);
+    right: -20px;
+    background: radial-gradient(circle at 100% 0, transparent 20px, hsl(var(--muted)) 20px);
   }
 }
 
