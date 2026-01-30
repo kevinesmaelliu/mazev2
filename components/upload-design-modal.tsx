@@ -10,7 +10,6 @@ import { useState, useCallback } from "react"
 import { Upload, Link2, Figma, ArrowRight } from "lucide-react"
 import {
   Dialog,
-  DialogContent,
   DialogPortal,
   DialogOverlay,
 } from "@/components/ui/dialog"

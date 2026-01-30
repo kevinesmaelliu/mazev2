@@ -6,6 +6,29 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Tab connector - creates inverted border-radius (concave curves) at tab bottom corners
+     Technique inspired by Firefox curved tabs and CSS-Tricks round-out borders
+     Creates "negative space" illusion using radial-gradient masks */
+  .tab-connector::before,
+  .tab-connector::after {
+    content: "";
+    position: absolute;
+    bottom: -16px;
+    width: 20px;
+    height: 20px;
+    background: transparent;
+  }
+
+  .tab-connector::before {
+    left: -20px;
+    background: radial-gradient(circle at 0 0, transparent 20px, var(--muted) 20px);
+  }
+
+  .tab-connector::after {
+    right: -20px;
+    background: radial-gradient(circle at 100% 0, transparent 20px, var(--muted) 20px);
+  }
 }
 
 
