@@ -8,7 +8,7 @@ import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 
 export default function Home() {
-  const [modalOpen, setModalOpen] = useState(false)
+  const [showUploadModal, setShowUploadModal] = useState(true)
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
@@ -88,18 +88,28 @@ export default function Home() {
           }
         }}
         onSave={() => console.log("Save clicked")}
-        onPublish={() => setModalOpen(true)}
+        onPublish={() => setShowUploadModal(true)}
         onProfileClick={() => console.log("Profile clicked")}
       />
 
       {/* Main content area with canvas and sidebar */}
       <div className="flex flex-1 overflow-hidden">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto relative">
           <Canvas
             websiteUrl={importedUrl}
             onClear={() => setImportedUrl(undefined)}
           />
+          {!importedUrl && (
+            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
+              <UploadDesignModal
+                open={showUploadModal}
+                onOpenChange={setShowUploadModal}
+                onUploadComplete={handleUploadComplete}
+                embedded
+              />
+            </div>
+          )}
         </div>
 
         {/* Sidebar - anchored to right */}
@@ -115,11 +125,13 @@ export default function Home() {
         />
       </div>
 
-      <UploadDesignModal
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onUploadComplete={handleUploadComplete}
-      />
+      {importedUrl && (
+        <UploadDesignModal
+          open={showUploadModal}
+          onOpenChange={setShowUploadModal}
+          onUploadComplete={handleUploadComplete}
+        />
+      )}
     </div>
   )
 }
