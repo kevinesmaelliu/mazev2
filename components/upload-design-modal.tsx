@@ -115,7 +115,7 @@ export function UploadDesignModal({
               <div className="text-center space-y-2 mb-8">
                 <p className="text-sm text-muted-foreground">Get Started</p>
                 <h2 className="text-2xl font-semibold text-foreground">
-                  Upload your design for testing
+                  Add your design
                 </h2>
               </div>
 
@@ -183,102 +183,58 @@ export function UploadDesignModal({
                   )}
 
                   {selectedMethod === "url" && (
-                    <div className="h-full flex flex-col justify-between space-y-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 1:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Copy the URL of the website you want to test
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 2:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Paste it below and we&apos;ll capture the entire page
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 3:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Add annotations and create your test
-                          </p>
-                        </div>
+                    <div className="h-full flex flex-col justify-end space-y-3">
+                      <div className="bg-background rounded-lg p-4 border border-border">
+                        <Input
+                          type="url"
+                          placeholder="https://example.com"
+                          value={websiteUrl}
+                          onChange={(e) => setWebsiteUrl(e.target.value)}
+                          className="bg-background border-muted-foreground/20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleUrlSubmit()
+                            }
+                          }}
+                        />
                       </div>
-                      <div className="space-y-3">
-                        <div className="bg-background rounded-lg p-4 border border-border">
-                          <Input
-                            type="url"
-                            placeholder="https://example.com"
-                            value={websiteUrl}
-                            onChange={(e) => setWebsiteUrl(e.target.value)}
-                            className="bg-background border-muted-foreground/20"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                handleUrlSubmit()
-                              }
-                            }}
-                          />
-                        </div>
-                        <Button
-                          onClick={handleUrlSubmit}
-                          disabled={!websiteUrl.trim()}
-                          size="lg"
-                          className="w-full gap-2"
-                        >
-                          Import Website
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        onClick={handleUrlSubmit}
+                        disabled={!websiteUrl.trim()}
+                        size="lg"
+                        className="w-full gap-2"
+                      >
+                        Import Website
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   )}
 
                   {selectedMethod === "figma" && (
-                    <div className="h-full flex flex-col justify-between space-y-4">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 1:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Make sure your Figma file has link sharing enabled
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 2:</p>
-                          <p className="text-sm text-muted-foreground">
-                            Copy the file or frame URL from Figma
-                          </p>
-                        </div>
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Step 3:</p>
-                          <p className="text-sm text-muted-foreground">
-                            All frames will be imported as separate artboards
-                          </p>
-                        </div>
+                    <div className="h-full flex flex-col justify-end space-y-3">
+                      <div className="bg-background rounded-lg p-4 border border-border">
+                        <Input
+                          type="url"
+                          placeholder="https://www.figma.com/file/..."
+                          value={figmaUrl}
+                          onChange={(e) => setFigmaUrl(e.target.value)}
+                          className="bg-background border-muted-foreground/20"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              handleFigmaSubmit()
+                            }
+                          }}
+                        />
                       </div>
-                      <div className="space-y-3">
-                        <div className="bg-background rounded-lg p-4 border border-border">
-                          <Input
-                            type="url"
-                            placeholder="https://www.figma.com/file/..."
-                            value={figmaUrl}
-                            onChange={(e) => setFigmaUrl(e.target.value)}
-                            className="bg-background border-muted-foreground/20"
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                handleFigmaSubmit()
-                              }
-                            }}
-                          />
-                        </div>
-                        <Button
-                          onClick={handleFigmaSubmit}
-                          disabled={!figmaUrl.trim()}
-                          size="lg"
-                          className="w-full gap-2"
-                        >
-                          Import from Figma
-                          <ArrowRight className="h-4 w-4" />
-                        </Button>
-                      </div>
+                      <Button
+                        onClick={handleFigmaSubmit}
+                        disabled={!figmaUrl.trim()}
+                        size="lg"
+                        className="w-full gap-2"
+                      >
+                        Import from Figma
+                        <ArrowRight className="h-4 w-4" />
+                      </Button>
                     </div>
                   )}
                 </div>
