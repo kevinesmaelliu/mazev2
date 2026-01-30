@@ -118,16 +118,15 @@ grep -r "export.*Button" components/
 
 ## Design Token Requirements
 
-### Source of Truth: `tailwind.config.js` (or `tailwind.config.ts`)
+### Source of Truth: `app/globals.css` (CoffeeMod Theme)
 
-**ALL** colors, spacing, typography, and other design values MUST come from Tailwind configuration.
+**ALL** colors, spacing, typography, and other design values MUST come from the design system. The CoffeeMod theme (https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh) is the single source of truth for all design tokens defined in `app/globals.css`.
 
 ### Location of Design Tokens
 
 ```
-/tailwind.config.js    # Single source of truth for design system
-or
-/tailwind.config.ts    # TypeScript version
+/app/globals.css       # Single source of truth (CoffeeMod theme colors)
+/tailwind.config.ts    # Tailwind configuration mapping CSS variables
 ```
 
 ### Approved Design Tokens
@@ -192,30 +191,35 @@ Use Tailwind's spacing scale. Never use arbitrary pixel values unless absolutely
 <div className="rounded-[12px]">
 ```
 
-### shadcn/ui Theme Variables (CSS Variables)
+### CoffeeMod Theme Variables (CSS Variables)
 
-shadcn/ui uses CSS variables defined in `app/globals.css`. These map to Tailwind classes:
+The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS variables map to Tailwind classes:
 
+**Light Mode (`:root`):**
 ```css
-/* app/globals.css */
-:root {
-  --background: 0 0% 100%;
-  --foreground: 222.2 84% 4.9%;
-  --primary: 222.2 47.4% 11.2%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222.2 47.4% 11.2%;
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  --radius: 0.5rem;
-}
+--background: #f9f9f9;         /* Page background */
+--foreground: #202020;         /* Main text color */
+--primary: #644a40;            /* Warm brown brand color */
+--primary-foreground: #ffffff; /* Text on primary */
+--secondary: #ffdfb5;          /* Cream accent */
+--muted: #f5f5f5;              /* Subtle background */
+--accent: #e8e8e8;             /* Light accent */
+--destructive: #e54d2e;        /* Error/warning red */
+--border: #d8d8d8;             /* Border color */
+--ring: #644a40;               /* Focus ring */
+```
+
+**Dark Mode (`.dark`):**
+```css
+--background: #130f0c;         /* Very dark brown */
+--foreground: #eeeeee;         /* Light text */
+--primary: #ffe0c2;            /* Light cream */
+--primary-foreground: #081a1b; /* Dark text on light */
+--secondary: #393028;          /* Dark brown */
+--muted: #262219;              /* Subtle dark background */
+--accent: #2a2a2a;             /* Dark gray accent */
+--border: #201e18;             /* Dark border */
+--ring: #ffe0c2;               /* Light focus ring */
 ```
 
 **Use these via Tailwind classes, NOT by directly referencing CSS variables.**
@@ -541,31 +545,46 @@ Add a comment at the top of the file:
 
 ## Design Token Quick Reference
 
-### Colors (from shadcn/ui theme)
+### Colors (from CoffeeMod theme)
 
+**Light Theme:**
 ```typescript
-bg-background           // Page background
-bg-foreground          // Main text color (when used as bg)
-text-foreground        // Main text color
+bg-background           // #f9f9f9 - Light gray page background
+text-foreground         // #202020 - Dark text
 
-bg-primary             // Primary brand color
-text-primary-foreground // Text on primary bg
+bg-primary              // #644a40 - Warm brown brand color
+text-primary-foreground // #ffffff - White text on primary
 
-bg-secondary           // Secondary color
-text-secondary-foreground
+bg-secondary            // #ffdfb5 - Cream accent
+bg-muted                // #f5f5f5 - Subtle light background
+text-muted-foreground   // #808080 - Gray text for captions
 
-bg-muted               // Subtle background
-text-muted-foreground  // Subtle text (labels, captions)
+bg-accent               // #e8e8e8 - Light gray accent
+bg-destructive          // #e54d2e - Red-orange for errors
 
-bg-accent              // Accent color for highlights
-text-accent-foreground
+border-border           // #d8d8d8 - Light gray borders
+border-input            // #d8d8d8 - Input field borders
+ring-ring               // #644a40 - Brown focus ring
+```
 
-bg-destructive         // Error/danger color
-text-destructive-foreground
+**Dark Theme (automatic when `.dark` class is applied):**
+```typescript
+bg-background           // #130f0c - Very dark brown
+text-foreground         // #eeeeee - Light text
 
-border-border          // Default border color
-border-input           // Input field border
-ring-ring              // Focus ring color
+bg-primary              // #ffe0c2 - Light cream brand
+text-primary-foreground // #081a1b - Dark text on light bg
+
+bg-secondary            // #393028 - Dark brown
+bg-muted                // #262219 - Dark subtle background
+text-muted-foreground   // #a8a8a8 - Light gray text
+
+bg-accent               // #2a2a2a - Dark gray accent
+bg-destructive          // #e54d2e - Consistent red
+
+border-border           // #201e18 - Dark borders
+border-input            // #484848 - Darker input borders
+ring-ring               // #ffe0c2 - Light cream focus ring
 ```
 
 ### Spacing (Tailwind default scale)
@@ -648,6 +667,7 @@ If you're unsure whether to create a new component or use an existing one:
 
 ## Additional Resources
 
+- [CoffeeMod Theme (Source of Truth)](https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh)
 - [shadcn/ui Documentation](https://ui.shadcn.com)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Next.js 14 App Router Docs](https://nextjs.org/docs)
@@ -657,3 +677,4 @@ If you're unsure whether to create a new component or use an existing one:
 
 **Last updated:** 2026-01-30
 **Applies to:** All development on this codebase
+**Theme:** CoffeeMod (https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh) - SINGLE SOURCE OF TRUTH
