@@ -120,7 +120,7 @@ grep -r "export.*Button" components/
 
 ### Source of Truth: `app/globals.css` (CoffeeMod Theme)
 
-**ALL** colors, spacing, typography, and other design values MUST come from the design system. The CoffeeMod theme (https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh) is the single source of truth for all design tokens defined in `app/globals.css`.
+**ALL** colors, spacing, typography, and other design values MUST come from the design system. The CoffeeMod theme (https://tweakcn.com/themes/cml1538aj000404i86i4oc6zc) is the single source of truth for all design tokens defined in `app/globals.css`.
 
 ### Location of Design Tokens
 
@@ -202,7 +202,7 @@ The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS var
 --primary: #644a40;            /* Warm brown brand color */
 --primary-foreground: #ffffff; /* Text on primary */
 --secondary: #ffdfb5;          /* Cream accent */
---muted: #f5f5f5;              /* Subtle background */
+--muted: #efefef;              /* Subtle background */
 --accent: #e8e8e8;             /* Light accent */
 --destructive: #e54d2e;        /* Error/warning red */
 --border: #d8d8d8;             /* Border color */
@@ -216,9 +216,9 @@ The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS var
 --primary: #ffe0c2;            /* Light cream */
 --primary-foreground: #081a1b; /* Dark text on light */
 --secondary: #393028;          /* Dark brown */
---muted: #262219;              /* Subtle dark background */
+--muted: #222222;              /* Subtle dark background */
 --accent: #2a2a2a;             /* Dark gray accent */
---border: #201e18;             /* Dark border */
+--border: #36332b;             /* Dark border */
 --ring: #ffe0c2;               /* Light focus ring */
 ```
 
@@ -667,7 +667,7 @@ If you're unsure whether to create a new component or use an existing one:
 
 ## Additional Resources
 
-- [CoffeeMod Theme (Source of Truth)](https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh)
+- [CoffeeMod Theme (Source of Truth)](https://tweakcn.com/themes/cml1538aj000404i86i4oc6zc)
 - [shadcn/ui Documentation](https://ui.shadcn.com)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Next.js 14 App Router Docs](https://nextjs.org/docs)
@@ -677,4 +677,4 @@ If you're unsure whether to create a new component or use an existing one:
 
 **Last updated:** 2026-01-30
 **Applies to:** All development on this codebase
-**Theme:** CoffeeMod (https://tweakcn.com/themes/cml0zmz9z000204jw5xi8bvlh) - SINGLE SOURCE OF TRUTH
+**Theme:** CoffeeMod (https://tweakcn.com/themes/cml1538aj000404i86i4oc6zc) - SINGLE SOURCE OF TRUTH
