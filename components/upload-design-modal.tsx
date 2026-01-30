@@ -64,7 +64,7 @@ export function UploadDesignModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl gap-0 p-0">
+      <DialogContent className="max-w-2xl gap-0 overflow-hidden p-0">
         <DialogHeader className="border-b border-border bg-card px-6 py-4 text-center">
           <DialogTitle className="text-lg font-semibold text-foreground">
             Upload your design for testing
