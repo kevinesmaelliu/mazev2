@@ -4,21 +4,21 @@ import { useState } from "react"
 import { CanvasHeader } from "@/components/layout/canvas-header"
 import { UploadDesignModal } from "@/components/upload-design-modal"
 import { Canvas } from "@/components/canvas"
-import { TestBlocksSidebar } from "@/components/test/test-blocks-sidebar"
-
-interface TestBlock {
-  id: string
-  label: string
-  type: "first-click" | "task" | "preference"
-  question: string
-}
+import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
+import { TestBlock } from "@/components/test/test-block-editor"
 
 export default function Home() {
   const [modalOpen, setModalOpen] = useState(false)
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
-  const [blocks, setBlocks] = useState<TestBlock[]>([])
+  const [blocks, setBlocks] = useState<TestBlock[]>([
+    {
+      id: "block-1",
+      type: "first-click",
+      content: "",
+    },
+  ])
 
   const canvasPages = [
     { id: "canvas-1", name: "Canvas" },
@@ -34,25 +34,40 @@ export default function Home() {
   const handleAddBlock = () => {
     const newBlock: TestBlock = {
       id: `block-${Date.now()}`,
-      label: `Q${blocks.length + 1}`,
-      type: "task",
-      question: "",
+      type: "first-click",
+      content: "",
     }
     setBlocks([...blocks, newBlock])
   }
 
-  const handleUpdateBlock = (id: string, updates: Partial<TestBlock>) => {
-    setBlocks(blocks.map((block) => (block.id === id ? { ...block, ...updates } : block)))
+  const handleAddBlockAtIndex = (index: number) => {
+    const newBlock: TestBlock = {
+      id: `block-${Date.now()}`,
+      type: "first-click",
+      content: "",
+    }
+    const newBlocks = [...blocks]
+    newBlocks.splice(index, 0, newBlock)
+    setBlocks(newBlocks)
+  }
+
+  const handleUpdateBlock = (id: string, updatedBlock: TestBlock) => {
+    setBlocks(blocks.map((b) => (b.id === id ? updatedBlock : b)))
   }
 
   const handleDeleteBlock = (id: string) => {
-    const newBlocks = blocks.filter((block) => block.id !== id)
-    // Update labels after deletion
-    const updatedBlocks = newBlocks.map((block, index) => ({
-      ...block,
-      label: `Q${index + 1}`,
-    }))
-    setBlocks(updatedBlocks)
+    if (blocks.length === 1) {
+      // Reset to empty if it's the last block
+      setBlocks([
+        {
+          id: `block-${Date.now()}`,
+          type: "first-click",
+          content: "",
+        },
+      ])
+    } else {
+      setBlocks(blocks.filter((b) => b.id !== id))
+    }
   }
 
   return (
@@ -88,11 +103,12 @@ export default function Home() {
         </div>
 
         {/* Sidebar - anchored to right */}
-        <TestBlocksSidebar
+        <CanvasSidebar
           testTitle={testTitle}
           onTestTitleChange={setTestTitle}
           blocks={blocks}
           onAddBlock={handleAddBlock}
+          onAddBlockAtIndex={handleAddBlockAtIndex}
           onUpdateBlock={handleUpdateBlock}
           onDeleteBlock={handleDeleteBlock}
           credits={50}
