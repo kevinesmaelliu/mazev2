@@ -213,13 +213,21 @@ The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS var
 ```css
 --background: #130f0c;         /* Very dark brown */
 --foreground: #eeeeee;         /* Light text */
+--card: #211c18;               /* Dark brown card */
+--popover: #191919;            /* Very dark popover */
 --primary: #ffe0c2;            /* Light cream */
 --primary-foreground: #081a1b; /* Dark text on light */
 --secondary: #393028;          /* Dark brown */
 --muted: #222222;              /* Subtle dark background */
+--muted-foreground: #b4b4b4;   /* Light gray text */
 --accent: #2a2a2a;             /* Dark gray accent */
 --border: #36332b;             /* Dark border */
+--input: #484848;              /* Input field border */
 --ring: #ffe0c2;               /* Light focus ring */
+--sidebar: #221e1c;            /* Sidebar background */
+--sidebar-foreground: #f4f4f5; /* Sidebar text */
+--sidebar-primary: #1d4ed8;    /* Sidebar primary (blue) */
+--sidebar-border: #27272a;     /* Sidebar border */
 ```
 
 **Use these via Tailwind classes, NOT by directly referencing CSS variables.**
@@ -572,19 +580,25 @@ ring-ring               // #644a40 - Brown focus ring
 bg-background           // #130f0c - Very dark brown
 text-foreground         // #eeeeee - Light text
 
+bg-card                 // #211c18 - Dark brown card
 bg-primary              // #ffe0c2 - Light cream brand
 text-primary-foreground // #081a1b - Dark text on light bg
 
 bg-secondary            // #393028 - Dark brown
-bg-muted                // #262219 - Dark subtle background
-text-muted-foreground   // #a8a8a8 - Light gray text
+bg-muted                // #222222 - Dark subtle background
+text-muted-foreground   // #b4b4b4 - Light gray text
 
 bg-accent               // #2a2a2a - Dark gray accent
 bg-destructive          // #e54d2e - Consistent red
 
-border-border           // #201e18 - Dark borders
+border-border           // #36332b - Dark borders
 border-input            // #484848 - Darker input borders
 ring-ring               // #ffe0c2 - Light cream focus ring
+
+bg-sidebar              // #221e1c - Sidebar background
+text-sidebar-foreground // #f4f4f5 - Sidebar text
+bg-sidebar-primary      // #1d4ed8 - Sidebar primary (blue accent)
+border-sidebar-border   // #27272a - Sidebar border
 ```
 
 ### Spacing (Tailwind default scale)
