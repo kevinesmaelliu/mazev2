@@ -122,32 +122,34 @@ export function UploadDesignModal({
               {/* Main content - horizontal split */}
               <div className="grid grid-cols-2 gap-8">
                 {/* Left side - Options */}
-                <div className="space-y-3">
-                  <MethodButton
-                    icon={Upload}
-                    title="Upload images"
-                    description="Drag and drop or browse for PNG, JPG, or SVG files"
-                    selected={selectedMethod === "upload"}
-                    onClick={() => setSelectedMethod("upload")}
-                  />
-                  <MethodButton
-                    icon={Link2}
-                    title="Import from URL"
-                    description="Paste a website URL to capture the entire page"
-                    selected={selectedMethod === "url"}
-                    onClick={() => setSelectedMethod("url")}
-                  />
-                  <MethodButton
-                    icon={Figma}
-                    title="Import from Figma"
-                    description="Connect your Figma file to import frames as artboards"
-                    selected={selectedMethod === "figma"}
-                    onClick={() => setSelectedMethod("figma")}
-                  />
-                </div>
+                <Card className="bg-muted/30 border-none p-0">
+                  <div className="p-4 space-y-3">
+                    <MethodButton
+                      icon={Upload}
+                      title="Upload images"
+                      description="Drag and drop or browse for PNG, JPG, or SVG files"
+                      selected={selectedMethod === "upload"}
+                      onClick={() => setSelectedMethod("upload")}
+                    />
+                    <MethodButton
+                      icon={Link2}
+                      title="Import from URL"
+                      description="Paste a website URL to capture the entire page"
+                      selected={selectedMethod === "url"}
+                      onClick={() => setSelectedMethod("url")}
+                    />
+                    <MethodButton
+                      icon={Figma}
+                      title="Import from Figma"
+                      description="Connect your Figma file to import frames as artboards"
+                      selected={selectedMethod === "figma"}
+                      onClick={() => setSelectedMethod("figma")}
+                    />
+                  </div>
+                </Card>
 
                 {/* Right side - Preview/Input area */}
-                <div className="rounded-lg bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 border border-primary/20 min-h-[400px] flex flex-col">
+                <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent p-6 min-h-[400px] flex flex-col">
                   {selectedMethod === "upload" && (
                     <div
                       onDrop={handleDrop}
@@ -237,7 +239,7 @@ export function UploadDesignModal({
                       </Button>
                     </div>
                   )}
-                </div>
+                </Card>
               </div>
             </div>
           </Card>
