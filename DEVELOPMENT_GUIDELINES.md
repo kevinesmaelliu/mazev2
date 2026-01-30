@@ -1,0 +1,659 @@
+# Development Guidelines
+
+> **Purpose:** These guidelines ensure consistent component reuse, proper design token usage, and adherence to established patterns. **ALL Claude Code instances and developers MUST follow these rules.**
+
+---
+
+## 🚨 Mandatory Pre-Development Checklist
+
+Before creating ANY component or writing ANY styles, you MUST:
+
+- [ ] Search for existing components: `grep -r "export.*function ComponentName" components/ app/`
+- [ ] Check if shadcn/ui has a built-in component: [ui.shadcn.com](https://ui.shadcn.com)
+- [ ] Verify design tokens exist in `tailwind.config.js` (or `tailwind.config.ts`)
+- [ ] Read component directories: `components/ui/`, `components/canvas/`, `components/test/`, `components/layout/`
+- [ ] Check if a similar pattern exists in the app directory
+
+**If you skip this checklist, you WILL create duplicate components and violate the design system.**
+
+---
+
+## Component Reuse Rules
+
+### Source of Truth: shadcn/ui (80%) + Custom Components (20%)
+
+This project uses **shadcn/ui** as the primary component library. Custom components should only be created when shadcn/ui doesn't provide the functionality.
+
+### Component Directory Structure
+
+```
+/components
+  /ui/              # shadcn/ui components (installed via CLI)
+    button.tsx
+    card.tsx
+    dialog.tsx
+    input.tsx
+    label.tsx
+    ... (more shadcn components)
+
+  /canvas/          # TLDraw-specific custom components
+    canvas-toolbar.tsx
+    annotation-layer.tsx
+    artboard-manager.tsx
+
+  /test/            # Test creation/execution components
+    test-question-editor.tsx
+    test-type-selector.tsx
+    test-results-display.tsx
+
+  /layout/          # Layout and navigation components
+    navbar.tsx
+    sidebar.tsx
+    footer.tsx
+```
+
+### Import Path Convention
+
+Always use the `@/` alias for imports:
+
+```typescript
+// ✅ Correct
+import { Button } from "@/components/ui/button"
+import { CanvasToolbar } from "@/components/canvas/canvas-toolbar"
+import { TestQuestionEditor } from "@/components/test/test-question-editor"
+
+// ❌ Wrong
+import { Button } from "../../components/ui/button"
+import Button from "@/components/ui/button"
+```
+
+### When to Use Existing Components
+
+| Need | Use This Component | Import Path | Don't Create |
+|------|-------------------|-------------|--------------|
+| Button/CTA | `Button` | `@/components/ui/button` | Custom button, submit button, action button |
+| Form input | `Input` | `@/components/ui/input` | Custom text field, search box |
+| Modal/popup | `Dialog` | `@/components/ui/dialog` | Custom modal, popup, overlay |
+| Card container | `Card` | `@/components/ui/card` | Custom card, panel, container |
+| Dropdown menu | `DropdownMenu` | `@/components/ui/dropdown-menu` | Custom dropdown, select alternative |
+| Form labels | `Label` | `@/components/ui/label` | Custom label component |
+| Toast notifications | `Toast` | `@/components/ui/toast` | Custom notification, alert banner |
+| Tabs | `Tabs` | `@/components/ui/tabs` | Custom tab navigation |
+| Tooltips | `Tooltip` | `@/components/ui/tooltip` | Custom hover info |
+| Checkbox | `Checkbox` | `@/components/ui/checkbox` | Custom checkbox |
+| Radio | `RadioGroup` | `@/components/ui/radio-group` | Custom radio button |
+| Select dropdown | `Select` | `@/components/ui/select` | Custom select, picker |
+| Switch/toggle | `Switch` | `@/components/ui/switch` | Custom toggle |
+
+### Adding New shadcn/ui Components
+
+When you need a shadcn/ui component that isn't installed yet:
+
+```bash
+# Install a specific component
+npx shadcn-ui@latest add button
+
+# Install multiple components
+npx shadcn-ui@latest add button card dialog input
+```
+
+This will automatically add the component to `components/ui/` with proper styling.
+
+### Custom Component Creation Rules
+
+Only create custom components when:
+1. shadcn/ui doesn't provide the functionality
+2. The component is domain-specific (e.g., canvas tools, test types)
+3. You've verified no similar component exists in the codebase
+
+**Before creating a custom component:**
+```bash
+# Search for similar functionality
+grep -r "function.*Canvas" components/
+grep -r "function.*Test" components/
+grep -r "export.*Button" components/
+```
+
+---
+
+## Design Token Requirements
+
+### Source of Truth: `tailwind.config.js` (or `tailwind.config.ts`)
+
+**ALL** colors, spacing, typography, and other design values MUST come from Tailwind configuration.
+
+### Location of Design Tokens
+
+```
+/tailwind.config.js    # Single source of truth for design system
+or
+/tailwind.config.ts    # TypeScript version
+```
+
+### Approved Design Tokens
+
+#### Colors
+
+**NEVER use hex codes, RGB values, or hardcoded colors.**
+
+```typescript
+// ✅ Correct - Using Tailwind theme colors
+<div className="bg-background text-foreground">
+<div className="bg-primary text-primary-foreground">
+<div className="bg-secondary text-secondary-foreground">
+<div className="bg-muted text-muted-foreground">
+<div className="bg-accent text-accent-foreground">
+<div className="bg-destructive text-destructive-foreground">
+<div className="border-border">
+
+// ❌ Wrong - Hardcoded colors
+<div className="bg-[#ffffff]">
+<div style={{ backgroundColor: '#000000' }}>
+<div className="bg-blue-500">  // Only if not in theme
+```
+
+#### Spacing
+
+Use Tailwind's spacing scale. Never use arbitrary pixel values unless absolutely necessary.
+
+```typescript
+// ✅ Correct - Using spacing scale
+<div className="p-4 m-2 gap-6 space-y-8">
+<div className="px-6 py-4">
+
+// ❌ Wrong - Arbitrary values
+<div className="p-[23px]">
+<div style={{ padding: '15px' }}>
+```
+
+#### Typography
+
+```typescript
+// ✅ Correct - Using Tailwind typography
+<h1 className="text-4xl font-bold">
+<p className="text-sm text-muted-foreground">
+<span className="font-medium text-lg">
+
+// ❌ Wrong - Hardcoded font sizes
+<h1 style={{ fontSize: '32px', fontWeight: 700 }}>
+<p className="text-[14px]">
+```
+
+#### Border Radius
+
+```typescript
+// ✅ Correct - Using Tailwind border radius
+<div className="rounded-lg">
+<div className="rounded-md">
+<div className="rounded-sm">
+
+// ❌ Wrong
+<div style={{ borderRadius: '8px' }}>
+<div className="rounded-[12px]">
+```
+
+### shadcn/ui Theme Variables (CSS Variables)
+
+shadcn/ui uses CSS variables defined in `app/globals.css`. These map to Tailwind classes:
+
+```css
+/* app/globals.css */
+:root {
+  --background: 0 0% 100%;
+  --foreground: 222.2 84% 4.9%;
+  --primary: 222.2 47.4% 11.2%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96.1%;
+  --secondary-foreground: 222.2 47.4% 11.2%;
+  --muted: 210 40% 96.1%;
+  --muted-foreground: 215.4 16.3% 46.9%;
+  --accent: 210 40% 96.1%;
+  --accent-foreground: 222.2 47.4% 11.2%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 214.3 31.8% 91.4%;
+  --input: 214.3 31.8% 91.4%;
+  --ring: 222.2 84% 4.9%;
+  --radius: 0.5rem;
+}
+```
+
+**Use these via Tailwind classes, NOT by directly referencing CSS variables.**
+
+---
+
+## Styling Approach
+
+### Tailwind CSS Only - No CSS-in-JS
+
+```typescript
+// ✅ Correct - Tailwind classes
+<div className="flex items-center justify-between p-4 bg-background">
+  <Button variant="outline" size="sm">Click me</Button>
+</div>
+
+// ❌ Wrong - Inline styles
+<div style={{ display: 'flex', alignItems: 'center', padding: '16px' }}>
+  <button style={{ padding: '8px 16px' }}>Click me</button>
+</div>
+
+// ❌ Wrong - CSS-in-JS
+const StyledDiv = styled.div`
+  display: flex;
+  padding: 16px;
+`
+```
+
+### Conditional Styling with cn() Utility
+
+Use the `cn()` utility (from `lib/utils.ts`) for conditional classes:
+
+```typescript
+import { cn } from "@/lib/utils"
+
+// ✅ Correct
+<div className={cn(
+  "p-4 rounded-lg",
+  isActive && "bg-primary text-primary-foreground",
+  isDisabled && "opacity-50 cursor-not-allowed"
+)}>
+
+// ❌ Wrong - String concatenation
+<div className={`p-4 rounded-lg ${isActive ? 'bg-primary' : ''}`}>
+```
+
+---
+
+## TypeScript Requirements
+
+### Strict Mode Enabled
+
+All code must pass TypeScript strict mode checks:
+
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true
+  }
+}
+```
+
+### Type Definitions
+
+```typescript
+// ✅ Correct - Explicit types
+interface ButtonProps {
+  variant: "default" | "outline" | "ghost"
+  size: "sm" | "md" | "lg"
+  onClick: () => void
+  children: React.ReactNode
+}
+
+export function Button({ variant, size, onClick, children }: ButtonProps) {
+  // ...
+}
+
+// ❌ Wrong - Implicit any
+export function Button(props) {
+  // ...
+}
+```
+
+### Use Zod for Runtime Validation
+
+```typescript
+// ✅ Correct - Zod schema for forms and API validation
+import { z } from "zod"
+
+const testSchema = z.object({
+  title: z.string().min(1).max(100),
+  questions: z.array(z.object({
+    type: z.enum(["first-click", "task", "preference"]),
+    content: z.string()
+  }))
+})
+
+type Test = z.infer<typeof testSchema>
+```
+
+---
+
+## Next.js App Router Best Practices
+
+### Server Components by Default
+
+```typescript
+// ✅ Correct - Server Component (default)
+// app/dashboard/page.tsx
+export default async function DashboardPage() {
+  const data = await fetchData()
+  return <div>{data}</div>
+}
+
+// ✅ Correct - Client Component when needed
+// components/interactive-button.tsx
+"use client"
+
+export function InteractiveButton() {
+  const [count, setCount] = useState(0)
+  return <button onClick={() => setCount(count + 1)}>{count}</button>
+}
+
+// ❌ Wrong - Unnecessary "use client"
+"use client"
+
+export default function StaticPage() {
+  return <div>Static content</div>
+}
+```
+
+### File Structure Conventions
+
+```
+app/
+  (auth)/              # Route group - doesn't affect URL
+    login/
+      page.tsx
+    signup/
+      page.tsx
+
+  (dashboard)/         # Protected routes
+    layout.tsx         # Shared layout
+    page.tsx           # /dashboard
+    tests/
+      page.tsx         # /dashboard/tests
+
+  test/
+    [id]/
+      page.tsx         # /test/[id] - dynamic route
+
+  api/
+    tests/
+      route.ts         # API route handler
+```
+
+### Loading and Error States
+
+```typescript
+// app/dashboard/loading.tsx
+export default function Loading() {
+  return <Skeleton />
+}
+
+// app/dashboard/error.tsx
+'use client'
+
+export default function Error({ error, reset }: {
+  error: Error & { digest?: string }
+  reset: () => void
+}) {
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  )
+}
+```
+
+---
+
+## Common Violations to Avoid
+
+### ❌ Violation #1: Hardcoded Colors
+
+```typescript
+// ❌ Wrong
+<div className="bg-[#ffffff] text-[#000000]">
+<div style={{ backgroundColor: '#f0f0f0' }}>
+
+// ✅ Correct
+<div className="bg-background text-foreground">
+<div className="bg-muted">
+```
+
+### ❌ Violation #2: Creating Duplicate Components
+
+```typescript
+// ❌ Wrong - Creating a custom button when shadcn/ui has one
+export function MyButton({ children }: { children: ReactNode }) {
+  return <button className="px-4 py-2 bg-blue-500">{children}</button>
+}
+
+// ✅ Correct - Using shadcn/ui Button
+import { Button } from "@/components/ui/button"
+
+<Button>Click me</Button>
+```
+
+### ❌ Violation #3: Inline Styles
+
+```typescript
+// ❌ Wrong
+<div style={{ padding: '16px', marginTop: '8px' }}>
+
+// ✅ Correct
+<div className="p-4 mt-2">
+```
+
+### ❌ Violation #4: Magic Numbers and Arbitrary Values
+
+```typescript
+// ❌ Wrong
+<div className="w-[347px] h-[89px] mt-[23px]">
+
+// ✅ Correct - Use spacing scale
+<div className="w-full max-w-sm h-24 mt-6">
+```
+
+### ❌ Violation #5: Not Using TypeScript
+
+```typescript
+// ❌ Wrong
+export function TestCard(props) {
+  return <div>{props.title}</div>
+}
+
+// ✅ Correct
+interface TestCardProps {
+  title: string
+  description?: string
+}
+
+export function TestCard({ title, description }: TestCardProps) {
+  return <div>{title}</div>
+}
+```
+
+### ❌ Violation #6: Importing with Relative Paths
+
+```typescript
+// ❌ Wrong
+import { Button } from "../../../components/ui/button"
+
+// ✅ Correct
+import { Button } from "@/components/ui/button"
+```
+
+---
+
+## Component Development Workflow
+
+### 1. Check for Existing Components
+
+```bash
+# Search component directories
+ls -R components/
+
+# Search for component by name
+grep -r "export.*function Button" components/
+grep -r "export.*function Card" components/
+
+# Check shadcn/ui documentation
+# Visit: https://ui.shadcn.com/docs/components
+```
+
+### 2. Install shadcn/ui Component (if available)
+
+```bash
+npx shadcn-ui@latest add [component-name]
+```
+
+### 3. Create Custom Component (if necessary)
+
+```typescript
+// components/custom/my-component.tsx
+import { cn } from "@/lib/utils"
+
+interface MyComponentProps {
+  className?: string
+  children: React.ReactNode
+}
+
+export function MyComponent({ className, children }: MyComponentProps) {
+  return (
+    <div className={cn("p-4 rounded-lg bg-background", className)}>
+      {children}
+    </div>
+  )
+}
+```
+
+### 4. Document the Component
+
+Add a comment at the top of the file:
+
+```typescript
+/**
+ * MyComponent - Brief description of what this component does
+ *
+ * @example
+ * <MyComponent>
+ *   <p>Content goes here</p>
+ * </MyComponent>
+ */
+```
+
+---
+
+## Design Token Quick Reference
+
+### Colors (from shadcn/ui theme)
+
+```typescript
+bg-background           // Page background
+bg-foreground          // Main text color (when used as bg)
+text-foreground        // Main text color
+
+bg-primary             // Primary brand color
+text-primary-foreground // Text on primary bg
+
+bg-secondary           // Secondary color
+text-secondary-foreground
+
+bg-muted               // Subtle background
+text-muted-foreground  // Subtle text (labels, captions)
+
+bg-accent              // Accent color for highlights
+text-accent-foreground
+
+bg-destructive         // Error/danger color
+text-destructive-foreground
+
+border-border          // Default border color
+border-input           // Input field border
+ring-ring              // Focus ring color
+```
+
+### Spacing (Tailwind default scale)
+
+```typescript
+p-0    // 0px
+p-0.5  // 2px
+p-1    // 4px
+p-2    // 8px
+p-3    // 12px
+p-4    // 16px
+p-5    // 20px
+p-6    // 24px
+p-8    // 32px
+p-10   // 40px
+p-12   // 48px
+p-16   // 64px
+p-20   // 80px
+p-24   // 96px
+
+// Also works with: m-, px-, py-, mx-, my-, gap-, space-x-, space-y-
+```
+
+### Typography
+
+```typescript
+text-xs    // 12px
+text-sm    // 14px
+text-base  // 16px
+text-lg    // 18px
+text-xl    // 20px
+text-2xl   // 24px
+text-3xl   // 30px
+text-4xl   // 36px
+
+font-normal    // 400
+font-medium    // 500
+font-semibold  // 600
+font-bold      // 700
+```
+
+### Border Radius
+
+```typescript
+rounded-sm   // 2px (from theme)
+rounded-md   // 4px (from theme)
+rounded-lg   // 8px (from theme)
+rounded-xl   // 12px
+rounded-full // 9999px (circles)
+```
+
+---
+
+## Pre-commit Checklist
+
+Before committing code, verify:
+
+- [ ] No hardcoded colors (search for `#`, `rgb`, `rgba`, `hsl`)
+- [ ] No inline styles (search for `style={{`)
+- [ ] All imports use `@/` alias
+- [ ] TypeScript has no errors (`npm run type-check` or `tsc --noEmit`)
+- [ ] Components use existing shadcn/ui components where possible
+- [ ] Design tokens from `tailwind.config.js` are used
+- [ ] No duplicate components created
+- [ ] Loading and error states are handled (for async operations)
+
+---
+
+## Questions?
+
+If you're unsure whether to create a new component or use an existing one:
+
+1. Search the codebase first
+2. Check shadcn/ui documentation
+3. Ask in code review: "Does a component for X already exist?"
+
+**When in doubt, reuse over recreate.**
+
+---
+
+## Additional Resources
+
+- [shadcn/ui Documentation](https://ui.shadcn.com)
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [Next.js 14 App Router Docs](https://nextjs.org/docs)
+- [TLDraw Documentation](https://tldraw.dev)
+
+---
+
+**Last updated:** 2026-01-30
+**Applies to:** All development on this codebase
