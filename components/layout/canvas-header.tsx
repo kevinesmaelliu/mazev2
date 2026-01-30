@@ -47,7 +47,7 @@ export function CanvasHeader({
   onProfileClick,
 }: CanvasHeaderProps) {
   return (
-    <header className="flex items-center justify-between bg-card px-6 py-3 border-b border-border">
+    <header className="flex items-center justify-between bg-card px-6 py-3">
       <div className="flex items-center gap-6">
         <Button
           variant="ghost"
@@ -71,17 +71,12 @@ export function CanvasHeader({
               <div
                 key={page.id}
                 className={cn(
-                  "group relative flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-all border",
+                  "group relative flex items-center gap-1.5 px-3 py-2 rounded-t-lg transition-all border border-b-0",
                   activeCanvasPageId === page.id
-                    ? "bg-muted border-border text-foreground"
+                    ? "tab-connector bg-muted border-border text-foreground"
                     : "bg-transparent hover:bg-muted/50 text-muted-foreground border-transparent"
                 )}
               >
-                {/* Top accent line for active tab */}
-                {activeCanvasPageId === page.id && (
-                  <div className="absolute -top-3 left-0 right-0 h-0.5 bg-primary rounded-t-lg" />
-                )}
-
                 <button
                   onClick={() => onCanvasPageSelect?.(page.id)}
                   className="flex items-center gap-1.5 text-sm font-medium"
@@ -108,7 +103,7 @@ export function CanvasHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 gap-1.5 text-muted-foreground hover:text-foreground"
+              className="h-9 gap-1.5 text-muted-foreground hover:text-foreground rounded-t-lg border-b-0"
               onClick={onCanvasPageAdd}
             >
               <Plus className="h-3.5 w-3.5" />
