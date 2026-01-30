@@ -61,22 +61,22 @@ export function CanvasHeader({
         </Button>
 
         {/* Project name and tabs section */}
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
             <span className="text-sm font-medium text-foreground">{projectName}</span>
           </div>
 
-          {/* Canvas page tabs */}
-          <div className="flex items-center gap-1">
+          {/* Canvas page tabs - relative positioning for pseudo-elements */}
+          <div className="relative flex items-baseline gap-0">
             {canvasPages.map((page) => (
               <div
                 key={page.id}
                 className={cn(
-                  "group relative flex items-center gap-2 px-4 py-2 rounded-t-lg transition-all border border-b-0",
+                  "group relative flex items-center gap-2 px-4 py-2.5 rounded-t-lg transition-all border border-b-0",
                   activeCanvasPageId === page.id
-                    ? "tab-connector bg-muted border-border text-foreground"
-                    : "bg-transparent hover:bg-muted/50 text-muted-foreground border-transparent"
+                    ? "tab-connector bg-muted border-border text-foreground z-10"
+                    : "bg-transparent text-muted-foreground border-transparent z-0 hover:bg-muted/30"
                 )}
               >
                 <button
@@ -105,7 +105,7 @@ export function CanvasHeader({
             <Button
               variant="ghost"
               size="sm"
-              className="h-10 gap-1.5 text-muted-foreground hover:text-foreground rounded-t-lg border-b-0"
+              className="relative z-0 h-10 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-t-lg border-b-0"
               onClick={onCanvasPageAdd}
             >
               <Plus className="h-3.5 w-3.5" />
