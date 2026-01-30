@@ -1,7 +1,6 @@
 "use client"
 
-import { Plus, Sparkles, MessageSquare, ClipboardList } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { Sparkles, MessageSquare, ClipboardList } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -36,10 +35,6 @@ export function CanvasSidebar({
   onAddBlockAtIndex,
   credits = 0,
 }: CanvasSidebarProps) {
-  const handleAddBlock = () => {
-    onAddBlock?.()
-  }
-
   const handleAddBlockAtIndex = (index: number) => {
     onAddBlockAtIndex?.(index)
   }
@@ -101,19 +96,7 @@ export function CanvasSidebar({
 
               {/* Blocks Section */}
               <div className="space-y-2 pb-4 border-b border-border">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs font-semibold">Blocks</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-7 gap-1.5 text-xs"
-                    onClick={handleAddBlock}
-                    type="button"
-                  >
-                    <Plus className="h-3.5 w-3.5" />
-                    Add Block
-                  </Button>
-                </div>
+                <Label className="text-xs font-semibold">Blocks</Label>
 
                 <div className="space-y-0">
                   {blocks.length === 0 ? (

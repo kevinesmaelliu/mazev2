@@ -1,29 +1,30 @@
 "use client"
 
 import { Plus } from "lucide-react"
-import { Button } from "@/components/ui/button"
 
 interface BlockAddButtonProps {
   onAdd: () => void
 }
 
 /**
- * BlockAddButton - Small button for inserting a block at a specific position
- * Appears between blocks and at the top of the block list
+ * BlockAddButton - Hover-activated button to add blocks between existing blocks
+ * Shows a line with add button on hover, no persistent layout shift
  */
 export function BlockAddButton({ onAdd }: BlockAddButtonProps) {
   return (
-    <div className="py-1 px-0">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={onAdd}
-        className="h-6 w-full gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-        type="button"
-      >
-        <Plus className="h-3 w-3" />
-        Insert
-      </Button>
+    <div className="relative h-0 group/add">
+      <div className="absolute inset-x-0 -top-2 flex items-center opacity-0 group-hover/add:opacity-100 transition-all duration-200 z-10">
+        <div className="flex-1 h-[2px] bg-primary/40 group-hover/add:bg-primary/60 transition-colors duration-200" />
+        <button
+          onClick={onAdd}
+          className="flex items-center justify-center h-7 w-7 rounded-full bg-primary hover:bg-primary text-primary-foreground transition-all duration-200 mx-2 hover:scale-110 hover:shadow-lg hover:shadow-primary/50 active:scale-95"
+          type="button"
+          aria-label="Add block here"
+        >
+          <Plus className="h-3.5 w-3.5 transition-transform duration-200 group-hover/add:rotate-90" />
+        </button>
+        <div className="flex-1 h-[2px] bg-primary/40 group-hover/add:bg-primary/60 transition-colors duration-200" />
+      </div>
     </div>
   )
 }
