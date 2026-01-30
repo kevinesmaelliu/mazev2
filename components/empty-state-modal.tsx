@@ -1,18 +1,11 @@
 /**
  * EmptyStateModal - Shows when canvas has no design loaded
- * Prompts user to add a design via URL, upload, or Figma
- * Appears by default and centered on blank canvas
+ * Positioned within canvas area, centered below header and left of sidebar
  */
 
 "use client"
 
 import { Upload, Link2, Figma, Plus } from "lucide-react"
-import {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
@@ -34,66 +27,65 @@ export function EmptyStateModal({
   onUploadComplete,
 }: EmptyStateModalProps) {
   const handleOptionClick = (method: "upload" | "url" | "figma") => {
-    // For now, just trigger the upload modal by calling onOpenChange
+    // Trigger the upload modal by calling onOpenChange
     // The parent component (page.tsx) will handle opening UploadDesignModal
     onOpenChange(true)
   }
 
+  if (!open) {
+    return null
+  }
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogPortal>
-        <DialogOverlay className="bg-background/80 backdrop-blur-sm" />
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <Card className="w-full max-w-2xl mx-4">
-            <div className="p-8 text-center">
-              {/* Header */}
-              <div className="space-y-3 mb-8">
-                <div className="inline-flex h-16 w-16 rounded-full bg-primary/10 items-center justify-center">
-                  <Plus className="h-8 w-8 text-primary" />
-                </div>
-                <h2 className="text-2xl font-semibold text-foreground">
-                  Start by adding a design
-                </h2>
-                <p className="text-muted-foreground max-w-sm mx-auto">
-                  Upload an image, paste a website URL, or import from Figma to
-                  begin your design review
-                </p>
-              </div>
-
-              {/* Options Grid */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <OptionCard
-                  icon={Upload}
-                  title="Upload images"
-                  description="PNG, JPG, or SVG"
-                  onClick={() => handleOptionClick("upload")}
-                />
-                <OptionCard
-                  icon={Link2}
-                  title="Import URL"
-                  description="Paste a website link"
-                  onClick={() => handleOptionClick("url")}
-                />
-                <OptionCard
-                  icon={Figma}
-                  title="Figma file"
-                  description="Connect your Figma"
-                  onClick={() => handleOptionClick("figma")}
-                />
-              </div>
-
-              {/* Footer */}
-              <div className="pt-4 border-t border-border">
-                <p className="text-xs text-muted-foreground">
-                  You can also use the &quot;Publish and Share&quot; button in the top bar
-                  to add a design anytime
-                </p>
-              </div>
+    <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10">
+      <Card className="w-full max-w-2xl mx-4">
+        <div className="p-8 text-center">
+          {/* Header */}
+          <div className="space-y-3 mb-8">
+            <div className="inline-flex h-16 w-16 rounded-full bg-primary/10 items-center justify-center">
+              <Plus className="h-8 w-8 text-primary" />
             </div>
-          </Card>
+            <h2 className="text-2xl font-semibold text-foreground">
+              Start by adding a design
+            </h2>
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              Upload an image, paste a website URL, or import from Figma to
+              begin your design review
+            </p>
+          </div>
+
+          {/* Options Grid */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <OptionCard
+              icon={Upload}
+              title="Upload images"
+              description="PNG, JPG, or SVG"
+              onClick={() => handleOptionClick("upload")}
+            />
+            <OptionCard
+              icon={Link2}
+              title="Import URL"
+              description="Paste a website link"
+              onClick={() => handleOptionClick("url")}
+            />
+            <OptionCard
+              icon={Figma}
+              title="Figma file"
+              description="Connect your Figma"
+              onClick={() => handleOptionClick("figma")}
+            />
+          </div>
+
+          {/* Footer */}
+          <div className="pt-4 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              You can also use the &quot;Publish and Share&quot; button in the top bar
+              to add a design anytime
+            </p>
+          </div>
         </div>
-      </DialogPortal>
-    </Dialog>
+      </Card>
+    </div>
   )
 }
 

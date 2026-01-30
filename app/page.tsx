@@ -96,10 +96,15 @@ export default function Home() {
       {/* Main content area with canvas and sidebar */}
       <div className="flex flex-1 overflow-hidden">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto relative">
           <Canvas
             websiteUrl={importedUrl}
             onClear={() => setImportedUrl(undefined)}
+          />
+          <EmptyStateModal
+            open={!importedUrl}
+            onOpenChange={setShowUploadModal}
+            onUploadComplete={handleUploadComplete}
           />
         </div>
 
@@ -115,12 +120,6 @@ export default function Home() {
           credits={50}
         />
       </div>
-
-      <EmptyStateModal
-        open={!importedUrl}
-        onOpenChange={setShowUploadModal}
-        onUploadComplete={handleUploadComplete}
-      />
 
       <UploadDesignModal
         open={showUploadModal}
