@@ -11,9 +11,9 @@ interface CreditDisplayProps {
 
 export function CreditDisplay({ credits = 0 }: CreditDisplayProps) {
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
       <Zap className="h-4 w-4" />
-      <span className="font-medium">{credits}</span>
+      <span>{credits}</span>
     </div>
   )
 }
