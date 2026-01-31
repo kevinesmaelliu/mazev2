@@ -11,6 +11,7 @@ export default function Home() {
   const [showUploadModal, setShowUploadModal] = useState(true)
   const [canvasMode, setCanvasMode] = useState<"drawing" | "url-preview">("drawing")
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
+  const [imageFiles, setImageFiles] = useState<File[]>([])
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
   const [blocks, setBlocks] = useState<TestBlock[]>([
@@ -26,13 +27,19 @@ export default function Home() {
     { id: "canvas-2", name: "Feedback" },
   ]
 
-  const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string }) => {
+  const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string; imageFiles?: File[] }) => {
     if (data.method === "canvas") {
       setCanvasMode("drawing")
       setImportedUrl(undefined)
+      setImageFiles([])
     } else if ((data.method === "url" || data.method === "figma") && (data.websiteUrl || data.figmaUrl)) {
       setCanvasMode("url-preview")
       setImportedUrl(data.websiteUrl || data.figmaUrl)
+      setImageFiles([])
+    } else if (data.method === "image" && data.imageFiles) {
+      setCanvasMode("drawing")
+      setImportedUrl(undefined)
+      setImageFiles(data.imageFiles)
     }
   }
 
@@ -104,9 +111,14 @@ export default function Home() {
           <Canvas
             mode={canvasMode}
             websiteUrl={importedUrl}
+            imageFiles={imageFiles}
             onClear={() => {
               setImportedUrl(undefined)
               setCanvasMode("drawing")
+              setImageFiles([])
+            }}
+            onImagesInserted={() => {
+              setImageFiles([])
             }}
           />
           {canvasMode === "drawing" && !importedUrl && (
