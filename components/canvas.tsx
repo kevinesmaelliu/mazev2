@@ -1,10 +1,11 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { TLDrawCanvas } from "@/components/canvas/tldraw-canvas"
+import { insertImageFromFile } from "@/lib/tldraw-utils"
 import { Editor } from "tldraw"
 
 type CanvasMode = 'drawing' | 'url-preview'
@@ -14,7 +15,9 @@ interface CanvasProps {
   websiteUrl?: string
   imageUrl?: string
   figmaUrl?: string
+  imageFiles?: File[]
   onClear?: () => void
+  onImagesInserted?: () => void
   /** @deprecated Use mode prop instead */
   canvasMode?: boolean
   onEditorMount?: (editor: Editor) => void
@@ -26,17 +29,43 @@ export function Canvas({
   websiteUrl,
   imageUrl,
   figmaUrl,
+  imageFiles,
   onClear,
+  onImagesInserted,
   canvasMode,
   onEditorMount,
   initialCanvasState,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl)
+  const editorRef = useRef<Editor | null>(null)
 
   // Handle backwards compatibility with canvasMode prop
   const mode: CanvasMode = propMode || (canvasMode ? 'drawing' : 'url-preview')
   const isDrawingMode = mode === 'drawing'
   const isPreviewMode = mode === 'url-preview'
+
+  // Handle uploaded image files insertion
+  useEffect(() => {
+    if (imageFiles && imageFiles.length > 0 && editorRef.current) {
+      const insertImages = async () => {
+        try {
+          for (const file of imageFiles) {
+            await insertImageFromFile(editorRef.current!, file)
+          }
+          onImagesInserted?.()
+          toast.success('Images inserted', {
+            description: `${imageFiles.length} image${imageFiles.length !== 1 ? 's' : ''} added to canvas`,
+          })
+        } catch (error) {
+          console.error('Failed to insert images:', error)
+          toast.error('Failed to insert images', {
+            description: 'One or more images could not be inserted. Please try again.',
+          })
+        }
+      }
+      insertImages()
+    }
+  }, [imageFiles, onImagesInserted])
 
   // Handle image loading errors
   useEffect(() => {
@@ -63,6 +92,11 @@ export function Canvas({
     }
   }, [figmaUrl])
 
+  const handleEditorMount = (editor: Editor) => {
+    editorRef.current = editor
+    onEditorMount?.(editor)
+  }
+
   // Drawing mode - TLDrawCanvas
   if (isDrawingMode) {
     return (
@@ -70,7 +104,7 @@ export function Canvas({
         <TLDrawCanvas
           width="100%"
           height="100%"
-          onEditorMount={onEditorMount}
+          onEditorMount={handleEditorMount}
           initialState={initialCanvasState}
           autoSave={true}
           autoSaveInterval={5000}
