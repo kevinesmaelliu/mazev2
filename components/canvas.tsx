@@ -3,15 +3,43 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { TLDrawCanvas } from "@/components/canvas/tldraw-canvas"
+import { Editor } from "tldraw"
 
 interface CanvasProps {
   websiteUrl?: string
   onClear?: () => void
+  canvasMode?: boolean
+  onEditorMount?: (editor: Editor) => void
+  initialCanvasState?: unknown
 }
 
-export function Canvas({ websiteUrl, onClear }: CanvasProps) {
+export function Canvas({
+  websiteUrl,
+  onClear,
+  canvasMode = false,
+  onEditorMount,
+  initialCanvasState,
+}: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl)
 
+  // Render blank canvas in canvas mode
+  if (canvasMode) {
+    return (
+      <div className="w-full h-full bg-background border-t border-border">
+        <TLDrawCanvas
+          width="100%"
+          height="100%"
+          onEditorMount={onEditorMount}
+          initialState={initialCanvasState}
+          autoSave={true}
+          autoSaveInterval={5000}
+        />
+      </div>
+    )
+  }
+
+  // Render empty state when no URL
   if (!websiteUrl) {
     return (
       <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
@@ -25,6 +53,7 @@ export function Canvas({ websiteUrl, onClear }: CanvasProps) {
     )
   }
 
+  // Render iframe for URL imports
   return (
     <div className="w-full h-full bg-background border-t border-border flex flex-col">
       {/* Header with close button */}
