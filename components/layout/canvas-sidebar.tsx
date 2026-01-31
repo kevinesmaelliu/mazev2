@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
-import { BlockAddButton } from "@/components/test/block-add-button"
+import { TestBlock } from "@/components/test/test-block-editor"
+import { DraggableBlocksList } from "@/components/test/draggable-blocks-list"
 import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
 
@@ -20,6 +20,7 @@ interface CanvasSidebarProps {
   onUpdateBlock?: (id: string, block: TestBlock) => void
   onDeleteBlock?: (id: string) => void
   onAddBlockAtIndex?: (index: number, type?: TestBlock["type"]) => void
+  onMoveBlock?: (dragIndex: number, hoverIndex: number) => void
   onAddBlocksGenerated?: (blocks: TestBlock[]) => void
   credits?: number
   onBrowseAllBlocks?: () => void
@@ -39,6 +40,7 @@ export function CanvasSidebar({
   onUpdateBlock,
   onDeleteBlock,
   onAddBlockAtIndex,
+  onMoveBlock,
   onAddBlocksGenerated,
   credits = 0,
   onBrowseAllBlocks,
@@ -126,7 +128,7 @@ export function CanvasSidebar({
                   placeholder="e.g., Homepage Navigation Test"
                   value={testTitle}
                   onChange={(e) => onTestTitleChange?.(e.target.value)}
-                  className="bg-background h-9"
+                  className="bg-transparent h-9"
                 />
               </div>
 
@@ -148,35 +150,17 @@ export function CanvasSidebar({
                         </p>
                       </div>
                     ) : (
-                      <>
-                        <BlockAddButton
-                          onAdd={() => handleAddBlockAtIndex(0)}
-                          onAddShortQuestion={() => handleAddBlockAtIndexWithType(0, "short-question")}
-                          onAddVibeCheck={() => handleAddBlockAtIndexWithType(0, "vibe-check")}
-                          onAddMultipleChoice={() => handleAddBlockAtIndexWithType(0, "multiple-choice")}
-                          onBrowseAllBlocks={handleBrowseAllBlocks}
-                        />
-                        {blocks.map((block, index) => (
-                          <div key={block.id} className="space-y-2">
-                            <TestBlockEditor
-                              block={block}
-                              onChange={(updatedBlock) =>
-                                handleUpdateBlock(block.id, updatedBlock)
-                              }
-                              onDelete={() => handleDeleteBlock(block.id)}
-                              blockNumber={index + 1}
-                              onBrowseBlocks={handleBrowseAllBlocks}
-                            />
-                            <BlockAddButton
-                              onAdd={() => handleAddBlockAtIndex(index + 1)}
-                              onAddShortQuestion={() => handleAddBlockAtIndexWithType(index + 1, "short-question")}
-                              onAddVibeCheck={() => handleAddBlockAtIndexWithType(index + 1, "vibe-check")}
-                              onAddMultipleChoice={() => handleAddBlockAtIndexWithType(index + 1, "multiple-choice")}
-                              onBrowseAllBlocks={handleBrowseAllBlocks}
-                            />
-                          </div>
-                        ))}
-                      </>
+                      <DraggableBlocksList
+                        blocks={blocks}
+                        onUpdateBlock={handleUpdateBlock}
+                        onDeleteBlock={handleDeleteBlock}
+                        onAddBlockAtIndex={handleAddBlockAtIndex}
+                        onMoveBlock={(dragIndex, hoverIndex) =>
+                          onMoveBlock?.(dragIndex, hoverIndex)
+                        }
+                        onBrowseAllBlocks={handleBrowseAllBlocks}
+                        onAddBlockAtIndexWithType={handleAddBlockAtIndexWithType}
+                      />
                     )}
                   </div>
                 </div>

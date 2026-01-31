@@ -34,39 +34,69 @@ export function KonvaCanvas({
   const [hasInitialized, setHasInitialized] = useState(false)
   const KonvaRef = useRef<KonvaModuleType>(null)
 
-  // Initialize Konva dynamically to avoid server-side issues
+  // Initialize Konva when container has dimensions (avoids 0x0 canvas); cleanup resets state for Strict Mode remount
   useEffect(() => {
-    if (!containerRef.current || hasInitialized) return
+    const container = containerRef.current
+    if (!container || hasInitialized) return
+
+    let cancelled = false
+    let resizeObserver: ResizeObserver | null = null
+    let wheelHandler: ((e: WheelEvent) => void) | null = null
 
     const initKonva = async () => {
+      if (stageRef.current) return
+      const w = container.clientWidth
+      const h = container.clientHeight
+      if (w === 0 && h === 0) return
+
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Konva = (await import("konva")).default as any
+        if (cancelled) return
         KonvaRef.current = Konva
 
-        // Get container dimensions
-        const containerWidth = containerRef.current?.clientWidth || 800
-        const containerHeight = containerRef.current?.clientHeight || 600
+        const containerWidth = w || 800
+        const containerHeight = h || 600
 
-        // Create stage
         const stage = new Konva.Stage({
-          container: containerRef.current!,
+          container,
           width: containerWidth,
           height: containerHeight,
         })
 
-        // Create main layer
+        const theme = getCanvasTheme(darkMode ?? true)
+
+        // Dotted grid: theme tokens only (grid color), non-interactive, behind content – visually differentiates Konva canvas
+        const GRID_SPACING = 24
+        const GRID_DOT_RADIUS = 2
+        const gridLayer = new Konva.Layer({ listening: false })
+        const gridShape = new Konva.Shape({
+          sceneFunc: (context: KonvaLayerType, shape: KonvaLayerType) => {
+            const extentW = containerWidth * 2
+            const extentH = containerHeight * 2
+            const offsetX = -containerWidth / 2
+            const offsetY = -containerHeight / 2
+            for (let x = 0; x <= extentW; x += GRID_SPACING) {
+              for (let y = 0; y <= extentH; y += GRID_SPACING) {
+                context.beginPath()
+                context.arc(offsetX + x, offsetY + y, GRID_DOT_RADIUS, 0, Math.PI * 2)
+                context.fillStrokeShape(shape)
+              }
+            }
+          },
+          fill: theme.colors.grid,
+          listening: false,
+        })
+        gridLayer.add(gridShape)
+        stage.add(gridLayer)
+        gridLayer.batchDraw()
+
         const layer = new Konva.Layer()
         stage.add(layer)
 
         stageRef.current = stage
         layerRef.current = layer
-
-        // Apply theme
-        const theme = getCanvasTheme(darkMode ?? true)
-        if (containerRef.current) {
-          containerRef.current.style.backgroundColor = theme.colors.background
-        }
+        stage.batchDraw()
 
         // Expose stage to parent component
         if (onEditorMount) {
@@ -137,7 +167,7 @@ export function KonvaCanvas({
         }
 
         // Set up zoom controls
-        const handleZoom = (e: WheelEvent) => {
+        wheelHandler = (e: WheelEvent) => {
           e.preventDefault()
 
           const oldScale = stage.scaleX()
@@ -163,23 +193,38 @@ export function KonvaCanvas({
           stage.batchDraw()
         }
 
-        if (containerRef.current) {
-          containerRef.current.addEventListener("wheel", handleZoom)
-        }
-
+        container.addEventListener("wheel", wheelHandler)
         setHasInitialized(true)
-
-        return () => {
-          if (containerRef.current) {
-            containerRef.current.removeEventListener("wheel", handleZoom)
-          }
-        }
       } catch (error) {
         console.error("Failed to initialize Konva stage:", error)
       }
     }
 
-    initKonva()
+    // Defer init one frame so layout is complete and container has dimensions
+    const rafId = requestAnimationFrame(() => {
+      initKonva()
+    })
+
+    if (container.clientWidth === 0 && container.clientHeight === 0) {
+      resizeObserver = new ResizeObserver(() => {
+        if (container.clientWidth > 0 || container.clientHeight > 0) {
+          initKonva()
+        }
+      })
+      resizeObserver.observe(container)
+    }
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      cancelled = true
+      if (resizeObserver && container) {
+        resizeObserver.disconnect()
+      }
+      if (container && wheelHandler) {
+        container.removeEventListener("wheel", wheelHandler)
+      }
+      setHasInitialized(false)
+    }
   }, [onEditorMount, initialState, darkMode, hasInitialized, readOnly])
 
   // Set up shape event listeners
@@ -308,7 +353,7 @@ export function KonvaCanvas({
     }
   }, [autoSave, autoSaveInterval, hasInitialized, onSave])
 
-  // Clean up on unmount
+  // Clean up on unmount (clear refs so Strict Mode remount can create a new stage)
   useEffect(() => {
     return () => {
       if (autoSaveIntervalRef.current) {
@@ -316,23 +361,22 @@ export function KonvaCanvas({
       }
       if (stageRef.current) {
         stageRef.current.destroy()
+        stageRef.current = null
+        layerRef.current = null
       }
     }
   }, [])
 
-  const theme = getCanvasTheme(darkMode ?? true)
-
   const containerStyle: React.CSSProperties = {
     width: typeof width === "number" ? `${width}px` : width,
     height: typeof height === "number" ? `${height}px` : height,
-    backgroundColor: theme.colors.background,
     overflow: "hidden",
   }
 
   return (
     <div
       ref={containerRef}
-      className={cn("w-full h-full", className)}
+      className={cn("w-full h-full overflow-hidden bg-background", className)}
       style={containerStyle}
     />
   )
