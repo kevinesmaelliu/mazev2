@@ -67,7 +67,7 @@ const LIGHT_THEME: CanvasThemeConfig = {
       color: "#644a40",
     },
     fill: {
-      color: "#ffffff",
+      color: "#ffffff", // Card background color (light mode)
       opacity: 1,
     },
     selection: {
@@ -105,7 +105,7 @@ const DARK_THEME: CanvasThemeConfig = {
       color: "#ffe0c2",
     },
     fill: {
-      color: "#211c18",
+      color: "#211c18", // Card background color (dark mode)
       opacity: 1,
     },
     selection: {

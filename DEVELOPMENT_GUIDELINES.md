@@ -535,6 +535,23 @@ import { Button } from "@/components/ui/button"
 
 **Note:** This exception applies ONLY to this specific interactive button component. The glassmorphic effect is essential to the intended user experience and visual design. All other UI elements continue to use Tailwind CSS and proper design tokens.
 
+### Exception 3: Canvas Block Fill Colors
+
+**Location:** `components/canvas/konva-theme.ts` - Block fill colors for Konva canvas shapes
+
+**Rationale:** Blocks on the canvas use hardcoded RGB/hex values for their fill colors. These colors are directly mapped to the CoffeeMod theme's card background colors to maintain visual consistency:
+- **Light mode:** `#ffffff` (card background light)
+- **Dark mode:** `#211c18` (card background dark)
+
+**Context:** The Konva canvas library requires explicit color values for shape fills. Rather than using Tailwind CSS classes, the theme configuration uses direct hex values that correspond exactly to the design system's card background tokens. This ensures blocks visually integrate with the design system while maintaining proper contrast and consistency with the CoffeeMod theme.
+
+**Specific Elements:**
+- `shapes.fill.color` in light theme: `#ffffff`
+- `shapes.fill.color` in dark theme: `#211c18`
+- Both values are sourced from `app/globals.css` `--card` variable definitions
+
+**Note:** This approach is necessary because Konva renders on HTML5 Canvas and requires RGB/hex values rather than CSS variables. The hardcoded values are locked to the theme configuration and should be updated only when the design system card colors change. All block strokes and selection states continue to use proper theme tokens.
+
 ---
 
 ## Component Development Workflow
