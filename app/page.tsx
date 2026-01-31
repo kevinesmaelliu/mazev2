@@ -96,6 +96,10 @@ export default function Home() {
     }
   }
 
+  const handleAddBlocksGenerated = (generatedBlocks: TestBlock[]) => {
+    setBlocks([...blocks, ...generatedBlocks])
+  }
+
   return (
     <div className="flex flex-col h-screen bg-[#130f0c]">
       <CanvasHeader
@@ -154,6 +158,7 @@ export default function Home() {
           onAddBlockAtIndex={handleAddBlockAtIndex}
           onUpdateBlock={handleUpdateBlock}
           onDeleteBlock={handleDeleteBlock}
+          onAddBlocksGenerated={handleAddBlocksGenerated}
           credits={50}
         />
       </div>
