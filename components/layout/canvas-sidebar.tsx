@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Sparkles, MessageSquare, ClipboardList } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
 import { BlockAddButton } from "@/components/test/block-add-button"
+import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 
 interface CanvasSidebarProps {
   testTitle?: string
@@ -46,8 +48,19 @@ export function CanvasSidebar({
     handleAddBlockAtIndex(index, type)
   }
 
+  const [isBlockBrowserOpen, setIsBlockBrowserOpen] = useState(false)
+
   const handleBrowseAllBlocks = () => {
+    setIsBlockBrowserOpen(true)
     onBrowseAllBlocks?.()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSelectBlockTemplate = (_template: BlockTemplate) => {
+    // Close the modal when a block template is selected
+    // The actual block addition would be handled by parent component
+    // if an onSelectBlockTemplate callback is provided
+    setIsBlockBrowserOpen(false)
   }
 
   const handleUpdateBlock = (id: string, updatedBlock: TestBlock) => {
@@ -60,6 +73,11 @@ export function CanvasSidebar({
 
   return (
     <aside className="w-96 border-l border-border bg-sidebar flex flex-col">
+      <BlockBrowserModal
+        open={isBlockBrowserOpen}
+        onOpenChange={setIsBlockBrowserOpen}
+        onSelectBlock={handleSelectBlockTemplate}
+      />
       <Tabs defaultValue="test" className="flex-1 flex flex-col">
         {/* Tabs Header */}
         <div className="px-4 py-3 border-b border-border">
