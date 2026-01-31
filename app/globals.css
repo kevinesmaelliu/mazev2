@@ -29,6 +29,66 @@
     right: -20px;
     background: radial-gradient(circle at 100% 0, transparent 20px, var(--muted) 20px);
   }
+
+  /* Animated Glow Card - Exception for UploadDesignModal */
+  .card-canvas {
+    position: relative;
+  }
+
+  .card-backdrop {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.5rem;
+    background: linear-gradient(to right, hsl(var(--primary) / 0.6), hsl(var(--primary) / 0.3), hsl(var(--primary) / 0.6));
+    filter: url(#unopaq) blur(12px);
+    opacity: 0.75;
+  }
+
+  .glow-card {
+    position: relative;
+  }
+
+  .border-element {
+    position: absolute;
+    background: linear-gradient(to bottom, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.25), transparent);
+    pointer-events: none;
+  }
+
+  .border-element.border-left,
+  .border-element.border-right {
+    top: 0;
+    bottom: 0;
+    width: 1px;
+  }
+
+  .border-element.border-left {
+    left: 0;
+  }
+
+  .border-element.border-right {
+    right: 0;
+  }
+
+  .border-element.border-top,
+  .border-element.border-bottom {
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, hsl(var(--primary) / 0.5), hsl(var(--primary) / 0.25), transparent);
+  }
+
+  .border-element.border-top {
+    top: 0;
+  }
+
+  .border-element.border-bottom {
+    bottom: 0;
+  }
+
+  .card-content {
+    position: relative;
+    z-index: 1;
+  }
 }
 
 
