@@ -1,30 +1,70 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { X } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { TLDrawCanvas } from "@/components/canvas/tldraw-canvas"
 import { Editor } from "tldraw"
 
+type CanvasMode = 'drawing' | 'url-preview'
+
 interface CanvasProps {
+  mode?: CanvasMode
   websiteUrl?: string
+  imageUrl?: string
+  figmaUrl?: string
   onClear?: () => void
+  /** @deprecated Use mode prop instead */
   canvasMode?: boolean
   onEditorMount?: (editor: Editor) => void
   initialCanvasState?: unknown
 }
 
 export function Canvas({
+  mode: propMode,
   websiteUrl,
+  imageUrl,
+  figmaUrl,
   onClear,
-  canvasMode = false,
+  canvasMode,
   onEditorMount,
   initialCanvasState,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl)
 
-  // Render blank canvas in canvas mode
-  if (canvasMode) {
+  // Handle backwards compatibility with canvasMode prop
+  const mode: CanvasMode = propMode || (canvasMode ? 'drawing' : 'url-preview')
+  const isDrawingMode = mode === 'drawing'
+  const isPreviewMode = mode === 'url-preview'
+
+  // Handle image loading errors
+  useEffect(() => {
+    if (imageUrl) {
+      const img = new Image()
+      img.onerror = () => {
+        toast.error('Failed to load image', {
+          description: 'The image could not be loaded. Please try uploading a different file.',
+        })
+      }
+      img.src = imageUrl
+    }
+  }, [imageUrl])
+
+  // Handle Figma frame loading
+  useEffect(() => {
+    if (figmaUrl) {
+      // Validate Figma URL format
+      if (!figmaUrl.includes('figma.com')) {
+        toast.error('Invalid Figma URL', {
+          description: 'Please provide a valid Figma file or prototype URL.',
+        })
+      }
+    }
+  }, [figmaUrl])
+
+  // Drawing mode - TLDrawCanvas
+  if (isDrawingMode) {
     return (
       <div className="w-full h-full bg-background border-t border-border">
         <TLDrawCanvas
@@ -39,8 +79,8 @@ export function Canvas({
     )
   }
 
-  // Render empty state when no URL
-  if (!websiteUrl) {
+  // URL preview mode with no loaded content - empty state
+  if (isPreviewMode && !websiteUrl) {
     return (
       <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
         <div className="text-center">
@@ -53,14 +93,14 @@ export function Canvas({
     )
   }
 
-  // Render iframe for URL imports
+  // URL preview mode - iframe
   return (
     <div className="w-full h-full bg-background border-t border-border flex flex-col">
       {/* Header with close button */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-foreground">
-            {new URL(websiteUrl).hostname}
+            {websiteUrl ? new URL(websiteUrl).hostname : 'Preview'}
           </span>
         </div>
         <Button
@@ -79,22 +119,29 @@ export function Canvas({
         <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-            <p className="text-sm text-muted-foreground">Loading website...</p>
+            <p className="text-sm text-muted-foreground">Loading preview...</p>
           </div>
         </div>
       )}
 
       {/* Iframe container */}
-      <div className="flex-1 overflow-hidden">
-        <iframe
-          src={websiteUrl}
-          title="Imported Website"
-          className="w-full h-full border-none"
-          onLoad={() => setIsLoading(false)}
-          onError={() => setIsLoading(false)}
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-        />
-      </div>
+      {websiteUrl && (
+        <div className="flex-1 overflow-hidden">
+          <iframe
+            src={websiteUrl}
+            title="Imported Website"
+            className="w-full h-full border-none"
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false)
+              toast.error('Failed to load preview', {
+                description: 'The website or Figma prototype could not be loaded. Please check the URL and try again.',
+              })
+            }}
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+          />
+        </div>
+      )}
     </div>
   )
 }
