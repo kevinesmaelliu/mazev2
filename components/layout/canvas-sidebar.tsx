@@ -16,8 +16,9 @@ interface CanvasSidebarProps {
   onAddBlock?: () => void
   onUpdateBlock?: (id: string, block: TestBlock) => void
   onDeleteBlock?: (id: string) => void
-  onAddBlockAtIndex?: (index: number) => void
+  onAddBlockAtIndex?: (index: number, type?: TestBlock["type"]) => void
   credits?: number
+  onBrowseAllBlocks?: () => void
 }
 
 /**
@@ -35,9 +36,18 @@ export function CanvasSidebar({
   onDeleteBlock,
   onAddBlockAtIndex,
   credits = 0,
+  onBrowseAllBlocks,
 }: CanvasSidebarProps) {
-  const handleAddBlockAtIndex = (index: number) => {
-    onAddBlockAtIndex?.(index)
+  const handleAddBlockAtIndex = (index: number, type?: TestBlock["type"]) => {
+    onAddBlockAtIndex?.(index, type)
+  }
+
+  const handleAddBlockAtIndexWithType = (index: number, type: TestBlock["type"]) => {
+    handleAddBlockAtIndex(index, type)
+  }
+
+  const handleBrowseAllBlocks = () => {
+    onBrowseAllBlocks?.()
   }
 
   const handleUpdateBlock = (id: string, updatedBlock: TestBlock) => {
@@ -108,7 +118,13 @@ export function CanvasSidebar({
                     </div>
                   ) : (
                     <>
-                      <BlockAddButton onAdd={() => handleAddBlockAtIndex(0)} />
+                      <BlockAddButton
+                        onAdd={() => handleAddBlockAtIndex(0)}
+                        onAddShortQuestion={() => handleAddBlockAtIndexWithType(0, "short-question")}
+                        onAddVibeCheck={() => handleAddBlockAtIndexWithType(0, "vibe-check")}
+                        onAddMultipleChoice={() => handleAddBlockAtIndexWithType(0, "multiple-choice")}
+                        onBrowseAllBlocks={handleBrowseAllBlocks}
+                      />
                       {blocks.map((block, index) => (
                         <div key={block.id} className="space-y-2">
                           <TestBlockEditor
@@ -121,6 +137,10 @@ export function CanvasSidebar({
                           />
                           <BlockAddButton
                             onAdd={() => handleAddBlockAtIndex(index + 1)}
+                            onAddShortQuestion={() => handleAddBlockAtIndexWithType(index + 1, "short-question")}
+                            onAddVibeCheck={() => handleAddBlockAtIndexWithType(index + 1, "vibe-check")}
+                            onAddMultipleChoice={() => handleAddBlockAtIndexWithType(index + 1, "multiple-choice")}
+                            onBrowseAllBlocks={handleBrowseAllBlocks}
                           />
                         </div>
                       ))}

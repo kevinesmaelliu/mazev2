@@ -6,7 +6,7 @@ import { useState } from "react"
 
 export interface TestBlock {
   id: string
-  type: "first-click" | "task" | "preference"
+  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice"
   content: string
 }
 
@@ -31,12 +31,15 @@ export function TestBlockEditor({
   const [isFocused, setIsFocused] = useState(false)
   const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false)
 
-  const blockTypes: Array<TestBlock["type"]> = ["first-click", "task", "preference"]
+  const blockTypes: Array<TestBlock["type"]> = ["first-click", "task", "preference", "short-question", "vibe-check", "multiple-choice"]
 
   const typeLabel: Record<TestBlock["type"], string> = {
     "first-click": "First Click",
     task: "Task",
     preference: "Preference",
+    "short-question": "Short Question",
+    "vibe-check": "Vibe Check",
+    "multiple-choice": "Multiple Choice",
   }
 
   return (
