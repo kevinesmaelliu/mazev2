@@ -173,7 +173,7 @@ export function TestBlockEditor({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       className={cn(
-        "rounded-lg bg-muted/30 border border-border/50 p-4 space-y-3",
+        "rounded-lg bg-card border border-border/50 p-4 space-y-3",
         "cursor-grab active:cursor-grabbing"
       )}
     >
