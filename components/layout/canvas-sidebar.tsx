@@ -79,13 +79,13 @@ export function CanvasSidebar({
   }
 
   return (
-    <aside className="w-96 border-l border-border bg-sidebar flex flex-col">
+    <aside className="w-96 h-full min-h-0 border-l border-border bg-sidebar flex flex-col shrink-0">
       <BlockBrowserModal
         open={isBlockBrowserOpen}
         onOpenChange={setIsBlockBrowserOpen}
         onSelectBlock={handleSelectBlockTemplate}
       />
-      <Tabs defaultValue="test" className="flex-1 flex flex-col">
+      <Tabs defaultValue="test" className="flex-1 flex flex-col min-h-0">
         {/* Tabs Header */}
         <div className="px-4 py-3 border-b border-border">
           <TabsList className="grid w-full grid-cols-2">
@@ -101,8 +101,8 @@ export function CanvasSidebar({
         </div>
 
         {/* Test Setup Tab */}
-        <TabsContent value="test" className="flex-1 m-0">
-          <div className="px-4 py-3 border-b border-border">
+        <TabsContent value="test" className="flex-1 flex flex-col min-h-0 m-0 data-[state=inactive]:hidden">
+          <div className="px-4 py-3 border-b border-border shrink-0">
             <div className="flex items-center justify-between mb-0.5">
               <h2 className="font-semibold text-sm">Create Test</h2>
               <Badge variant="secondary" className="text-xs">
@@ -114,7 +114,7 @@ export function CanvasSidebar({
             </p>
           </div>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 min-h-0">
             <div className="p-4 space-y-4">
               {/* Test Title Input */}
               <div className="space-y-1.5 pb-4 border-b border-border">
@@ -187,15 +187,15 @@ export function CanvasSidebar({
         </TabsContent>
 
         {/* Annotations Tab */}
-        <TabsContent value="annotations" className="flex-1 m-0">
-          <div className="px-4 py-3 border-b border-border">
+        <TabsContent value="annotations" className="flex-1 flex flex-col min-h-0 m-0 data-[state=inactive]:hidden">
+          <div className="px-4 py-3 border-b border-border shrink-0">
             <h2 className="font-semibold text-sm">Annotations</h2>
             <p className="text-xs text-muted-foreground">
               View and manage your highlights
             </p>
           </div>
 
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 min-h-0">
             <div className="p-4">
               <p className="text-xs text-muted-foreground text-center py-8">
                 No annotations yet
