@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { KonvaCanvas } from "@/components/canvas/konva-canvas"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
@@ -37,12 +38,22 @@ export function Canvas({
   initialCanvasState,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
+  const [canvasReady, setCanvasReady] = useState(false)
   const stageRef = useRef<Konva.Stage | null>(null)
+  const prevModeRef = useRef<CanvasMode | null>(null)
 
   // Handle backwards compatibility with canvasMode prop
   const mode: CanvasMode = propMode || (canvasMode ? 'drawing' : 'url-preview')
   const isDrawingMode = mode === 'drawing'
   const isPreviewMode = mode === 'url-preview'
+
+  // Reset canvas ready only when entering drawing mode so skeleton shows again
+  useEffect(() => {
+    if (isDrawingMode && prevModeRef.current !== "drawing") {
+      setCanvasReady(false)
+    }
+    prevModeRef.current = mode
+  }, [isDrawingMode, mode])
 
   // Handle uploaded image files insertion
   useEffect(() => {
@@ -95,12 +106,29 @@ export function Canvas({
   const handleEditorMount = (stage: Konva.Stage) => {
     stageRef.current = stage
     onEditorMount?.(stage)
+    setCanvasReady(true)
   }
 
-  // Drawing mode - KonvaCanvas
+  // Drawing mode - KonvaCanvas with skeleton loading
   if (isDrawingMode) {
     return (
-      <div className="w-full h-full bg-[#130f0c] border-t border-border">
+      <div className="w-full h-full bg-background border-t border-border relative">
+        {!canvasReady && (
+          <div
+            className="absolute inset-0 z-10 flex items-center justify-center p-6"
+            aria-busy="true"
+            aria-label="Loading canvas"
+          >
+            <div className="grid w-full h-full max-w-4xl max-h-[85%] gap-4 grid-cols-3 grid-rows-3">
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg col-span-2" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg col-span-3" />
+            </div>
+          </div>
+        )}
         <KonvaCanvas
           width="100%"
           height="100%"
