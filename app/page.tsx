@@ -9,6 +9,7 @@ import { TestBlock } from "@/components/test/test-block-editor"
 
 export default function Home() {
   const [showUploadModal, setShowUploadModal] = useState(true)
+  const [canvasMode, setCanvasMode] = useState<"drawing" | "url-preview">("drawing")
   const [importedUrl, setImportedUrl] = useState<string | undefined>()
   const [activePageId, setActivePageId] = useState("canvas-1")
   const [testTitle, setTestTitle] = useState("")
@@ -25,9 +26,13 @@ export default function Home() {
     { id: "canvas-2", name: "Feedback" },
   ]
 
-  const handleUploadComplete = (data: { method: string; websiteUrl?: string }) => {
-    if (data.method === "url" && data.websiteUrl) {
-      setImportedUrl(data.websiteUrl)
+  const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string }) => {
+    if (data.method === "canvas") {
+      setCanvasMode("drawing")
+      setImportedUrl(undefined)
+    } else if ((data.method === "url" || data.method === "figma") && (data.websiteUrl || data.figmaUrl)) {
+      setCanvasMode("url-preview")
+      setImportedUrl(data.websiteUrl || data.figmaUrl)
     }
   }
 
@@ -97,10 +102,14 @@ export default function Home() {
         {/* Canvas - takes remaining space */}
         <div className="flex-1 overflow-auto relative">
           <Canvas
+            mode={canvasMode}
             websiteUrl={importedUrl}
-            onClear={() => setImportedUrl(undefined)}
+            onClear={() => {
+              setImportedUrl(undefined)
+              setCanvasMode("drawing")
+            }}
           />
-          {!importedUrl && (
+          {canvasMode === "drawing" && !importedUrl && (
             <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
               <UploadDesignModal
                 open={showUploadModal}
