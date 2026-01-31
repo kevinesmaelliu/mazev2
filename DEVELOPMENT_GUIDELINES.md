@@ -535,6 +535,20 @@ import { Button } from "@/components/ui/button"
 
 **Note:** This exception applies ONLY to this specific interactive button component. The glassmorphic effect is essential to the intended user experience and visual design. All other UI elements continue to use Tailwind CSS and proper design tokens.
 
+### Exception 3: Test Block Editor Background
+
+**Location:** `components/test/test-block-editor.tsx` - Test block cards in the test creation panel
+
+**Rationale:** Test block cards use `bg-card` (the card background color from the CoffeeMod theme) to provide stronger visual containment and better visual hierarchy within the test creation panel.
+
+**Changes:**
+- **Light mode:** `#ffffff` (from `--card` CSS variable)
+- **Dark mode:** `#211c18` (from `--card` CSS variable)
+
+**Context:** Blocks represent distinct, independent test questions and benefit from a more defined background. Using the card background color creates visual separation while maintaining consistency with the design system's color tokens.
+
+**Note:** This change uses proper Tailwind tokens (`bg-card`) which automatically adapt to light/dark mode via CSS variables defined in `app/globals.css`.
+
 ---
 
 ## Component Development Workflow
