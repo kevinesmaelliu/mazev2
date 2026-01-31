@@ -7,8 +7,8 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TestBlock } from "@/components/test/test-block-editor"
-import { DraggableBlocksList } from "@/components/test/draggable-blocks-list"
+import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
+import { BlockAddButton } from "@/components/test/block-add-button"
 import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
 
@@ -150,17 +150,39 @@ export function CanvasSidebar({
                         </p>
                       </div>
                     ) : (
-                      <DraggableBlocksList
-                        blocks={blocks}
-                        onUpdateBlock={handleUpdateBlock}
-                        onDeleteBlock={handleDeleteBlock}
-                        onAddBlockAtIndex={handleAddBlockAtIndex}
-                        onMoveBlock={(dragIndex, hoverIndex) =>
-                          onMoveBlock?.(dragIndex, hoverIndex)
-                        }
-                        onBrowseAllBlocks={handleBrowseAllBlocks}
-                        onAddBlockAtIndexWithType={handleAddBlockAtIndexWithType}
-                      />
+                      <>
+                        <BlockAddButton
+                          onAdd={() => handleAddBlockAtIndex(0)}
+                          onAddShortQuestion={() => handleAddBlockAtIndexWithType(0, "short-question")}
+                          onAddVibeCheck={() => handleAddBlockAtIndexWithType(0, "vibe-check")}
+                          onAddMultipleChoice={() => handleAddBlockAtIndexWithType(0, "multiple-choice")}
+                          onBrowseAllBlocks={handleBrowseAllBlocks}
+                        />
+                        {blocks.map((block, index) => (
+                          <div key={block.id} className="space-y-2">
+                            <TestBlockEditor
+                              block={block}
+                              index={index}
+                              blockNumber={index + 1}
+                              onChange={(updatedBlock) =>
+                                handleUpdateBlock(block.id, updatedBlock)
+                              }
+                              onDelete={() => handleDeleteBlock(block.id)}
+                              onBrowseBlocks={handleBrowseAllBlocks}
+                              moveBlock={(dragIndex, hoverIndex) =>
+                                onMoveBlock?.(dragIndex, hoverIndex)
+                              }
+                            />
+                            <BlockAddButton
+                              onAdd={() => handleAddBlockAtIndex(index + 1)}
+                              onAddShortQuestion={() => handleAddBlockAtIndexWithType(index + 1, "short-question")}
+                              onAddVibeCheck={() => handleAddBlockAtIndexWithType(index + 1, "vibe-check")}
+                              onAddMultipleChoice={() => handleAddBlockAtIndexWithType(index + 1, "multiple-choice")}
+                              onBrowseAllBlocks={handleBrowseAllBlocks}
+                            />
+                          </div>
+                        ))}
+                      </>
                     )}
                   </div>
                 </div>

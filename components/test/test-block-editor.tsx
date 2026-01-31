@@ -67,13 +67,6 @@ interface TestBlockEditorProps {
   onDelete: () => void
   onBrowseBlocks?: () => void
   moveBlock: (dragIndex: number, hoverIndex: number) => void
-  /** Slot index in display list (for drag-over reorder); when provided with onDragStart, enables custom drag image and animated reorder */
-  slotIndex?: number
-  onDragStart?: (index: number) => void
-  onDragOverSlot?: (slotIndex: number) => void
-  onDropAtSlot?: (slotIndex: number) => void
-  cloneRef?: React.MutableRefObject<HTMLElement | null>
-  isDragging?: boolean
 }
 
 export function TestBlockEditor({
@@ -84,11 +77,6 @@ export function TestBlockEditor({
   onDelete,
   onBrowseBlocks,
   moveBlock,
-  slotIndex,
-  onDragStart,
-  onDragOverSlot,
-  onDropAtSlot,
-  cloneRef,
 }: TestBlockEditorProps) {
   const [isFocused, setIsFocused] = useState(false)
 
@@ -164,37 +152,15 @@ export function TestBlockEditor({
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.setData("text/plain", String(index))
     e.dataTransfer.effectAllowed = "move"
-    if (cloneRef && onDragStart) {
-      const el = e.currentTarget
-      const rect = el.getBoundingClientRect()
-      const clone = el.cloneNode(true) as HTMLElement
-      clone.style.position = "fixed"
-      clone.style.top = "-9999px"
-      clone.style.left = "-9999px"
-      clone.style.width = `${rect.width}px`
-      clone.style.opacity = "1"
-      clone.style.pointerEvents = "none"
-      document.body.appendChild(clone)
-      e.dataTransfer.setDragImage(clone, e.clientX - rect.left, e.clientY - rect.top)
-      cloneRef.current = clone
-      onDragStart(index)
-    }
   }
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault()
     e.dataTransfer.dropEffect = "move"
-    if (onDragOverSlot !== undefined && slotIndex !== undefined) {
-      onDragOverSlot(slotIndex)
-    }
   }
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault()
-    if (onDropAtSlot !== undefined && slotIndex !== undefined) {
-      onDropAtSlot(slotIndex)
-      return
-    }
     const dragIndex = parseInt(e.dataTransfer.getData("text/plain"), 10)
     if (Number.isNaN(dragIndex) || dragIndex === index) return
     moveBlock(dragIndex, index)

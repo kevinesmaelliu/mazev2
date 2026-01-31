@@ -89,54 +89,6 @@
     position: relative;
     z-index: 1;
   }
-
-  /* Canvas entry shimmer - light sweep to signal "entered canvas space" */
-  @keyframes canvas-shimmer-sweep {
-    0% {
-      transform: translateX(-100%) skewX(-12deg);
-    }
-    100% {
-      transform: translateX(200%) skewX(-12deg);
-    }
-  }
-
-  /* Subtle repeating shimmer for loading state */
-  @keyframes canvas-shimmer-bg {
-    0%,
-    100% {
-      opacity: 0.4;
-    }
-    50% {
-      opacity: 0.7;
-    }
-  }
-
-  .canvas-shimmer-wrap {
-    position: relative;
-    overflow: hidden;
-  }
-
-  /* One-time sweep on entry */
-  .canvas-shimmer-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(var(--primary) / 0.08) 40%,
-      hsl(var(--primary) / 0.18) 50%,
-      hsl(var(--primary) / 0.08) 60%,
-      transparent 100%
-    );
-    animation: canvas-shimmer-sweep 1.6s ease-in-out 1;
-    pointer-events: none;
-  }
-
-  /* Repeating soft pulse on base */
-  .canvas-shimmer-bg {
-    animation: canvas-shimmer-bg 2s ease-in-out infinite;
-  }
 }
 
 

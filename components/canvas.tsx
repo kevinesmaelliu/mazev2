@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { KonvaCanvas } from "@/components/canvas/konva-canvas"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
@@ -22,8 +23,6 @@ interface CanvasProps {
   canvasMode?: boolean
   onEditorMount?: (stage: Konva.Stage) => void
   initialCanvasState?: unknown
-  /** When true, upload modal is open – hide skeleton so modal stays clickable */
-  uploadModalOpen?: boolean
 }
 
 export function Canvas({
@@ -37,48 +36,24 @@ export function Canvas({
   canvasMode,
   onEditorMount,
   initialCanvasState,
-  uploadModalOpen = false,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
   const [canvasReady, setCanvasReady] = useState(false)
-  const [shimmerMinTimePassed, setShimmerMinTimePassed] = useState(true)
   const stageRef = useRef<Konva.Stage | null>(null)
   const prevModeRef = useRef<CanvasMode | null>(null)
-  const prevUploadModalOpenRef = useRef(uploadModalOpen)
 
   // Handle backwards compatibility with canvasMode prop
   const mode: CanvasMode = propMode || (canvasMode ? 'drawing' : 'url-preview')
   const isDrawingMode = mode === 'drawing'
   const isPreviewMode = mode === 'url-preview'
 
-  // Reset canvas ready only when entering drawing mode so shimmer shows again
+  // Reset canvas ready only when entering drawing mode so skeleton shows again
   useEffect(() => {
     if (isDrawingMode && prevModeRef.current !== "drawing") {
       setCanvasReady(false)
     }
     prevModeRef.current = mode
   }, [isDrawingMode, mode])
-
-  // When user closes upload modal and enters canvas view, show shimmer for minimum duration
-  useEffect(() => {
-    const justEnteredCanvasView = !uploadModalOpen && prevUploadModalOpenRef.current
-    prevUploadModalOpenRef.current = uploadModalOpen
-
-    if (isDrawingMode && justEnteredCanvasView) {
-      setShimmerMinTimePassed(false)
-    }
-    if (uploadModalOpen) {
-      setShimmerMinTimePassed(true)
-    }
-  }, [uploadModalOpen, isDrawingMode])
-
-  const SHIMMER_MIN_MS = 900
-
-  useEffect(() => {
-    if (!isDrawingMode || uploadModalOpen || shimmerMinTimePassed) return
-    const t = setTimeout(() => setShimmerMinTimePassed(true), SHIMMER_MIN_MS)
-    return () => clearTimeout(t)
-  }, [isDrawingMode, uploadModalOpen, shimmerMinTimePassed])
 
   // Handle uploaded image files insertion
   useEffect(() => {
@@ -134,17 +109,25 @@ export function Canvas({
     setCanvasReady(true)
   }
 
-  // Drawing mode - KonvaCanvas with shimmer on entry (hide when modal is open; min duration so user sees it)
+  // Drawing mode - KonvaCanvas with skeleton loading
   if (isDrawingMode) {
-    const showShimmer = !uploadModalOpen && (!shimmerMinTimePassed || !canvasReady)
     return (
       <div className="w-full h-full bg-background border-t border-border relative">
-        {showShimmer && (
+        {!canvasReady && (
           <div
-            className="canvas-shimmer-wrap canvas-shimmer-bg absolute inset-0 z-10 bg-muted/50"
+            className="absolute inset-0 z-10 flex items-center justify-center p-6"
             aria-busy="true"
             aria-label="Loading canvas"
-          />
+          >
+            <div className="grid w-full h-full max-w-4xl max-h-[85%] gap-4 grid-cols-3 grid-rows-3">
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg col-span-2" />
+              <Skeleton className="rounded-lg" />
+              <Skeleton className="rounded-lg col-span-3" />
+            </div>
+          </div>
         )}
         <KonvaCanvas
           width="100%"
