@@ -29,6 +29,7 @@ export function CanvasSidebar({
   testTitle = "",
   onTestTitleChange,
   blocks = [],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onAddBlock,
   onUpdateBlock,
   onDeleteBlock,

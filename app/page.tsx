@@ -26,10 +26,9 @@ export default function Home() {
 
   const canvasPages = [
     { id: "canvas-1", name: "Canvas" },
-    { id: "canvas-2", name: "Feedback" },
   ]
 
-  const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string; imageFiles?: File[] }) => {
+  const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string }) => {
     if (data.method === "canvas") {
       setCanvasMode("drawing")
       setWebsiteUrl(undefined)
@@ -46,12 +45,6 @@ export default function Home() {
       setFigmaUrl(data.figmaUrl)
       setWebsiteUrl(undefined)
       setImageFiles([])
-    } else if (data.method === "image" && data.imageFiles) {
-      setCanvasMode("drawing")
-      setWebsiteUrl(undefined)
-      setFigmaUrl(undefined)
-      setUploadedImages([])
-      setImageFiles(data.imageFiles)
     }
   }
 
@@ -104,7 +97,7 @@ export default function Home() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex flex-col h-screen bg-[#130f0c]">
       <CanvasHeader
         projectName="Untitled Design Review"
         credits={50}
@@ -126,9 +119,9 @@ export default function Home() {
       />
 
       {/* Main content area with canvas and sidebar */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto relative">
+        <div className="flex-1 overflow-auto relative bg-[#130f0c]">
           <Canvas
             mode={canvasMode}
             websiteUrl={websiteUrl}
@@ -140,13 +133,13 @@ export default function Home() {
               setImageFiles([])
             }}
           />
-          {canvasMode === "drawing" && !websiteUrl && !figmaUrl && uploadedImages.length === 0 && imageFiles.length === 0 && (
-            <div className="absolute inset-0 bg-background/50 backdrop-blur-sm flex items-center justify-center z-10 pointer-events-auto">
+          {canvasMode === "drawing" && !websiteUrl && !figmaUrl && uploadedImages.length === 0 && imageFiles.length === 0 && showUploadModal && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-40 pointer-events-auto">
               <UploadDesignModal
                 open={showUploadModal}
                 onOpenChange={setShowUploadModal}
                 onUploadComplete={handleUploadComplete}
-                embedded
+                embedded={false}
               />
             </div>
           )}

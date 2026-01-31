@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react"
 import { X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { TLDrawCanvas } from "@/components/canvas/tldraw-canvas"
-import { insertImageFromFile } from "@/lib/tldraw-utils"
-import { Editor } from "tldraw"
+import { KonvaCanvas } from "@/components/canvas/konva-canvas"
+import { insertImageFromFile } from "@/lib/konva-utils-client"
+import type Konva from "konva"
 
 type CanvasMode = 'drawing' | 'url-preview'
 
@@ -20,7 +20,7 @@ interface CanvasProps {
   onImagesInserted?: () => void
   /** @deprecated Use mode prop instead */
   canvasMode?: boolean
-  onEditorMount?: (editor: Editor) => void
+  onEditorMount?: (stage: Konva.Stage) => void
   initialCanvasState?: unknown
 }
 
@@ -37,7 +37,7 @@ export function Canvas({
   initialCanvasState,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
-  const editorRef = useRef<Editor | null>(null)
+  const stageRef = useRef<Konva.Stage | null>(null)
 
   // Handle backwards compatibility with canvasMode prop
   const mode: CanvasMode = propMode || (canvasMode ? 'drawing' : 'url-preview')
@@ -46,11 +46,11 @@ export function Canvas({
 
   // Handle uploaded image files insertion
   useEffect(() => {
-    if (imageFiles && imageFiles.length > 0 && editorRef.current) {
+    if (imageFiles && imageFiles.length > 0 && stageRef.current) {
       const insertImages = async () => {
         try {
           for (const file of imageFiles) {
-            await insertImageFromFile(editorRef.current!, file)
+            await insertImageFromFile(stageRef.current!, file)
           }
           onImagesInserted?.()
           toast.success('Images inserted', {
@@ -92,20 +92,21 @@ export function Canvas({
     }
   }, [figmaUrl])
 
-  const handleEditorMount = (editor: Editor) => {
-    editorRef.current = editor
-    onEditorMount?.(editor)
+  const handleEditorMount = (stage: Konva.Stage) => {
+    stageRef.current = stage
+    onEditorMount?.(stage)
   }
 
-  // Drawing mode - TLDrawCanvas
+  // Drawing mode - KonvaCanvas
   if (isDrawingMode) {
     return (
       <div className="w-full h-full bg-background border-t border-border">
-        <TLDrawCanvas
+        <KonvaCanvas
           width="100%"
           height="100%"
           onEditorMount={handleEditorMount}
-          initialState={initialCanvasState}
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          initialState={initialCanvasState as any}
           autoSave={true}
           autoSaveInterval={5000}
         />

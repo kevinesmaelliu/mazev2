@@ -1,16 +1,16 @@
-import { Editor } from "tldraw"
+import type Konva from "konva"
 
-export interface TLDrawCanvasProps {
+export interface KonvaCanvasProps {
   // Dimensions and layout
   width?: string | number
   height?: string | number
   className?: string
 
   // Initialization
-  initialState?: TLDrawInitialState
+  initialState?: KonvaInitialState
 
   // Editor callbacks
-  onEditorMount?: (editor: Editor) => void
+  onEditorMount?: (stage: Konva.Stage) => void
   onCreateShape?: (shapeData: ShapeData) => void
   onUpdateShape?: (shapeData: ShapeData) => void
   onDeleteShape?: (shapeIds: string[]) => void
@@ -27,11 +27,17 @@ export interface TLDrawCanvasProps {
   autoSaveInterval?: number
 }
 
-export interface TLDrawInitialState {
+// Backward compatibility alias
+export type TLDrawCanvasProps = KonvaCanvasProps
+
+export interface KonvaInitialState {
   shapes?: ShapeData[]
   selectedShapeIds?: string[]
   viewport?: ViewportState
 }
+
+// Backward compatibility alias
+export type TLDrawInitialState = KonvaInitialState
 
 export interface ShapeData {
   id: string

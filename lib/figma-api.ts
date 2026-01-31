@@ -1,5 +1,4 @@
-import type { Editor } from "tldraw"
-import { insertImageFromUrl } from "./tldraw-utils"
+import { insertImageFromUrl } from "./konva-utils-client"
 
 interface ParsedFigmaUrl {
   fileId: string
@@ -139,17 +138,18 @@ export async function getFigmaFrameImage(
 }
 
 /**
- * Insert a Figma frame or board into the TLDraw canvas
+ * Insert a Figma frame or board into the Konva canvas
  *
  * Parses the Figma URL, fetches the frame as an image, and inserts it into the canvas.
  *
- * @param editor - TLDraw Editor instance
+ * @param stage - Konva Stage instance
  * @param figmaUrl - Figma URL (file or prototype link)
  * @param token - Optional Figma API token (defaults to FIGMA_API_TOKEN env var)
  * @param position - Optional position for the image (x, y coordinates)
  */
 export async function insertFigmaFrame(
-  editor: Editor,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  stage: any,
   figmaUrl: string,
   token?: string,
   position?: { x: number; y: number }
@@ -168,7 +168,7 @@ export async function insertFigmaFrame(
     const imageUrl = await getFigmaFrameImage(parsed.fileId, parsed.frameId, token)
 
     // Insert the image into the canvas
-    await insertImageFromUrl(editor, imageUrl, position)
+    await insertImageFromUrl(stage, imageUrl, position)
   } catch (error) {
     const message =
       error instanceof Error ? error.message : "Failed to insert Figma frame"
