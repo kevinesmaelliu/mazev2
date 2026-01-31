@@ -7,14 +7,30 @@ import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 
+interface CanvasState {
+  mode: "drawing" | "url-preview"
+  websiteUrl?: string
+  figmaUrl?: string
+  uploadedImages: string[]
+  imageFiles: File[]
+  showUploadModal: boolean
+}
+
 export default function Home() {
-  const [showUploadModal, setShowUploadModal] = useState(true)
-  const [canvasMode, setCanvasMode] = useState<"drawing" | "url-preview">("drawing")
-  const [websiteUrl, setWebsiteUrl] = useState<string | undefined>()
-  const [figmaUrl, setFigmaUrl] = useState<string | undefined>()
-  const [uploadedImages, setUploadedImages] = useState<string[]>([])
-  const [imageFiles, setImageFiles] = useState<File[]>([])
   const [activePageId, setActivePageId] = useState("canvas-1")
+  const [canvasPages, setCanvasPages] = useState([
+    { id: "canvas-1", name: "Canvas" },
+  ])
+  const [canvasStateMap, setCanvasStateMap] = useState<Record<string, CanvasState>>({
+    "canvas-1": {
+      mode: "drawing",
+      websiteUrl: undefined,
+      figmaUrl: undefined,
+      uploadedImages: [],
+      imageFiles: [],
+      showUploadModal: true,
+    },
+  })
   const [testTitle, setTestTitle] = useState("")
   const [blocks, setBlocks] = useState<TestBlock[]>([
     {
@@ -24,37 +40,35 @@ export default function Home() {
     },
   ])
 
-  const canvasPages = [
-    { id: "canvas-1", name: "Canvas" },
-  ]
+  // Get current canvas state
+  const currentCanvasState = canvasStateMap[activePageId]
 
   const handleUploadComplete = (data: { method: string; websiteUrl?: string; figmaUrl?: string }) => {
-    if (data.method === "canvas") {
-      setCanvasMode("drawing")
-      setWebsiteUrl(undefined)
-      setFigmaUrl(undefined)
-      setUploadedImages([])
-      setImageFiles([])
-    } else if (data.method === "url" && data.websiteUrl) {
-      setCanvasMode("url-preview")
-      setWebsiteUrl(data.websiteUrl)
-      setFigmaUrl(undefined)
-      setImageFiles([])
-    } else if (data.method === "figma" && data.figmaUrl) {
-      setCanvasMode("url-preview")
-      setFigmaUrl(data.figmaUrl)
-      setWebsiteUrl(undefined)
-      setImageFiles([])
-    }
+    setCanvasStateMap((prev) => ({
+      ...prev,
+      [activePageId]: {
+        mode: data.method === "canvas" ? "drawing" : "url-preview",
+        websiteUrl: data.method === "url" ? data.websiteUrl : undefined,
+        figmaUrl: data.method === "figma" ? data.figmaUrl : undefined,
+        uploadedImages: data.method === "canvas" ? [] : prev[activePageId]?.uploadedImages || [],
+        imageFiles: [],
+        showUploadModal: false,
+      },
+    }))
   }
 
   const handleCanvasClear = () => {
-    setCanvasMode("drawing")
-    setWebsiteUrl(undefined)
-    setFigmaUrl(undefined)
-    setUploadedImages([])
-    setImageFiles([])
-    setShowUploadModal(true)
+    setCanvasStateMap((prev) => ({
+      ...prev,
+      [activePageId]: {
+        mode: "drawing",
+        websiteUrl: undefined,
+        figmaUrl: undefined,
+        uploadedImages: [],
+        imageFiles: [],
+        showUploadModal: true,
+      },
+    }))
   }
 
   const handleAddBlock = () => {
@@ -108,6 +122,51 @@ export default function Home() {
     setBlocks(next)
   }
 
+  const handleAddCanvasPage = () => {
+    const newPageId = `canvas-${Date.now()}`
+    const newPageNumber = canvasPages.length + 1
+    setCanvasPages([...canvasPages, { id: newPageId, name: `Canvas ${newPageNumber}` }])
+    setCanvasStateMap((prev) => ({
+      ...prev,
+      [newPageId]: {
+        mode: "drawing",
+        websiteUrl: undefined,
+        figmaUrl: undefined,
+        uploadedImages: [],
+        imageFiles: [],
+        showUploadModal: true,
+      },
+    }))
+    setActivePageId(newPageId)
+  }
+
+  const handleCanvasPageClose = (id: string) => {
+    const filtered = canvasPages.filter((p) => p.id !== id)
+    setCanvasPages(filtered)
+
+    // Remove the canvas state for the deleted page
+    setCanvasStateMap((prev) => {
+      const next = { ...prev }
+      delete next[id]
+      return next
+    })
+
+    // Switch to another tab if the active tab was closed
+    if (activePageId === id && filtered.length > 0) {
+      setActivePageId(filtered[0].id)
+    }
+  }
+
+  const updateCanvasState = (updates: Partial<CanvasState>) => {
+    setCanvasStateMap((prev) => ({
+      ...prev,
+      [activePageId]: {
+        ...prev[activePageId],
+        ...updates,
+      },
+    }))
+  }
+
   return (
     <div className="flex flex-col h-screen bg-[#130f0c]">
       <CanvasHeader
@@ -118,15 +177,10 @@ export default function Home() {
         userInitial="U"
         onBack={() => console.log("Back clicked")}
         onCanvasPageSelect={(id) => setActivePageId(id)}
-        onCanvasPageAdd={() => console.log("Add page clicked")}
-        onCanvasPageClose={(id) => {
-          const filtered = canvasPages.filter((p) => p.id !== id)
-          if (filtered.length > 0) {
-            setActivePageId(filtered[0].id)
-          }
-        }}
+        onCanvasPageAdd={handleAddCanvasPage}
+        onCanvasPageClose={handleCanvasPageClose}
         onSave={() => console.log("Save clicked")}
-        onPublish={() => setShowUploadModal(true)}
+        onPublish={() => updateCanvasState({ showUploadModal: true })}
         onProfileClick={() => console.log("Profile clicked")}
       />
 
@@ -135,24 +189,26 @@ export default function Home() {
         {/* Canvas - takes remaining space */}
         <div className="flex-1 overflow-auto relative bg-[#130f0c]">
           <Canvas
-            mode={canvasMode}
-            websiteUrl={websiteUrl}
-            figmaUrl={figmaUrl}
-            imageUrl={uploadedImages[0]}
-            imageFiles={imageFiles}
+            mode={currentCanvasState.mode}
+            websiteUrl={currentCanvasState.websiteUrl}
+            figmaUrl={currentCanvasState.figmaUrl}
+            imageUrl={currentCanvasState.uploadedImages[0]}
+            imageFiles={currentCanvasState.imageFiles}
             onClear={handleCanvasClear}
             onImagesInserted={() => {
-              setImageFiles([])
+              updateCanvasState({ imageFiles: [] })
             }}
-            uploadModalOpen={showUploadModal}
+            uploadModalOpen={currentCanvasState.showUploadModal}
           />
-          {canvasMode === "drawing" && !websiteUrl && !figmaUrl && uploadedImages.length === 0 && imageFiles.length === 0 && showUploadModal && (
+          {currentCanvasState.mode === "drawing" && !currentCanvasState.websiteUrl && !currentCanvasState.figmaUrl && currentCanvasState.uploadedImages.length === 0 && currentCanvasState.imageFiles.length === 0 && currentCanvasState.showUploadModal && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">
               <UploadDesignModal
-                open={showUploadModal}
-                onOpenChange={setShowUploadModal}
-                onUploadComplete={handleUploadComplete}
+                open={currentCanvasState.showUploadModal}
+                onOpenChange={(open) => {
+                  updateCanvasState({ showUploadModal: open })
+                }}
                 embedded={true}
+                onUploadComplete={handleUploadComplete}
               />
             </div>
           )}
@@ -173,10 +229,12 @@ export default function Home() {
         />
       </div>
 
-      {(websiteUrl || figmaUrl) && (
+      {(currentCanvasState.websiteUrl || currentCanvasState.figmaUrl) && (
         <UploadDesignModal
-          open={showUploadModal}
-          onOpenChange={setShowUploadModal}
+          open={currentCanvasState.showUploadModal}
+          onOpenChange={(open) => {
+            updateCanvasState({ showUploadModal: open })
+          }}
           onUploadComplete={handleUploadComplete}
         />
       )}
