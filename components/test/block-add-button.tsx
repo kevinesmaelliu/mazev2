@@ -81,14 +81,16 @@ export function BlockAddButton({
 
               <Separator className="my-2" />
 
-              <button
-                onClick={() => handleQuickAddBlock(onBrowseAllBlocks)}
-                className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
-                type="button"
-              >
-                <Library className="h-4 w-4" />
-                Browse all blocks
-              </button>
+              {onBrowseAllBlocks && (
+                <button
+                  onClick={() => handleQuickAddBlock(onBrowseAllBlocks)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
+                  type="button"
+                >
+                  <Library className="h-4 w-4" />
+                  Browse all blocks
+                </button>
+              )}
             </div>
           </PopoverContent>
         </Popover>

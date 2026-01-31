@@ -134,6 +134,7 @@ export function CanvasSidebar({
                             }
                             onDelete={() => handleDeleteBlock(block.id)}
                             blockNumber={index + 1}
+                            onBrowseBlocks={handleBrowseAllBlocks}
                           />
                           <BlockAddButton
                             onAdd={() => handleAddBlockAtIndex(index + 1)}
