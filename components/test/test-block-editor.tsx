@@ -1,13 +1,23 @@
 "use client"
 
-import { Sparkles, Trash2, ChevronDown } from "lucide-react"
+import { Sparkles, Trash2, ChevronDown, MessageSquare, GaugeCircle, ListChecks, Library } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { Separator } from "@/components/ui/separator"
 
 export interface TestBlock {
   id: string
-  type: "first-click" | "task" | "preference"
+  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice" | "rating-scale" | "semantic-differential" | "matrix" | "likert"
   content: string
+  description?: string
+  scaleLeftLabel?: string
+  scaleRightLabel?: string
+  options?: string[]
 }
 
 interface TestBlockEditorProps {
@@ -15,6 +25,7 @@ interface TestBlockEditorProps {
   blockNumber: number
   onChange: (block: TestBlock) => void
   onDelete: () => void
+  onBrowseBlocks?: () => void
 }
 
 /**
@@ -27,16 +38,29 @@ export function TestBlockEditor({
   blockNumber,
   onChange,
   onDelete,
+  onBrowseBlocks,
 }: TestBlockEditorProps) {
   const [isFocused, setIsFocused] = useState(false)
-  const [isTypeMenuOpen, setIsTypeMenuOpen] = useState(false)
+  const [isTypePopoverOpen, setIsTypePopoverOpen] = useState(false)
 
-  const blockTypes: Array<TestBlock["type"]> = ["first-click", "task", "preference"]
+  // Quick access types shown in popover
+  const quickAccessTypes = [
+    { value: "short-question" as const, label: "Short Question", icon: MessageSquare },
+    { value: "vibe-check" as const, label: "Vibe Check", icon: GaugeCircle },
+    { value: "multiple-choice" as const, label: "Multiple Choice", icon: ListChecks },
+  ]
 
   const typeLabel: Record<TestBlock["type"], string> = {
     "first-click": "First Click",
     task: "Task",
     preference: "Preference",
+    "short-question": "Short Question",
+    "vibe-check": "Vibe Check",
+    "multiple-choice": "Multiple Choice",
+    "rating-scale": "Rating Scale",
+    "semantic-differential": "Semantic Differential",
+    matrix: "Matrix",
+    likert: "Likert Scale",
   }
 
   return (
@@ -47,42 +71,63 @@ export function TestBlockEditor({
           <span className="text-xs font-semibold text-muted-foreground">
             Q{blockNumber}
           </span>
-          <div className="relative">
-            <button
-              onClick={() => setIsTypeMenuOpen(!isTypeMenuOpen)}
-              className={cn(
-                "px-2 py-1 text-xs rounded border transition-colors",
-                "bg-background border-border hover:bg-muted",
-                "flex items-center gap-1"
-              )}
-              type="button"
-            >
-              {typeLabel[block.type]}
-              <ChevronDown className="h-3 w-3" />
-            </button>
-
-            {/* Type dropdown menu */}
-            {isTypeMenuOpen && (
-              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded shadow-lg z-10 min-w-max">
-                {blockTypes.map((type) => (
+          <Popover open={isTypePopoverOpen} onOpenChange={setIsTypePopoverOpen}>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "px-2 py-1 text-xs rounded border transition-colors",
+                  "bg-background border-border hover:bg-muted",
+                  "flex items-center gap-1"
+                )}
+                type="button"
+              >
+                {typeLabel[block.type]}
+                <ChevronDown className="h-3 w-3" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-56 p-2" align="start">
+              <div className="space-y-1">
+                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  Quick Access
+                </div>
+                {quickAccessTypes.map((type) => (
                   <button
-                    key={type}
+                    key={type.value}
                     onClick={() => {
-                      onChange({ ...block, type })
-                      setIsTypeMenuOpen(false)
+                      onChange({ ...block, type: type.value })
+                      setIsTypePopoverOpen(false)
                     }}
                     className={cn(
-                      "block w-full text-left px-3 py-2 text-xs hover:bg-muted transition-colors",
-                      block.type === type && "bg-muted font-semibold"
+                      "w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors",
+                      block.type === type.value
+                        ? "bg-primary text-primary-foreground"
+                        : "hover:bg-muted"
                     )}
                     type="button"
                   >
-                    {typeLabel[type]}
+                    <type.icon className="h-4 w-4" />
+                    {type.label}
                   </button>
                 ))}
+
+                <Separator className="my-2" />
+
+                {onBrowseBlocks && (
+                  <button
+                    onClick={() => {
+                      onBrowseBlocks()
+                      setIsTypePopoverOpen(false)
+                    }}
+                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
+                    type="button"
+                  >
+                    <Library className="h-4 w-4" />
+                    Browse all blocks
+                  </button>
+                )}
               </div>
-            )}
-          </div>
+            </PopoverContent>
+          </Popover>
         </div>
 
         <button

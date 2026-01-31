@@ -1,6 +1,7 @@
 "use client"
 
-import { MessageSquare, ClipboardList } from "lucide-react"
+import { useState } from "react"
+import { Sparkles, MessageSquare, ClipboardList } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -8,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
 import { BlockAddButton } from "@/components/test/block-add-button"
+import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
 
 interface CanvasSidebarProps {
@@ -17,9 +19,10 @@ interface CanvasSidebarProps {
   onAddBlock?: () => void
   onUpdateBlock?: (id: string, block: TestBlock) => void
   onDeleteBlock?: (id: string) => void
-  onAddBlockAtIndex?: (index: number) => void
+  onAddBlockAtIndex?: (index: number, type?: TestBlock["type"]) => void
   onAddBlocksGenerated?: (blocks: TestBlock[]) => void
   credits?: number
+  onBrowseAllBlocks?: () => void
 }
 
 /**
@@ -38,9 +41,29 @@ export function CanvasSidebar({
   onAddBlockAtIndex,
   onAddBlocksGenerated,
   credits = 0,
+  onBrowseAllBlocks,
 }: CanvasSidebarProps) {
-  const handleAddBlockAtIndex = (index: number) => {
-    onAddBlockAtIndex?.(index)
+  const handleAddBlockAtIndex = (index: number, type?: TestBlock["type"]) => {
+    onAddBlockAtIndex?.(index, type)
+  }
+
+  const handleAddBlockAtIndexWithType = (index: number, type: TestBlock["type"]) => {
+    handleAddBlockAtIndex(index, type)
+  }
+
+  const [isBlockBrowserOpen, setIsBlockBrowserOpen] = useState(false)
+
+  const handleBrowseAllBlocks = () => {
+    setIsBlockBrowserOpen(true)
+    onBrowseAllBlocks?.()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const handleSelectBlockTemplate = (_template: BlockTemplate) => {
+    // Close the modal when a block template is selected
+    // The actual block addition would be handled by parent component
+    // if an onSelectBlockTemplate callback is provided
+    setIsBlockBrowserOpen(false)
   }
 
   const handleUpdateBlock = (id: string, updatedBlock: TestBlock) => {
@@ -57,6 +80,11 @@ export function CanvasSidebar({
 
   return (
     <aside className="w-96 border-l border-border bg-sidebar flex flex-col">
+      <BlockBrowserModal
+        open={isBlockBrowserOpen}
+        onOpenChange={setIsBlockBrowserOpen}
+        onSelectBlock={handleSelectBlockTemplate}
+      />
       <Tabs defaultValue="test" className="flex-1 flex flex-col">
         {/* Tabs Header */}
         <div className="px-4 py-3 border-b border-border">
@@ -121,7 +149,13 @@ export function CanvasSidebar({
                       </div>
                     ) : (
                       <>
-                        <BlockAddButton onAdd={() => handleAddBlockAtIndex(0)} />
+                        <BlockAddButton
+                          onAdd={() => handleAddBlockAtIndex(0)}
+                          onAddShortQuestion={() => handleAddBlockAtIndexWithType(0, "short-question")}
+                          onAddVibeCheck={() => handleAddBlockAtIndexWithType(0, "vibe-check")}
+                          onAddMultipleChoice={() => handleAddBlockAtIndexWithType(0, "multiple-choice")}
+                          onBrowseAllBlocks={handleBrowseAllBlocks}
+                        />
                         {blocks.map((block, index) => (
                           <div key={block.id} className="space-y-2">
                             <TestBlockEditor
@@ -131,9 +165,14 @@ export function CanvasSidebar({
                               }
                               onDelete={() => handleDeleteBlock(block.id)}
                               blockNumber={index + 1}
+                              onBrowseBlocks={handleBrowseAllBlocks}
                             />
                             <BlockAddButton
                               onAdd={() => handleAddBlockAtIndex(index + 1)}
+                              onAddShortQuestion={() => handleAddBlockAtIndexWithType(index + 1, "short-question")}
+                              onAddVibeCheck={() => handleAddBlockAtIndexWithType(index + 1, "vibe-check")}
+                              onAddMultipleChoice={() => handleAddBlockAtIndexWithType(index + 1, "multiple-choice")}
+                              onBrowseAllBlocks={handleBrowseAllBlocks}
                             />
                           </div>
                         ))}

@@ -66,10 +66,10 @@ export default function Home() {
     setBlocks([...blocks, newBlock])
   }
 
-  const handleAddBlockAtIndex = (index: number) => {
+  const handleAddBlockAtIndex = (index: number, type: TestBlock["type"] = "first-click") => {
     const newBlock: TestBlock = {
       id: `block-${Date.now()}`,
-      type: "first-click",
+      type,
       content: "",
     }
     const newBlocks = [...blocks]
