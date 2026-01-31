@@ -24,8 +24,10 @@ interface UploadData {
 export function EmptyStateModal({
   open,
   onOpenChange,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onUploadComplete,
 }: EmptyStateModalProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleOptionClick = (method: "upload" | "url" | "figma") => {
     // Trigger the upload modal by calling onOpenChange
     // The parent component (page.tsx) will handle opening UploadDesignModal

@@ -6,8 +6,8 @@
 
 "use client"
 
-import { useState, useRef } from "react"
-import { ArrowRight, X, Upload } from "lucide-react"
+import { useState } from "react"
+import { ArrowRight, X } from "lucide-react"
 import {
   Dialog,
   DialogPortal,
@@ -25,10 +25,9 @@ interface UploadDesignModalProps {
 }
 
 interface UploadData {
-  method: "url" | "figma" | "canvas" | "image"
+  method: "url" | "figma" | "canvas"
   websiteUrl?: string
   figmaUrl?: string
-  imageFiles?: File[]
 }
 
 export function UploadDesignModal({
@@ -38,9 +37,6 @@ export function UploadDesignModal({
   embedded = false,
 }: UploadDesignModalProps) {
   const [url, setUrl] = useState("")
-  const [imageFiles, setImageFiles] = useState<File[]>([])
-  const [imagePreviews, setImagePreviews] = useState<string[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleUrlSubmit = () => {
     if (url.trim()) {
@@ -59,51 +55,13 @@ export function UploadDesignModal({
     onOpenChange(false)
   }
 
-  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
-    if (files.length === 0) return
-
-    setImageFiles(files)
-
-    // Generate previews for selected files
-    Promise.all(
-      files.map(
-        (file) =>
-          new Promise<string>((resolve) => {
-            const reader = new FileReader()
-            reader.onload = () => {
-              resolve(reader.result as string)
-            }
-            reader.readAsDataURL(file)
-          })
-      )
-    ).then(setImagePreviews)
-  }
-
-  const handleImageUpload = () => {
-    if (imageFiles.length > 0) {
-      onUploadComplete?.({ method: "image", imageFiles })
-      onOpenChange(false)
-      setImageFiles([])
-      setImagePreviews([])
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    }
-  }
-
   const handleClose = () => {
     setUrl("")
-    setImageFiles([])
-    setImagePreviews([])
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ""
-    }
     onOpenChange(false)
   }
 
   const modalContent = (
-    <Card className="w-full max-w-4xl shadow-2xl relative">
+    <Card className="w-full max-w-4xl shadow-2xl relative bg-background border border-border">
       {/* Close button */}
       <Button
         variant="ghost"
@@ -118,11 +76,11 @@ export function UploadDesignModal({
         {/* Header */}
         <div className="text-center space-y-2 mb-8">
           <p className="text-sm text-muted-foreground">Get Started</p>
-          <h2 className="text-2xl font-semibold text-foreground">Import your design for testing</h2>
+          <h2 className="text-2xl font-semibold text-foreground">Add your design</h2>
         </div>
 
-        {/* Three cards grid */}
-        <div className="grid grid-cols-3 gap-6">
+        {/* Two cards grid */}
+        <div className="grid grid-cols-2 gap-6 md:gap-8">
           {/* Canvas Card */}
           <div className="relative bg-muted/10 rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all h-96">
             {/* Background Preview */}
@@ -222,7 +180,7 @@ export function UploadDesignModal({
               <div className="relative">
                 <Input
                   type="url"
-                  placeholder="https://example.com or figma.com/proto/..."
+                  placeholder="yourprototype.com"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   className="pr-12 bg-background border-border/50 h-11"
@@ -243,113 +201,13 @@ export function UploadDesignModal({
               </div>
             </div>
           </div>
-
-          {/* Image Upload Card */}
-          <div className="relative bg-muted/10 rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all h-96">
-            {/* Background Preview */}
-            <div className="absolute inset-0 flex items-start justify-center pt-8">
-              <div className="relative w-48 h-48">
-                {/* Image frame illustration */}
-                <div className="absolute inset-0 border-4 border-primary/40 rounded-lg flex items-center justify-center bg-muted/30">
-                  {/* Mountain/image icon */}
-                  <div className="relative w-24 h-24">
-                    {/* Mountain shape */}
-                    <svg
-                      viewBox="0 0 100 100"
-                      className="w-full h-full text-primary/60"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                    >
-                      <path d="M 20 80 L 40 40 L 60 60 L 80 20 L 90 50 L 90 90 L 10 90 Z" />
-                      <circle cx="70" cy="30" r="8" fill="currentColor" />
-                    </svg>
-                  </div>
-                </div>
-
-                {/* Upload indicator */}
-                <div className="absolute -bottom-2 -right-2 w-14 h-14 bg-gradient-to-br from-primary to-primary/60 rounded-full flex items-center justify-center shadow-lg">
-                  <Upload className="w-6 h-6 text-white" />
-                </div>
-              </div>
-            </div>
-
-            {/* Gradient overlay for fade effect */}
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background/95"></div>
-
-            {/* Content */}
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              {/* Dark overlay behind text */}
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
-
-              <div className="relative space-y-2 mb-6">
-                <h3 className="text-lg font-semibold text-foreground">Upload Image</h3>
-                <p className="text-sm text-muted-foreground">
-                  Add PNG, JPG, GIF or WebP files
-                </p>
-              </div>
-
-              {/* Action */}
-              <div className="relative flex flex-col gap-2">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png,image/jpeg,image/gif,image/webp"
-                  multiple
-                  onChange={handleImageSelect}
-                  className="sr-only"
-                />
-                <Button
-                  onClick={() => fileInputRef.current?.click()}
-                  className="w-full"
-                  size="lg"
-                  variant={imageFiles.length > 0 ? "default" : "outline"}
-                >
-                  {imageFiles.length > 0
-                    ? `${imageFiles.length} file${imageFiles.length !== 1 ? "s" : ""} selected`
-                    : "Choose Images"}
-                </Button>
-                {imageFiles.length > 0 && (
-                  <Button
-                    onClick={handleImageUpload}
-                    className="w-full"
-                    size="lg"
-                  >
-                    Upload to Canvas
-                  </Button>
-                )}
-              </div>
-
-              {/* Preview thumbnails */}
-              {imagePreviews.length > 0 && (
-                <div className="relative mt-3 flex gap-2 overflow-x-auto">
-                  {imagePreviews.map((preview, idx) => (
-                    <div
-                      key={idx}
-                      className="h-12 w-12 flex-shrink-0 rounded border border-border/50 overflow-hidden bg-muted/50"
-                    >
-                      <img
-                        src={preview}
-                        alt={`Preview ${idx + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
       </div>
     </Card>
   )
 
   if (embedded) {
-    return (
-      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-50 p-8">
-        {modalContent}
-      </div>
-    )
+    return modalContent
   }
 
   return (
