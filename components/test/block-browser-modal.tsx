@@ -3,6 +3,7 @@
 import { useState } from "react"
 import {
   Dialog,
+  DialogTrigger,
   SuperModalContent,
   SuperModalHeader,
   SuperModalBody,
