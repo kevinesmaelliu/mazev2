@@ -100,7 +100,7 @@ export function Canvas({
   // Drawing mode - KonvaCanvas
   if (isDrawingMode) {
     return (
-      <div className="w-full h-full bg-background border-t border-border">
+      <div className="w-full h-full bg-[#130f0c] border-t border-border">
         <KonvaCanvas
           width="100%"
           height="100%"
@@ -117,7 +117,7 @@ export function Canvas({
   // URL preview mode with no loaded content - empty state
   if (isPreviewMode && !websiteUrl && !figmaUrl && !imageUrl) {
     return (
-      <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
+      <div className="w-full h-full bg-[#130f0c] flex items-center justify-center border-t border-border">
         <div className="text-center">
           <p className="text-muted-foreground">No design loaded</p>
           <p className="text-sm text-muted-foreground mt-2">
@@ -130,7 +130,7 @@ export function Canvas({
 
   // URL preview mode - iframe
   return (
-    <div className="w-full h-full bg-background border-t border-border flex flex-col">
+    <div className="w-full h-full bg-[#130f0c] border-t border-border flex flex-col">
       {/* Header with close button */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
@@ -151,7 +151,7 @@ export function Canvas({
 
       {/* Loading state */}
       {isLoading && (
-        <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-[#130f0c]/50 flex items-center justify-center z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
             <p className="text-sm text-muted-foreground">Loading preview...</p>
@@ -180,7 +180,7 @@ export function Canvas({
 
       {/* Image preview container */}
       {imageUrl && !websiteUrl && !figmaUrl && (
-        <div className="flex-1 overflow-hidden flex items-center justify-center bg-background">
+        <div className="flex-1 overflow-hidden flex items-center justify-center bg-[#130f0c]">
           <img
             src={imageUrl}
             alt="Uploaded design"

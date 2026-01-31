@@ -63,7 +63,7 @@ export function KonvaCanvas({
         layerRef.current = layer
 
         // Apply theme
-        const theme = getCanvasTheme(darkMode)
+        const theme = getCanvasTheme(darkMode ?? true)
         if (containerRef.current) {
           containerRef.current.style.backgroundColor = theme.colors.background
         }
@@ -75,7 +75,7 @@ export function KonvaCanvas({
 
         // Load initial state if provided
         if (initialState?.shapes && initialState.shapes.length > 0) {
-          const theme = getCanvasTheme(darkMode)
+          const theme = getCanvasTheme(darkMode ?? true)
           for (const shapeData of initialState.shapes) {
             if (shapeData.type === "rect") {
               const rect = new Konva.Rect({
@@ -208,7 +208,7 @@ export function KonvaCanvas({
       }
 
       if (target instanceof Konva.Rect || target instanceof Konva.Circle) {
-        const theme = getCanvasTheme(darkMode)
+        const theme = getCanvasTheme(darkMode ?? true)
 
         layer.getChildren().forEach((node: KonvaLayerType) => {
           if ((node instanceof Konva.Rect || node instanceof Konva.Circle) && node.id() !== target.id()) {
@@ -320,7 +320,7 @@ export function KonvaCanvas({
     }
   }, [])
 
-  const theme = getCanvasTheme(darkMode)
+  const theme = getCanvasTheme(darkMode ?? true)
 
   const containerStyle: React.CSSProperties = {
     width: typeof width === "number" ? `${width}px` : width,
