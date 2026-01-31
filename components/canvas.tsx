@@ -36,7 +36,7 @@ export function Canvas({
   onEditorMount,
   initialCanvasState,
 }: CanvasProps) {
-  const [isLoading, setIsLoading] = useState(!!websiteUrl)
+  const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
   const editorRef = useRef<Editor | null>(null)
 
   // Handle backwards compatibility with canvasMode prop
@@ -114,7 +114,7 @@ export function Canvas({
   }
 
   // URL preview mode with no loaded content - empty state
-  if (isPreviewMode && !websiteUrl) {
+  if (isPreviewMode && !websiteUrl && !figmaUrl && !imageUrl) {
     return (
       <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
         <div className="text-center">
@@ -134,7 +134,7 @@ export function Canvas({
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-foreground">
-            {websiteUrl ? new URL(websiteUrl).hostname : 'Preview'}
+            {websiteUrl ? new URL(websiteUrl).hostname : figmaUrl ? 'Figma' : imageUrl ? 'Image Preview' : 'Preview'}
           </span>
         </div>
         <Button
@@ -158,12 +158,12 @@ export function Canvas({
         </div>
       )}
 
-      {/* Iframe container */}
-      {websiteUrl && (
+      {/* Iframe/Preview container */}
+      {(websiteUrl || figmaUrl) && (
         <div className="flex-1 overflow-hidden">
           <iframe
-            src={websiteUrl}
-            title="Imported Website"
+            src={websiteUrl || figmaUrl}
+            title={websiteUrl ? "Imported Website" : "Figma Design"}
             className="w-full h-full border-none"
             onLoad={() => setIsLoading(false)}
             onError={() => {
@@ -173,6 +173,24 @@ export function Canvas({
               })
             }}
             sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+          />
+        </div>
+      )}
+
+      {/* Image preview container */}
+      {imageUrl && !websiteUrl && !figmaUrl && (
+        <div className="flex-1 overflow-hidden flex items-center justify-center bg-background">
+          <img
+            src={imageUrl}
+            alt="Uploaded design"
+            className="max-w-full max-h-full object-contain"
+            onLoad={() => setIsLoading(false)}
+            onError={() => {
+              setIsLoading(false)
+              toast.error('Failed to load image', {
+                description: 'The image could not be loaded. Please try uploading a different file.',
+              })
+            }}
           />
         </div>
       )}
