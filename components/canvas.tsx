@@ -2,29 +2,32 @@
 
 import { useState } from "react"
 import { X } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { TLDrawCanvas } from "@/components/canvas/tldraw-canvas"
 import { Editor } from "tldraw"
 
+type CanvasMode = "drawing" | "url-preview"
+
 interface CanvasProps {
+  mode?: CanvasMode
   websiteUrl?: string
   onClear?: () => void
-  canvasMode?: boolean
   onEditorMount?: (editor: Editor) => void
   initialCanvasState?: unknown
 }
 
 export function Canvas({
+  mode = "drawing",
   websiteUrl,
   onClear,
-  canvasMode = false,
   onEditorMount,
   initialCanvasState,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl)
 
-  // Render blank canvas in canvas mode
-  if (canvasMode) {
+  // Drawing mode - TLDraw canvas with image/Figma loading
+  if (mode === "drawing") {
     return (
       <div className="w-full h-full bg-background border-t border-border">
         <TLDrawCanvas
@@ -39,6 +42,7 @@ export function Canvas({
     )
   }
 
+  // URL preview mode - iframe for website/Figma imports
   // Render empty state when no URL
   if (!websiteUrl) {
     return (
@@ -54,6 +58,16 @@ export function Canvas({
   }
 
   // Render iframe for URL imports
+  const handleIframeLoad = () => {
+    setIsLoading(false)
+    toast.success("Design loaded successfully")
+  }
+
+  const handleIframeError = () => {
+    setIsLoading(false)
+    toast.error("Failed to load design. Please check the URL and try again.")
+  }
+
   return (
     <div className="w-full h-full bg-background border-t border-border flex flex-col">
       {/* Header with close button */}
@@ -79,7 +93,7 @@ export function Canvas({
         <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
-            <p className="text-sm text-muted-foreground">Loading website...</p>
+            <p className="text-sm text-muted-foreground">Loading design...</p>
           </div>
         </div>
       )}
@@ -88,10 +102,10 @@ export function Canvas({
       <div className="flex-1 overflow-hidden">
         <iframe
           src={websiteUrl}
-          title="Imported Website"
+          title="Imported Design"
           className="w-full h-full border-none"
-          onLoad={() => setIsLoading(false)}
-          onError={() => setIsLoading(false)}
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
         />
       </div>
