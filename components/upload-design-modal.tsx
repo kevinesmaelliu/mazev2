@@ -7,7 +7,7 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowRight, X } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import {
   Dialog,
   DialogPortal,
@@ -62,15 +62,6 @@ export function UploadDesignModal({
 
   const modalContent = (
     <Card className="w-full max-w-4xl shadow-2xl relative bg-background border border-border">
-      {/* Close button */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-4 top-4 h-8 w-8 rounded-full z-10"
-        onClick={handleClose}
-      >
-        <X className="h-4 w-4" />
-      </Button>
 
       <div className="p-8">
         {/* Header */}
