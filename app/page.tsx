@@ -134,12 +134,12 @@ export default function Home() {
             }}
           />
           {canvasMode === "drawing" && !websiteUrl && !figmaUrl && uploadedImages.length === 0 && imageFiles.length === 0 && showUploadModal && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-40 pointer-events-auto">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
               <UploadDesignModal
                 open={showUploadModal}
                 onOpenChange={setShowUploadModal}
                 onUploadComplete={handleUploadComplete}
-                embedded={false}
+                embedded={true}
               />
             </div>
           )}
