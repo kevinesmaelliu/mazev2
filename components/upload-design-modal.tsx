@@ -85,8 +85,8 @@ export function UploadDesignModal({
             <div className="grid grid-cols-2 gap-6 md:gap-8">
               {/* Canvas Card */}
               <div className="relative bg-muted/10 rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all h-96">
-                {/* Background Preview */}
-                <div className="absolute inset-0 flex items-start justify-center pt-8">
+                {/* Background Preview - pointer-events-none so card content is clickable */}
+                <div className="absolute inset-0 pointer-events-none flex items-start justify-center pt-8">
                   <div className="relative w-48 h-48">
                     {/* Canvas illustration - simplified geometric shapes */}
                     <div className="absolute top-0 left-8 w-16 h-16">
@@ -113,12 +113,12 @@ export function UploadDesignModal({
                 </div>
 
                 {/* Gradient overlay for fade effect */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background/95"></div>
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-background/60 to-background/95"></div>
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6">
-                  {/* Dark overlay behind text */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
+                  {/* Dark overlay behind text - pointer-events-none so button receives clicks */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
 
                   <div className="relative space-y-2 mb-6">
                     <h3 className="text-lg font-semibold text-foreground">Use Canvas</h3>
@@ -136,8 +136,8 @@ export function UploadDesignModal({
 
               {/* URL/Figma Card */}
               <div className="relative bg-muted/10 rounded-xl overflow-hidden border border-border hover:border-primary/50 transition-all h-96">
-                {/* Background Preview */}
-                <div className="absolute inset-0 flex items-start justify-center pt-8">
+                {/* Background Preview - pointer-events-none so card content is clickable */}
+                <div className="absolute inset-0 pointer-events-none flex items-start justify-center pt-8">
                   <div className="relative w-56 h-40">
                     {/* Browser window mockup */}
                     <div className="absolute inset-0 bg-card/60 backdrop-blur-sm border border-border rounded-lg overflow-hidden shadow-xl">
@@ -164,12 +164,12 @@ export function UploadDesignModal({
                 </div>
 
                 {/* Gradient overlay for fade effect */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/60 to-background/95"></div>
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-background/60 to-background/95"></div>
 
                 {/* Content */}
                 <div className="absolute inset-0 flex flex-col justify-end p-6">
-                  {/* Dark overlay behind text */}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
+                  {/* Dark overlay behind text - pointer-events-none so inputs/button receive clicks */}
+                  <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-black/20 to-black/60"></div>
 
                   <div className="relative space-y-2 mb-6">
                     <h3 className="text-lg font-semibold text-foreground">Import Website or Figma Prototype</h3>

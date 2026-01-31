@@ -100,6 +100,14 @@ export default function Home() {
     setBlocks([...blocks, ...generatedBlocks])
   }
 
+  const handleMoveBlock = (dragIndex: number, hoverIndex: number) => {
+    if (dragIndex === hoverIndex) return
+    const next = [...blocks]
+    const [removed] = next.splice(dragIndex, 1)
+    next.splice(hoverIndex, 0, removed!)
+    setBlocks(next)
+  }
+
   return (
     <div className="flex flex-col h-screen bg-[#130f0c]">
       <CanvasHeader
@@ -136,9 +144,10 @@ export default function Home() {
             onImagesInserted={() => {
               setImageFiles([])
             }}
+            uploadModalOpen={showUploadModal}
           />
           {canvasMode === "drawing" && !websiteUrl && !figmaUrl && uploadedImages.length === 0 && imageFiles.length === 0 && showUploadModal && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-auto">
+            <div className="absolute inset-0 z-20 flex items-center justify-center">
               <UploadDesignModal
                 open={showUploadModal}
                 onOpenChange={setShowUploadModal}
@@ -158,6 +167,7 @@ export default function Home() {
           onAddBlockAtIndex={handleAddBlockAtIndex}
           onUpdateBlock={handleUpdateBlock}
           onDeleteBlock={handleDeleteBlock}
+          onMoveBlock={handleMoveBlock}
           onAddBlocksGenerated={handleAddBlocksGenerated}
           credits={50}
         />

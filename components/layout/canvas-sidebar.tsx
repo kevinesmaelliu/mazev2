@@ -20,6 +20,7 @@ interface CanvasSidebarProps {
   onUpdateBlock?: (id: string, block: TestBlock) => void
   onDeleteBlock?: (id: string) => void
   onAddBlockAtIndex?: (index: number, type?: TestBlock["type"]) => void
+  onMoveBlock?: (dragIndex: number, hoverIndex: number) => void
   onAddBlocksGenerated?: (blocks: TestBlock[]) => void
   credits?: number
   onBrowseAllBlocks?: () => void
@@ -39,6 +40,7 @@ export function CanvasSidebar({
   onUpdateBlock,
   onDeleteBlock,
   onAddBlockAtIndex,
+  onMoveBlock,
   onAddBlocksGenerated,
   credits = 0,
   onBrowseAllBlocks,
@@ -126,7 +128,7 @@ export function CanvasSidebar({
                   placeholder="e.g., Homepage Navigation Test"
                   value={testTitle}
                   onChange={(e) => onTestTitleChange?.(e.target.value)}
-                  className="bg-background h-9"
+                  className="bg-transparent h-9"
                 />
               </div>
 
@@ -160,12 +162,16 @@ export function CanvasSidebar({
                           <div key={block.id} className="space-y-2">
                             <TestBlockEditor
                               block={block}
+                              index={index}
+                              blockNumber={index + 1}
                               onChange={(updatedBlock) =>
                                 handleUpdateBlock(block.id, updatedBlock)
                               }
                               onDelete={() => handleDeleteBlock(block.id)}
-                              blockNumber={index + 1}
                               onBrowseBlocks={handleBrowseAllBlocks}
+                              moveBlock={(dragIndex, hoverIndex) =>
+                                onMoveBlock?.(dragIndex, hoverIndex)
+                              }
                             />
                             <BlockAddButton
                               onAdd={() => handleAddBlockAtIndex(index + 1)}
