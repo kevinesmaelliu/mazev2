@@ -1,6 +1,6 @@
 "use client"
 
-import { Sparkles, MessageSquare, ClipboardList } from "lucide-react"
+import { MessageSquare, ClipboardList } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
 import { BlockAddButton } from "@/components/test/block-add-button"
+import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
 
 interface CanvasSidebarProps {
   testTitle?: string
@@ -17,6 +18,7 @@ interface CanvasSidebarProps {
   onUpdateBlock?: (id: string, block: TestBlock) => void
   onDeleteBlock?: (id: string) => void
   onAddBlockAtIndex?: (index: number) => void
+  onAddBlocksGenerated?: (blocks: TestBlock[]) => void
   credits?: number
 }
 
@@ -34,6 +36,7 @@ export function CanvasSidebar({
   onUpdateBlock,
   onDeleteBlock,
   onAddBlockAtIndex,
+  onAddBlocksGenerated,
   credits = 0,
 }: CanvasSidebarProps) {
   const handleAddBlockAtIndex = (index: number) => {
@@ -46,6 +49,10 @@ export function CanvasSidebar({
 
   const handleDeleteBlock = (id: string) => {
     onDeleteBlock?.(id)
+  }
+
+  const handleBlocksGenerated = (generatedBlocks: TestBlock[]) => {
+    onAddBlocksGenerated?.(generatedBlocks)
   }
 
   return (
@@ -97,53 +104,45 @@ export function CanvasSidebar({
 
               {/* Blocks Section */}
               <div className="space-y-2 pb-4 border-b border-border">
-                <Label className="text-xs font-semibold">Blocks</Label>
-
-                <div className="space-y-0">
-                  {blocks.length === 0 ? (
-                    <div className="text-center py-6">
-                      <p className="text-xs text-muted-foreground">
-                        No blocks yet. Add one to get started.
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <BlockAddButton onAdd={() => handleAddBlockAtIndex(0)} />
-                      {blocks.map((block, index) => (
-                        <div key={block.id} className="space-y-2">
-                          <TestBlockEditor
-                            block={block}
-                            onChange={(updatedBlock) =>
-                              handleUpdateBlock(block.id, updatedBlock)
-                            }
-                            onDelete={() => handleDeleteBlock(block.id)}
-                            blockNumber={index + 1}
-                          />
-                          <BlockAddButton
-                            onAdd={() => handleAddBlockAtIndex(index + 1)}
-                          />
-                        </div>
-                      ))}
-                    </>
-                  )}
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs font-semibold">Blocks</Label>
                 </div>
-              </div>
 
-              {/* Auto-generate Section */}
-              <div className="rounded-lg bg-muted/50 border border-border p-3 space-y-1.5">
-                <div className="flex items-start gap-2">
-                  <Sparkles className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                  <div className="space-y-0.5 text-xs text-muted-foreground">
-                    <p className="font-semibold text-foreground">
-                      Auto-generate blocks
-                    </p>
-                    <p>
-                      Add a walkthrough recording and we&apos;ll create relevant
-                      questions for you automatically.
-                    </p>
+                <div className="space-y-2">
+                  {/* AI Blocks Generator Button */}
+                  <AIBlocksGenerator onBlocksGenerate={handleBlocksGenerated} />
+
+                  <div className="space-y-0">
+                    {blocks.length === 0 ? (
+                      <div className="text-center py-6">
+                        <p className="text-xs text-muted-foreground">
+                          No blocks yet. Add one to get started.
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <BlockAddButton onAdd={() => handleAddBlockAtIndex(0)} />
+                        {blocks.map((block, index) => (
+                          <div key={block.id} className="space-y-2">
+                            <TestBlockEditor
+                              block={block}
+                              onChange={(updatedBlock) =>
+                                handleUpdateBlock(block.id, updatedBlock)
+                              }
+                              onDelete={() => handleDeleteBlock(block.id)}
+                              blockNumber={index + 1}
+                            />
+                            <BlockAddButton
+                              onAdd={() => handleAddBlockAtIndex(index + 1)}
+                            />
+                          </div>
+                        ))}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
+
             </div>
           </ScrollArea>
         </TabsContent>
