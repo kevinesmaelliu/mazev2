@@ -494,19 +494,25 @@ import { Button } from "@/components/ui/button"
 
 ## Design Exceptions
 
-### Exception 1: UploadDesignModal Hardcoded Colors
+### Exception 1: UploadDesignModal Hardcoded Colors & Glow Effect
 
-**Location:** `components/upload-design-modal.tsx` - Canvas and URL/Figma preview cards
+**Location:** `components/upload-design-modal.tsx` - Canvas and URL/Figma preview cards + modal glow border
 
-**Rationale:** The upload modal cards contain hardcoded brand colors (`blue-500`, `purple-500`, `pink-500`, `red-500`, `yellow-500`, `green-500`) for visual illustration elements only. These colors are part of the visual preview mockups and do not appear in the actual UI structure or content areas.
+**Rationale:** The upload modal cards contain hardcoded brand colors (`blue-500`, `purple-500`, `pink-500`, `red-500`, `yellow-500`, `green-500`) for visual illustration elements only. These colors are part of the visual preview mockups and do not appear in the actual UI structure or content areas. Additionally, the modal container uses SVG filters and inline styles for the glow border effect to achieve the glowing card aesthetic.
 
-**Context:** The browser window mockup in the URL/Figma card uses standard browser chrome colors (red/yellow/green dots) for visual authenticity. The canvas preview uses blue/purple/pink to create an appealing, illustrative design pattern. These are decorative elements only and do NOT represent design tokens.
+**Context:** The browser window mockup in the URL/Figma card uses standard browser chrome colors (red/yellow/green dots) for visual authenticity. The canvas preview uses blue/purple/pink to create an appealing, illustrative design pattern. The glow effect uses an SVG `feColorMatrix` filter and inline `filter: url(#unopaq)` styling to create the enhanced glow appearance with the backdrop blur gradient.
 
 **Specific Elements:**
 - Canvas preview: Blue circle marker, purple-to-pink gradient sphere
 - Browser mockup: Red/yellow/green traffic light dots, purple-pink gradient content placeholder
+- Modal glow: SVG filter definition, absolute positioned gradient blur layer, and inline filter application
 
-**Note:** This exception applies ONLY to decorative preview elements within this specific modal. All functional UI elements (buttons, inputs, backgrounds) use proper design tokens. This does NOT establish a precedent for other components.
+**Exceptions Allowed:**
+- SVG filter definition with `style={{ position: 'absolute', width: 0, height: 0 }}`
+- Inline `style={{ filter: 'url(#unopaq)' }}` on the glow backdrop layer
+- Arbitrary shadow value in className using `shadow-[...]` syntax for glow effect
+
+**Note:** This exception applies ONLY to decorative preview elements and the glow border effect within this specific modal. All functional UI elements (buttons, inputs, backgrounds) use proper design tokens. This does NOT establish a precedent for other components.
 
 ### Exception 2: AIBlocksGenerator Glassmorphic Button
 
