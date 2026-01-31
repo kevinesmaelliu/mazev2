@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Sparkles, MessageSquare, ClipboardList } from "lucide-react"
+import { MessageSquare, ClipboardList } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -11,6 +11,8 @@ import { TestBlockEditor, TestBlock } from "@/components/test/test-block-editor"
 import { BlockAddButton } from "@/components/test/block-add-button"
 import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
+import { AnnotationsList } from "@/components/canvas/annotations-list"
+import type { Annotation } from "@/app/page"
 
 interface CanvasSidebarProps {
   testTitle?: string
@@ -24,6 +26,9 @@ interface CanvasSidebarProps {
   onAddBlocksGenerated?: (blocks: TestBlock[]) => void
   credits?: number
   onBrowseAllBlocks?: () => void
+  annotations?: Annotation[]
+  selectedAnnotationId?: string | null
+  onSelectAnnotation?: (id: string) => void
 }
 
 /**
@@ -44,6 +49,9 @@ export function CanvasSidebar({
   onAddBlocksGenerated,
   credits = 0,
   onBrowseAllBlocks,
+  annotations = [],
+  selectedAnnotationId = null,
+  onSelectAnnotation,
 }: CanvasSidebarProps) {
   const handleAddBlockAtIndex = (index: number, type?: TestBlock["type"]) => {
     onAddBlockAtIndex?.(index, type)
@@ -195,7 +203,12 @@ export function CanvasSidebar({
         {/* Annotations Tab */}
         <TabsContent value="annotations" className="flex-1 flex flex-col min-h-0 m-0 data-[state=inactive]:hidden">
           <div className="px-4 py-3 border-b border-border shrink-0">
-            <h2 className="font-semibold text-sm">Annotations</h2>
+            <div className="flex items-center justify-between mb-0.5">
+              <h2 className="font-semibold text-sm">Annotations</h2>
+              <Badge variant="secondary" className="text-xs">
+                {annotations.length}
+              </Badge>
+            </div>
             <p className="text-xs text-muted-foreground">
               View and manage your highlights
             </p>
@@ -203,9 +216,11 @@ export function CanvasSidebar({
 
           <ScrollArea className="flex-1 min-h-0">
             <div className="p-4">
-              <p className="text-xs text-muted-foreground text-center py-8">
-                No annotations yet
-              </p>
+              <AnnotationsList
+                annotations={annotations}
+                selectedAnnotationId={selectedAnnotationId}
+                onSelectAnnotation={onSelectAnnotation || (() => {})}
+              />
             </div>
           </ScrollArea>
         </TabsContent>
