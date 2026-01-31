@@ -135,13 +135,16 @@ export function getCanvasTheme(isDark?: boolean): CanvasThemeConfig {
       shouldUseDarkTheme = document.documentElement.classList.contains("dark")
     }
 
-    // Fall back to system preference
-    if (shouldUseDarkTheme === undefined && typeof window !== "undefined") {
-      shouldUseDarkTheme = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches
+    // Fall back to system preference if still undefined
+    if (shouldUseDarkTheme === undefined || shouldUseDarkTheme === false) {
+      if (typeof window !== "undefined") {
+        shouldUseDarkTheme = window.matchMedia(
+          "(prefers-color-scheme: dark)"
+        ).matches
+      }
     }
   }
 
-  return shouldUseDarkTheme ? DARK_THEME : LIGHT_THEME
+  // Default to dark theme if no explicit setting
+  return shouldUseDarkTheme !== false ? DARK_THEME : LIGHT_THEME
 }
