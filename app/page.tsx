@@ -7,6 +7,7 @@ import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 import { AnnotationToolbar } from "@/components/canvas/annotation-toolbar"
+import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 
 export interface Annotation {
   id: string
@@ -58,7 +59,7 @@ export default function Home() {
   ])
   const [isAnnotating, setIsAnnotating] = useState(false)
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null)
-  const [annotationColor, setAnnotationColor] = useState<string>("red")
+  const [annotationColor, setAnnotationColor] = useState<HighlightColor>("red")
 
   // Get current canvas state
   const currentCanvasState = canvasStateMap[activePageId]
@@ -140,6 +141,16 @@ export default function Home() {
     const [removed] = next.splice(dragIndex, 1)
     next.splice(hoverIndex, 0, removed!)
     setBlocks(next)
+  }
+
+  const handleAnnotationAdd = (annotation: Annotation) => {
+    setCanvasPages((prev) =>
+      prev.map((page) =>
+        page.id === activePageId
+          ? { ...page, annotations: [...page.annotations, annotation] }
+          : page
+      )
+    )
   }
 
   const handleAddCanvasPage = () => {
@@ -243,6 +254,12 @@ export default function Home() {
             onImagesInserted={() => {
               updateCanvasState({ imageFiles: [] })
             }}
+            isAnnotating={isAnnotating}
+            annotations={getCurrentPageAnnotations()}
+            selectedAnnotationId={selectedAnnotationId}
+            annotationColor={annotationColor}
+            onAnnotationAdd={handleAnnotationAdd}
+            onAnnotationSelect={setSelectedAnnotationId}
           />
           {currentCanvasState.mode === "drawing" && !currentCanvasState.websiteUrl && !currentCanvasState.figmaUrl && currentCanvasState.uploadedImages.length === 0 && currentCanvasState.imageFiles.length === 0 && currentCanvasState.showUploadModal && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">

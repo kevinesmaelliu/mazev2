@@ -6,8 +6,11 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { KonvaCanvas } from "@/components/canvas/konva-canvas"
+import { WebsiteViewer } from "@/components/canvas/website-viewer"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
+import type { Annotation } from "@/app/page"
+import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 
 type CanvasMode = 'drawing' | 'url-preview'
 
@@ -23,6 +26,12 @@ interface CanvasProps {
   canvasMode?: boolean
   onEditorMount?: (stage: Konva.Stage) => void
   initialCanvasState?: unknown
+  isAnnotating?: boolean
+  annotations?: Annotation[]
+  selectedAnnotationId?: string | null
+  annotationColor?: HighlightColor
+  onAnnotationAdd?: (annotation: Annotation) => void
+  onAnnotationSelect?: (id: string | null) => void
 }
 
 export function Canvas({
@@ -36,6 +45,12 @@ export function Canvas({
   canvasMode,
   onEditorMount,
   initialCanvasState,
+  isAnnotating,
+  annotations = [],
+  selectedAnnotationId,
+  annotationColor = "red",
+  onAnnotationAdd,
+  onAnnotationSelect,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
   const [canvasReady, setCanvasReady] = useState(false)
@@ -156,7 +171,7 @@ export function Canvas({
     )
   }
 
-  // URL preview mode - iframe
+  // URL preview mode
   return (
     <div className="w-full h-full bg-[#130f0c] border-t border-border flex flex-col">
       {/* Header with close button */}
@@ -187,21 +202,22 @@ export function Canvas({
         </div>
       )}
 
-      {/* Iframe/Preview container */}
+      {/* Website/Figma preview container with annotation support */}
       {(websiteUrl || figmaUrl) && (
-        <div className="flex-1 overflow-hidden">
-          <iframe
-            src={websiteUrl || figmaUrl}
-            title={websiteUrl ? "Imported Website" : "Figma Design"}
-            className="w-full h-full border-none"
-            onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setIsLoading(false)
-              toast.error('Failed to load preview', {
-                description: 'The website or Figma prototype could not be loaded. Please check the URL and try again.',
-              })
+        <div className="flex-1 overflow-hidden relative">
+          <WebsiteViewer
+            url={websiteUrl || figmaUrl}
+            isAnnotating={isAnnotating || false}
+            annotations={annotations}
+            selectedAnnotationId={selectedAnnotationId || null}
+            annotationColor={annotationColor}
+            onAnnotationAdd={onAnnotationAdd || (() => {})}
+            onAnnotationSelect={onAnnotationSelect || (() => {})}
+            onScroll={() => {
+              if (!isLoading) {
+                setIsLoading(false)
+              }
             }}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
           />
         </div>
       )}

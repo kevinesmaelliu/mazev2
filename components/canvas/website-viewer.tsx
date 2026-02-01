@@ -5,6 +5,7 @@ import { AnnotationOverlay } from "@/components/canvas/annotation-overlay"
 import type { Annotation } from "@/app/page"
 
 interface WebsiteViewerProps {
+  url?: string
   isAnnotating: boolean
   annotations: Annotation[]
   selectedAnnotationId: string | null
@@ -15,6 +16,7 @@ interface WebsiteViewerProps {
 }
 
 export function WebsiteViewer({
+  url,
   isAnnotating,
   annotations,
   selectedAnnotationId,
@@ -24,6 +26,7 @@ export function WebsiteViewer({
   onScroll,
 }: WebsiteViewerProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const [scrollOffset, setScrollOffset] = useState({ left: 0, top: 0 })
 
   const handleScroll = useCallback(
@@ -49,13 +52,16 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Placeholder iframe for website preview */}
-      <iframe
-        src="https://example.com"
-        title="Website Preview"
-        className="w-full min-h-full border-none"
-        sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-      />
+      {/* Iframe for website preview */}
+      {url && (
+        <iframe
+          ref={iframeRef}
+          src={url}
+          title="Website Preview"
+          className="w-full min-h-full border-none"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+        />
+      )}
 
       {/* Annotation overlay absolutely positioned over iframe */}
       {isAnnotating && (
