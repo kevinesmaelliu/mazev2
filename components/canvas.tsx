@@ -6,8 +6,11 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { KonvaCanvas } from "@/components/canvas/konva-canvas"
+import { WebsiteViewer } from "@/components/canvas/website-viewer"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
+import type { Annotation } from "@/app/page"
+import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 
 type CanvasMode = 'drawing' | 'url-preview'
 
@@ -23,6 +26,12 @@ interface CanvasProps {
   canvasMode?: boolean
   onEditorMount?: (stage: Konva.Stage) => void
   initialCanvasState?: unknown
+  isAnnotating?: boolean
+  annotations?: Annotation[]
+  selectedAnnotationId?: string | null
+  annotationColor?: HighlightColor
+  onAnnotationAdd?: (annotation: Annotation) => void
+  onAnnotationSelect?: (id: string | null) => void
 }
 
 export function Canvas({
@@ -36,6 +45,12 @@ export function Canvas({
   canvasMode,
   onEditorMount,
   initialCanvasState,
+  isAnnotating,
+  annotations = [],
+  selectedAnnotationId,
+  annotationColor = "red",
+  onAnnotationAdd,
+  onAnnotationSelect,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
   const [canvasReady, setCanvasReady] = useState(false)
@@ -145,7 +160,7 @@ export function Canvas({
   // URL preview mode with no loaded content - empty state
   if (isPreviewMode && !websiteUrl && !figmaUrl && !imageUrl) {
     return (
-      <div className="w-full h-full bg-[#130f0c] flex items-center justify-center border-t border-border">
+      <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
         <div className="text-center">
           <p className="text-muted-foreground">No design loaded</p>
           <p className="text-sm text-muted-foreground mt-2">
@@ -156,9 +171,9 @@ export function Canvas({
     )
   }
 
-  // URL preview mode - iframe
+  // URL preview mode
   return (
-    <div className="w-full h-full bg-[#130f0c] border-t border-border flex flex-col">
+    <div className="w-full h-full bg-background border-t border-border flex flex-col">
       {/* Header with close button */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div className="flex items-center gap-2">
@@ -179,7 +194,7 @@ export function Canvas({
 
       {/* Loading state */}
       {isLoading && (
-        <div className="absolute inset-0 bg-[#130f0c]/50 flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-background/50 flex items-center justify-center z-10">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2"></div>
             <p className="text-sm text-muted-foreground">Loading preview...</p>
@@ -187,28 +202,25 @@ export function Canvas({
         </div>
       )}
 
-      {/* Iframe/Preview container */}
+      {/* Website/Figma preview container with annotation support */}
       {(websiteUrl || figmaUrl) && (
-        <div className="flex-1 overflow-hidden">
-          <iframe
-            src={websiteUrl || figmaUrl}
-            title={websiteUrl ? "Imported Website" : "Figma Design"}
-            className="w-full h-full border-none"
+        <div className="flex-1 overflow-hidden relative">
+          <WebsiteViewer
+            url={websiteUrl || figmaUrl}
+            isAnnotating={isAnnotating || false}
+            annotations={annotations}
+            selectedAnnotationId={selectedAnnotationId || null}
+            annotationColor={annotationColor}
+            onAnnotationAdd={onAnnotationAdd || (() => {})}
+            onAnnotationSelect={onAnnotationSelect || (() => {})}
             onLoad={() => setIsLoading(false)}
-            onError={() => {
-              setIsLoading(false)
-              toast.error('Failed to load preview', {
-                description: 'The website or Figma prototype could not be loaded. Please check the URL and try again.',
-              })
-            }}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
           />
         </div>
       )}
 
       {/* Image preview container */}
       {imageUrl && !websiteUrl && !figmaUrl && (
-        <div className="flex-1 overflow-hidden flex items-center justify-center bg-[#130f0c]">
+        <div className="flex-1 overflow-hidden flex items-center justify-center bg-background">
           <img
             src={imageUrl}
             alt="Uploaded design"

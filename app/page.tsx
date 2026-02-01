@@ -7,6 +7,7 @@ import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
 import { AnnotationToolbar } from "@/components/canvas/annotation-toolbar"
+import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 
 export interface Annotation {
   id: string
@@ -58,7 +59,7 @@ export default function Home() {
   ])
   const [isAnnotating, setIsAnnotating] = useState(false)
   const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null)
-  const [annotationColor, setAnnotationColor] = useState<string>("red")
+  const [annotationColor, setAnnotationColor] = useState<HighlightColor>("red")
 
   // Get current canvas state
   const currentCanvasState = canvasStateMap[activePageId]
@@ -142,6 +143,16 @@ export default function Home() {
     setBlocks(next)
   }
 
+  const handleAnnotationAdd = (annotation: Annotation) => {
+    setCanvasPages((prev) =>
+      prev.map((page) =>
+        page.id === activePageId
+          ? { ...page, annotations: [...page.annotations, annotation] }
+          : page
+      )
+    )
+  }
+
   const handleAddCanvasPage = () => {
     const newPageId = `canvas-${Date.now()}`
     const newPageNumber = canvasPages.length + 1
@@ -213,7 +224,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex flex-col h-screen bg-[#130f0c]">
+    <div className="flex flex-col h-screen bg-background">
       <CanvasHeader
         projectName="Untitled Design Review"
         credits={50}
@@ -232,7 +243,7 @@ export default function Home() {
       {/* Main content area with canvas and sidebar */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto relative bg-[#130f0c]">
+        <div className="flex-1 overflow-auto relative bg-background">
           <Canvas
             mode={currentCanvasState.mode}
             websiteUrl={currentCanvasState.websiteUrl}
@@ -243,6 +254,12 @@ export default function Home() {
             onImagesInserted={() => {
               updateCanvasState({ imageFiles: [] })
             }}
+            isAnnotating={isAnnotating}
+            annotations={getCurrentPageAnnotations()}
+            selectedAnnotationId={selectedAnnotationId}
+            annotationColor={annotationColor}
+            onAnnotationAdd={handleAnnotationAdd}
+            onAnnotationSelect={setSelectedAnnotationId}
           />
           {currentCanvasState.mode === "drawing" && !currentCanvasState.websiteUrl && !currentCanvasState.figmaUrl && currentCanvasState.uploadedImages.length === 0 && currentCanvasState.imageFiles.length === 0 && currentCanvasState.showUploadModal && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">

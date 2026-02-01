@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 
-type HighlightColor = "yellow" | "red" | "blue" | "green"
+export type HighlightColor = "yellow" | "red" | "blue" | "green"
 
 interface AnnotationToolbarProps {
   isAnnotating: boolean

@@ -216,7 +216,8 @@ export function AnnotationOverlay({
             width: `${previewBox.width}px`,
             height: `${previewBox.height}px`,
             borderColor: colorMap[currentColor] || "#ef4444",
-            opacity: 0.6,
+            backgroundColor: colorMap[currentColor] || "#ef4444",
+            opacity: 0.3,
           }}
         />
       )}
