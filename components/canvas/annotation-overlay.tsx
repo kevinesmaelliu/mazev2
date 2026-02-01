@@ -153,11 +153,6 @@ export function AnnotationOverlay({
     })
   }
 
-  // Allow scroll events to pass through
-  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    // Don't prevent default - let scroll events bubble up to parent
-    // This allows scrolling while annotation overlay is present
-  }
 
   // Handle comment submission
   const handleCommentSubmit = () => {
@@ -202,12 +197,11 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      onWheel={handleWheel}
-      className="absolute inset-0 will-change-transform"
+      className="absolute inset-0 will-change-transform pointer-events-none"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
         transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
-        pointerEvents: "auto",
+        pointerEvents: isInteractive ? "auto" : "none",
       }}
     >
       {/* Render existing annotations */}
@@ -218,12 +212,13 @@ export function AnnotationOverlay({
           <div
             key={annotation.id}
             onClick={() => onAnnotationSelect(annotation.id)}
-            className="absolute group cursor-pointer transition-all"
+            className="absolute group cursor-pointer transition-all pointer-events-auto"
             style={{
               left: `${annotation.x}px`,
               top: `${annotation.y}px`,
               width: `${annotation.width}px`,
               height: `${annotation.height}px`,
+              pointerEvents: "auto",
             }}
           >
             {/* Annotation border */}
@@ -287,9 +282,10 @@ export function AnnotationOverlay({
         <Card
           className="absolute z-50 w-72 shadow-lg bg-popover border-border"
           style={{
-            left: `${pendingAnnotation.x - scrollLeft}px`,
-            top: `${pendingAnnotation.y - scrollTop + pendingAnnotation.height + 8}px`,
+            left: `${pendingAnnotation.x}px`,
+            top: `${pendingAnnotation.y + pendingAnnotation.height + 8}px`,
             pointerEvents: "auto",
+            transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
           }}
         >
           <CardContent className="p-3 space-y-2.5">
