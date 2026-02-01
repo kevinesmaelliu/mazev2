@@ -4,8 +4,8 @@ import { useState } from "react"
 import { TestBlock } from "@/components/test/test-block-editor"
 import { Annotation } from "@/app/page"
 import { PreviewHeader } from "./preview-header"
-import { BlockRenderer } from "./block-renderer"
-import { PreviewNavigation } from "./preview-navigation"
+import { CanvasPreviewPanel } from "./canvas-preview-panel"
+import { ReviewerChecklist } from "./reviewer-checklist"
 
 interface CanvasPageData {
   id: string
@@ -61,7 +61,6 @@ export function TestPreview({ testData }: TestPreviewProps) {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
@@ -71,26 +70,29 @@ export function TestPreview({ testData }: TestPreviewProps) {
         totalBlocks={testData.blocks.length}
       />
 
-      {/* Main content */}
-      <div className="flex-1 overflow-auto flex flex-col">
-        <div className="flex-1 flex flex-col items-center justify-center p-6">
-          <div className="w-full max-w-4xl">
-            <BlockRenderer
-              block={currentBlock}
-              canvasPages={testData.canvasPages}
-              canvasStateMap={testData.canvasStateMap}
-            />
-          </div>
+      {/* Main content - Two column layout */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Left: Canvas Preview */}
+        <div className="flex-1 overflow-auto border-r border-border">
+          <CanvasPreviewPanel
+            canvasPages={testData.canvasPages}
+            canvasStateMap={testData.canvasStateMap}
+          />
+        </div>
+
+        {/* Right: Reviewer Checklist */}
+        <div className="w-80 overflow-hidden flex flex-col bg-card border-l border-border">
+          <ReviewerChecklist
+            blocks={testData.blocks}
+            currentBlockIndex={currentBlockIndex}
+            block={currentBlock}
+            isFirstBlock={isFirstBlock}
+            isLastBlock={isLastBlock}
+            onBack={handleBack}
+            onNext={handleNext}
+          />
         </div>
       </div>
-
-      {/* Navigation */}
-      <PreviewNavigation
-        isFirstBlock={isFirstBlock}
-        isLastBlock={isLastBlock}
-        onBack={handleBack}
-        onNext={handleNext}
-      />
     </div>
   )
 }
