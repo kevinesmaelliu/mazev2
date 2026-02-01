@@ -47,7 +47,7 @@ export function CanvasHeader({
   onProfileClick,
 }: CanvasHeaderProps) {
   return (
-    <header className="flex items-center justify-between bg-card px-6 py-2 border-b border-border">
+    <header className="flex items-center justify-between bg-card px-6 pt-2 pb-0">
       <div className="flex items-center gap-8">
         {/* Back button */}
         <Button
