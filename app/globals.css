@@ -93,31 +93,22 @@
   /* Annotate Mode Visual Feedback */
   .annotate-mode-active {
     position: relative;
-  }
-
-  .annotate-mode-active::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border: 2px solid;
-    border-image: linear-gradient(
-      135deg,
-      hsl(var(--primary) / 0.4),
-      hsl(var(--primary) / 0.6),
-      hsl(var(--primary) / 0.4)
-    ) 1;
-    border-radius: var(--radius-md);
-    pointer-events: none;
     animation: annotate-glow 2s ease-in-out infinite;
-    z-index: 10;
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.4);
   }
 
   @keyframes annotate-glow {
     0%, 100% {
-      box-shadow: 0 0 10px hsl(var(--primary) / 0.3), inset 0 0 10px hsl(var(--primary) / 0.1);
+      box-shadow:
+        0 0 0 2px hsl(var(--primary) / 0.4),
+        0 0 15px hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.2);
     }
     50% {
-      box-shadow: 0 0 20px hsl(var(--primary) / 0.5), inset 0 0 15px hsl(var(--primary) / 0.2);
+      box-shadow:
+        0 0 0 2px hsl(var(--primary) / 0.6),
+        0 0 25px hsl(var(--primary) / 0.5),
+        0 0 50px hsl(var(--primary) / 0.3);
     }
   }
 }
