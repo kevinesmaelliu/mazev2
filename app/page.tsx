@@ -224,6 +224,17 @@ export default function Home() {
     currentCanvasState.showUploadModal
   )
 
+  const handlePreview = () => {
+    const testData = {
+      title: testTitle,
+      blocks,
+      canvasPages,
+      canvasStateMap,
+    }
+    const encodedData = encodeURIComponent(JSON.stringify(testData))
+    window.open(`/preview?data=${encodedData}`, "_blank")
+  }
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <CanvasHeader
@@ -236,7 +247,7 @@ export default function Home() {
         onCanvasPageSelect={(id) => setActivePageId(id)}
         onCanvasPageAdd={handleAddCanvasPage}
         onCanvasPageClose={handleCanvasPageClose}
-        onPreview={() => console.log("Preview clicked")}
+        onPreview={handlePreview}
         onPublish={() => updateCanvasState({ showUploadModal: true })}
         onProfileClick={() => console.log("Profile clicked")}
       />

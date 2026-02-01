@@ -114,10 +114,6 @@ export function TestBlockEditor({
     { value: "multiple-choice" as const, label: "Multiple Choice", icon: ListChecks },
   ]
 
-  const currentType = quickAccessTypes.find(t => t.value === block.type) ||
-    ({ value: block.type, label: block.type } as any)
-  const CurrentTypeIcon = currentType?.icon ?? MessageSquare
-
   const handleAIGenerate = () => {
     const suggestions: Partial<Record<TestBlock["type"], string[]>> = {
       "first-click": [
