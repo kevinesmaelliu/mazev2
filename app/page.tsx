@@ -6,6 +6,23 @@ import { UploadDesignModal } from "@/components/upload-design-modal"
 import { Canvas } from "@/components/canvas"
 import { CanvasSidebar } from "@/components/layout/canvas-sidebar"
 import { TestBlock } from "@/components/test/test-block-editor"
+import { AnnotationToolbar } from "@/components/canvas/annotation-toolbar"
+
+export interface Annotation {
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
+  label: string
+  color: string
+}
+
+interface CanvasPageData {
+  id: string
+  name: string
+  annotations: Annotation[]
+}
 
 interface CanvasState {
   mode: "drawing" | "url-preview"
@@ -18,8 +35,8 @@ interface CanvasState {
 
 export default function Home() {
   const [activePageId, setActivePageId] = useState("canvas-1")
-  const [canvasPages, setCanvasPages] = useState([
-    { id: "canvas-1", name: "Canvas" },
+  const [canvasPages, setCanvasPages] = useState<CanvasPageData[]>([
+    { id: "canvas-1", name: "Canvas", annotations: [] },
   ])
   const [canvasStateMap, setCanvasStateMap] = useState<Record<string, CanvasState>>({
     "canvas-1": {
@@ -39,6 +56,9 @@ export default function Home() {
       content: "",
     },
   ])
+  const [isAnnotating, setIsAnnotating] = useState(false)
+  const [selectedAnnotationId, setSelectedAnnotationId] = useState<string | null>(null)
+  const [annotationColor, setAnnotationColor] = useState<string>("red")
 
   // Get current canvas state
   const currentCanvasState = canvasStateMap[activePageId]
@@ -125,7 +145,7 @@ export default function Home() {
   const handleAddCanvasPage = () => {
     const newPageId = `canvas-${Date.now()}`
     const newPageNumber = canvasPages.length + 1
-    setCanvasPages([...canvasPages, { id: newPageId, name: `Canvas ${newPageNumber}` }])
+    setCanvasPages([...canvasPages, { id: newPageId, name: `Canvas ${newPageNumber}`, annotations: [] }])
     setCanvasStateMap((prev) => ({
       ...prev,
       [newPageId]: {
@@ -138,6 +158,21 @@ export default function Home() {
       },
     }))
     setActivePageId(newPageId)
+  }
+
+  const handleDeleteAnnotation = (id: string) => {
+    setCanvasPages((prev) =>
+      prev.map((page) =>
+        page.id === activePageId
+          ? { ...page, annotations: page.annotations.filter((a) => a.id !== id) }
+          : page
+      )
+    )
+    setSelectedAnnotationId(null)
+  }
+
+  const getCurrentPageAnnotations = () => {
+    return canvasPages.find((p) => p.id === activePageId)?.annotations || []
   }
 
   const handleCanvasPageClose = (id: string) => {
@@ -166,6 +201,16 @@ export default function Home() {
       },
     }))
   }
+
+  // Determine if canvas has content (not in upload modal state)
+  const hasCanvasContent = !(
+    currentCanvasState.mode === "drawing" &&
+    !currentCanvasState.websiteUrl &&
+    !currentCanvasState.figmaUrl &&
+    currentCanvasState.uploadedImages.length === 0 &&
+    currentCanvasState.imageFiles.length === 0 &&
+    currentCanvasState.showUploadModal
+  )
 
   return (
     <div className="flex flex-col h-screen bg-[#130f0c]">
@@ -198,7 +243,6 @@ export default function Home() {
             onImagesInserted={() => {
               updateCanvasState({ imageFiles: [] })
             }}
-            uploadModalOpen={currentCanvasState.showUploadModal}
           />
           {currentCanvasState.mode === "drawing" && !currentCanvasState.websiteUrl && !currentCanvasState.figmaUrl && currentCanvasState.uploadedImages.length === 0 && currentCanvasState.imageFiles.length === 0 && currentCanvasState.showUploadModal && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">
@@ -211,6 +255,21 @@ export default function Home() {
                 onUploadComplete={handleUploadComplete}
               />
             </div>
+          )}
+          {/* Annotation Toolbar - only show when canvas has content */}
+          {hasCanvasContent && (
+            <AnnotationToolbar
+              isAnnotating={isAnnotating}
+              selectedAnnotationId={selectedAnnotationId}
+              currentColor={annotationColor}
+              onModeChange={setIsAnnotating}
+              onColorChange={setAnnotationColor}
+              onDeleteAnnotation={() => {
+                if (selectedAnnotationId) {
+                  handleDeleteAnnotation(selectedAnnotationId)
+                }
+              }}
+            />
           )}
         </div>
 
@@ -226,6 +285,9 @@ export default function Home() {
           onMoveBlock={handleMoveBlock}
           onAddBlocksGenerated={handleAddBlocksGenerated}
           credits={50}
+          annotations={getCurrentPageAnnotations()}
+          selectedAnnotationId={selectedAnnotationId}
+          onSelectAnnotation={setSelectedAnnotationId}
         />
       </div>
 

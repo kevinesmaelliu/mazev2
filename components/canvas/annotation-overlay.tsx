@@ -1,0 +1,225 @@
+"use client"
+
+import { useState, useRef } from "react"
+import type { Annotation } from "@/app/page"
+
+interface AnnotationOverlayProps {
+  annotations: Annotation[]
+  selectedAnnotationId: string | null
+  currentColor: string
+  scrollLeft: number
+  scrollTop: number
+  onAnnotationAdd: (annotation: Annotation) => void
+  onAnnotationSelect: (id: string | null) => void
+}
+
+interface DrawingState {
+  isDrawing: boolean
+  startX: number
+  startY: number
+  currentX: number
+  currentY: number
+}
+
+const colorMap: Record<string, string> = {
+  red: "#ef4444",
+  orange: "#f97316",
+  yellow: "#eab308",
+  green: "#22c55e",
+  blue: "#3b82f6",
+}
+
+export function AnnotationOverlay({
+  annotations,
+  selectedAnnotationId,
+  currentColor,
+  scrollLeft,
+  scrollTop,
+  onAnnotationAdd,
+  onAnnotationSelect,
+}: AnnotationOverlayProps) {
+  const [drawingState, setDrawingState] = useState<DrawingState>({
+    isDrawing: false,
+    startX: 0,
+    startY: 0,
+    currentX: 0,
+    currentY: 0,
+  })
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // Generate auto-incrementing label (A1, A2, A3...)
+  const getNextLabel = () => {
+    const labels = annotations.map((a) => a.label)
+    let index = 1
+    while (labels.includes(`A${index}`)) {
+      index++
+    }
+    return `A${index}`
+  }
+
+  // Handle mouse down - start drawing
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.button !== 0) return // Only left click
+
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    const startX = e.clientX - rect.left + scrollLeft
+    const startY = e.clientY - rect.top + scrollTop
+
+    // Check if clicking on existing annotation
+    const clickedAnnotation = annotations.find((ann) => {
+      const annLeft = ann.x - scrollLeft
+      const annTop = ann.y - scrollTop
+      return (
+        e.clientX >= rect.left + annLeft &&
+        e.clientX <= rect.left + annLeft + ann.width &&
+        e.clientY >= rect.top + annTop &&
+        e.clientY <= rect.top + annTop + ann.height
+      )
+    })
+
+    if (clickedAnnotation) {
+      onAnnotationSelect(clickedAnnotation.id)
+      return
+    }
+
+    // Start new annotation
+    setDrawingState({
+      isDrawing: true,
+      startX,
+      startY,
+      currentX: startX,
+      currentY: startY,
+    })
+  }
+
+  // Handle mouse move - update drawing preview
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!drawingState.isDrawing) return
+
+    const rect = containerRef.current?.getBoundingClientRect()
+    if (!rect) return
+
+    const currentX = e.clientX - rect.left + scrollLeft
+    const currentY = e.clientY - rect.top + scrollTop
+
+    setDrawingState((prev) => ({
+      ...prev,
+      currentX,
+      currentY,
+    }))
+  }
+
+  // Handle mouse up - finalize annotation
+  const handleMouseUp = () => {
+    if (!drawingState.isDrawing) return
+
+    const width = Math.abs(drawingState.currentX - drawingState.startX)
+    const height = Math.abs(drawingState.currentY - drawingState.startY)
+
+    // Only create annotation if it has meaningful dimensions
+    if (width > 10 && height > 10) {
+      const newAnnotation: Annotation = {
+        id: `ann-${Date.now()}`,
+        x: Math.min(drawingState.startX, drawingState.currentX),
+        y: Math.min(drawingState.startY, drawingState.currentY),
+        width,
+        height,
+        label: getNextLabel(),
+        color: currentColor,
+      }
+      onAnnotationAdd(newAnnotation)
+    }
+
+    setDrawingState({
+      isDrawing: false,
+      startX: 0,
+      startY: 0,
+      currentX: 0,
+      currentY: 0,
+    })
+  }
+
+  // Get drawing preview box if currently drawing
+  const getPreviewBox = () => {
+    if (!drawingState.isDrawing) return null
+
+    const left = Math.min(drawingState.startX, drawingState.currentX) - scrollLeft
+    const top = Math.min(drawingState.startY, drawingState.currentY) - scrollTop
+    const width = Math.abs(drawingState.currentX - drawingState.startX)
+    const height = Math.abs(drawingState.currentY - drawingState.startY)
+
+    return { left, top, width, height }
+  }
+
+  const previewBox = getPreviewBox()
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
+      className="absolute inset-0 cursor-crosshair"
+      style={{ cursor: drawingState.isDrawing ? "crosshair" : "default" }}
+    >
+      {/* Render existing annotations */}
+      {annotations.map((annotation) => {
+        const left = annotation.x - scrollLeft
+        const top = annotation.y - scrollTop
+        const isSelected = annotation.id === selectedAnnotationId
+
+        return (
+          <div
+            key={annotation.id}
+            onClick={() => onAnnotationSelect(annotation.id)}
+            className="absolute group cursor-pointer transition-all"
+            style={{
+              left: `${left}px`,
+              top: `${top}px`,
+              width: `${annotation.width}px`,
+              height: `${annotation.height}px`,
+            }}
+          >
+            {/* Annotation border */}
+            <div
+              className={`absolute inset-0 border-2 transition-all ${
+                isSelected ? "border-blue-500 shadow-lg shadow-blue-500/20" : ""
+              } group-hover:shadow-lg group-hover:shadow-current/20`}
+              style={{
+                borderColor: isSelected ? "#3b82f6" : colorMap[annotation.color] || "#ef4444",
+              }}
+            />
+
+            {/* Label chip */}
+            <div
+              className="absolute -top-2 -left-2 px-2 py-0.5 rounded-full text-xs font-semibold text-white shadow-md"
+              style={{
+                backgroundColor: colorMap[annotation.color] || "#ef4444",
+              }}
+            >
+              {annotation.label}
+            </div>
+          </div>
+        )
+      })}
+
+      {/* Drawing preview */}
+      {previewBox && (
+        <div
+          className="absolute border-2 border-dashed"
+          style={{
+            left: `${previewBox.left}px`,
+            top: `${previewBox.top}px`,
+            width: `${previewBox.width}px`,
+            height: `${previewBox.height}px`,
+            borderColor: colorMap[currentColor] || "#ef4444",
+            opacity: 0.6,
+          }}
+        />
+      )}
+    </div>
+  )
+}
