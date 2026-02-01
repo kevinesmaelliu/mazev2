@@ -60,7 +60,7 @@ export function WebsiteViewer({
           ref={iframeRef}
           src={url}
           title="Website Preview"
-          className="w-full min-h-full border-none"
+          className="w-full h-full border-none"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
           onLoad={onLoad}
         />
