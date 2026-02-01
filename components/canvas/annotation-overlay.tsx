@@ -16,6 +16,7 @@ interface AnnotationOverlayProps {
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
   isInteractive?: boolean
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>
 }
 
 interface DrawingState {
@@ -43,6 +44,7 @@ export function AnnotationOverlay({
   onAnnotationAdd,
   onAnnotationSelect,
   isInteractive = true,
+  scrollContainerRef,
 }: AnnotationOverlayProps) {
   const [drawingState, setDrawingState] = useState<DrawingState>({
     isDrawing: false,
@@ -153,6 +155,13 @@ export function AnnotationOverlay({
     })
   }
 
+  // Forward wheel events to the scroll container for scrolling
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (scrollContainerRef?.current) {
+      scrollContainerRef.current.scrollTop += e.deltaY
+      scrollContainerRef.current.scrollLeft += e.deltaX
+    }
+  }
 
   // Handle comment submission
   const handleCommentSubmit = () => {
@@ -197,6 +206,7 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onWheel={handleWheel}
       className="absolute inset-0 will-change-transform pointer-events-none"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",

@@ -76,6 +76,7 @@ export function WebsiteViewer({
         onAnnotationAdd={onAnnotationAdd}
         onAnnotationSelect={onAnnotationSelect}
         isInteractive={isAnnotating}
+        scrollContainerRef={scrollContainerRef}
       />
     </div>
   )
