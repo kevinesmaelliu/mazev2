@@ -54,20 +54,21 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Iframe for website preview */}
-      {url && (
-        <iframe
-          ref={iframeRef}
-          src={url}
-          title="Website Preview"
-          className="w-full h-full border-none"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-          onLoad={onLoad}
-        />
-      )}
+      {/* Content wrapper that positions annotations relative to scrollable content */}
+      <div className="relative inline-block w-full">
+        {/* Iframe for website preview */}
+        {url && (
+          <iframe
+            ref={iframeRef}
+            src={url}
+            title="Website Preview"
+            className="w-full h-full border-none block"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+            onLoad={onLoad}
+          />
+        )}
 
-      {/* Annotation overlay absolutely positioned over iframe */}
-      {isAnnotating && (
+        {/* Annotation overlay - positioned absolutely over the content */}
         <AnnotationOverlay
           annotations={annotations}
           selectedAnnotationId={selectedAnnotationId}
@@ -76,8 +77,9 @@ export function WebsiteViewer({
           scrollTop={scrollOffset.top}
           onAnnotationAdd={onAnnotationAdd}
           onAnnotationSelect={onAnnotationSelect}
+          isInteractive={isAnnotating}
         />
-      )}
+      </div>
     </div>
   )
 }

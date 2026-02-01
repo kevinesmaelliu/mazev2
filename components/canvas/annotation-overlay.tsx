@@ -11,6 +11,7 @@ interface AnnotationOverlayProps {
   scrollTop: number
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
+  isInteractive?: boolean
 }
 
 interface DrawingState {
@@ -37,6 +38,7 @@ export function AnnotationOverlay({
   scrollTop,
   onAnnotationAdd,
   onAnnotationSelect,
+  isInteractive = true,
 }: AnnotationOverlayProps) {
   const [drawingState, setDrawingState] = useState<DrawingState>({
     isDrawing: false,
@@ -69,13 +71,14 @@ export function AnnotationOverlay({
 
     // Check if clicking on existing annotation
     const clickedAnnotation = annotations.find((ann) => {
-      const annLeft = ann.x - scrollLeft
-      const annTop = ann.y - scrollTop
+      // Calculate screen position of annotation accounting for transform
+      const screenLeft = rect.left + ann.x - scrollLeft
+      const screenTop = rect.top + ann.y - scrollTop
       return (
-        e.clientX >= rect.left + annLeft &&
-        e.clientX <= rect.left + annLeft + ann.width &&
-        e.clientY >= rect.top + annTop &&
-        e.clientY <= rect.top + annTop + ann.height
+        e.clientX >= screenLeft &&
+        e.clientX <= screenLeft + ann.width &&
+        e.clientY >= screenTop &&
+        e.clientY <= screenTop + ann.height
       )
     })
 
@@ -84,7 +87,9 @@ export function AnnotationOverlay({
       return
     }
 
-    // Start new annotation
+    // Only start drawing if in interactive mode
+    if (!isInteractive) return
+
     setDrawingState({
       isDrawing: true,
       startX,
@@ -145,8 +150,8 @@ export function AnnotationOverlay({
   const getPreviewBox = () => {
     if (!drawingState.isDrawing) return null
 
-    const left = Math.min(drawingState.startX, drawingState.currentX) - scrollLeft
-    const top = Math.min(drawingState.startY, drawingState.currentY) - scrollTop
+    const left = Math.min(drawingState.startX, drawingState.currentX)
+    const top = Math.min(drawingState.startY, drawingState.currentY)
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
 
@@ -162,13 +167,14 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="absolute inset-0 cursor-crosshair"
-      style={{ cursor: drawingState.isDrawing ? "crosshair" : "default" }}
+      className="absolute inset-0 will-change-transform"
+      style={{
+        cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
+        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`
+      }}
     >
       {/* Render existing annotations */}
       {annotations.map((annotation) => {
-        const left = annotation.x - scrollLeft
-        const top = annotation.y - scrollTop
         const isSelected = annotation.id === selectedAnnotationId
 
         return (
@@ -177,8 +183,8 @@ export function AnnotationOverlay({
             onClick={() => onAnnotationSelect(annotation.id)}
             className="absolute group cursor-pointer transition-all"
             style={{
-              left: `${left}px`,
-              top: `${top}px`,
+              left: `${annotation.x}px`,
+              top: `${annotation.y}px`,
               width: `${annotation.width}px`,
               height: `${annotation.height}px`,
             }}
