@@ -418,7 +418,7 @@ export function BlockBrowserModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-24rem)] h-[96vh] max-w-[calc(100vw-24rem)] p-0 gap-0 bg-background sm:max-w-[calc(100vw-24rem)] [&>button]:hidden left-[calc((100vw-24rem)/2)] translate-x-[-50%]">
+      <DialogContent className="w-[calc(100vw-32rem)] h-[96vh] max-w-[calc(100vw-32rem)] p-0 gap-0 bg-background sm:max-w-[calc(100vw-32rem)] [&>button]:hidden left-[calc((100vw-32rem)/2)] translate-x-[-50%]">
         {/* Accessible title and description for screen readers */}
         <DialogTitle className="sr-only">Test Blocks</DialogTitle>
         <DialogDescription className="sr-only">
