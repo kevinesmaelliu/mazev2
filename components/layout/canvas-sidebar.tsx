@@ -62,18 +62,47 @@ export function CanvasSidebar({
   }
 
   const [isBlockBrowserOpen, setIsBlockBrowserOpen] = useState(false)
+  const [isSingleSelectMode, setIsSingleSelectMode] = useState(false)
+  const [editingBlockId, setEditingBlockId] = useState<string | null>(null)
 
-  const handleBrowseAllBlocks = () => {
+  const handleBrowseAllBlocks = (blockIdToEdit?: string) => {
     setIsBlockBrowserOpen(true)
+    setIsSingleSelectMode(!!blockIdToEdit)
+    setEditingBlockId(blockIdToEdit || null)
     onBrowseAllBlocks?.()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSelectBlockTemplate = (_template: BlockTemplate) => {
-    // Close the modal when a block template is selected
-    // The actual block addition would be handled by parent component
-    // if an onSelectBlockTemplate callback is provided
-    setIsBlockBrowserOpen(false)
+  const handleSelectBlockTemplate = (template: BlockTemplate) => {
+    if (isSingleSelectMode && editingBlockId) {
+      // In single select mode, update the existing block
+      const blockToUpdate = blocks.find((b) => b.id === editingBlockId)
+      if (blockToUpdate) {
+        onUpdateBlock?.(editingBlockId, {
+          ...blockToUpdate,
+          type: template.type,
+          content: template.content,
+          scaleLeftLabel: template.scaleLeftLabel,
+          scaleRightLabel: template.scaleRightLabel,
+        })
+      }
+    } else {
+      // In multi-select mode, add the block to the end
+      const newBlock: TestBlock = {
+        id: `block-${Date.now()}`,
+        type: template.type,
+        content: template.content,
+        description: template.description,
+        scaleLeftLabel: template.scaleLeftLabel,
+        scaleRightLabel: template.scaleRightLabel,
+      }
+      onAddBlockAtIndex?.(blocks.length, newBlock.type)
+    }
+  }
+
+  const handleSelectBlocksMultiple = () => {
+    // This callback is called after all blocks have been individually selected
+    // The actual block creation happens in handleSelectBlockTemplate for each template
+    // No additional action needed here
   }
 
   const handleUpdateBlock = (id: string, updatedBlock: TestBlock) => {
@@ -94,6 +123,8 @@ export function CanvasSidebar({
         open={isBlockBrowserOpen}
         onOpenChange={setIsBlockBrowserOpen}
         onSelectBlock={handleSelectBlockTemplate}
+        onSelectBlocks={handleSelectBlocksMultiple}
+        singleSelectMode={isSingleSelectMode}
       />
       <Tabs defaultValue="test" className="flex-1 flex flex-col min-h-0">
         {/* Tabs Header */}
