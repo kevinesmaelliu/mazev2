@@ -213,7 +213,7 @@ The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS var
 ```css
 --background: #130f0c;         /* Very dark brown */
 --foreground: #eeeeee;         /* Light text */
---card: #211c18;               /* Dark brown card */
+--card: #282420;               /* Dark brown card */
 --popover: #191919;            /* Very dark popover */
 --primary: #ffe0c2;            /* Light cream */
 --primary-foreground: #081a1b; /* Dark text on light */
@@ -535,19 +535,31 @@ import { Button } from "@/components/ui/button"
 
 **Note:** This exception applies ONLY to this specific interactive button component. The glassmorphic effect is essential to the intended user experience and visual design. All other UI elements continue to use Tailwind CSS and proper design tokens.
 
-### Exception 3: Test Block Editor Background
+### Exception 3: Test Block Editor Background and Depth Shadow
 
 **Location:** `components/test/test-block-editor.tsx` - Test block cards in the test creation panel
 
-**Rationale:** Test block cards use `bg-card` (the card background color from the CoffeeMod theme) to provide stronger visual containment and better visual hierarchy within the test creation panel.
+**Rationale:** Test block cards use `bg-card` (the card background color from the CoffeeMod theme) to provide stronger visual containment and better visual hierarchy within the test creation panel. Additionally, blocks use custom inset shadow styling to create depth and visual separation from the sidebar background.
 
 **Changes:**
-- **Light mode:** `#ffffff` (from `--card` CSS variable)
-- **Dark mode:** `#211c18` (from `--card` CSS variable)
+- **Background:** `bg-card` with `#282420` in dark mode (proper Tailwind token)
+- **Border Radius:** `rounded-xl` (12px - from Tailwind scale)
+- **Border:** `border border-border` (1px solid from design tokens)
+- **Shadows:** Custom inset shadows for depth:
+  - `box-shadow: 0 2px 4px 0 rgba(57, 57, 57, 0.25) inset, 0 2px 4px 0 rgba(28, 28, 27, 0.25)`
 
-**Context:** Blocks represent distinct, independent test questions and benefit from a more defined background. Using the card background color creates visual separation while maintaining consistency with the design system's color tokens.
+**Context:** Blocks represent distinct, independent test questions within the test creation panel and sit adjacent to the sidebar. The combination of `bg-card` background, defined borders, and layered inset shadows (top and bottom) creates visual depth that makes blocks stand out from the sidebar while maintaining visual hierarchy and contrast.
 
-**Note:** This change uses proper Tailwind tokens (`bg-card`) which automatically adapt to light/dark mode via CSS variables defined in `app/globals.css`.
+**Specific Elements:**
+- Border radius: `rounded-xl` (12px from Tailwind scale)
+- Border: `border border-border` (uses design tokens, adapts to light/dark mode)
+- Background: `bg-card` (uses design tokens, adapts to light/dark mode)
+- Inset shadows: Top and bottom shadows using rgba values to create depth effect
+
+**Exceptions Allowed:**
+- Inline `style={{ boxShadow: '0 2px 4px 0 rgba(57, 57, 57, 0.25) inset, 0 2px 4px 0 rgba(28, 28, 27, 0.25)' }}` on block containers for inset shadow depth effect
+
+**Note:** This exception applies ONLY to test block cards in the test creation panel. The inset shadow effect is essential for visual separation from the sidebar background and creating the intended depth perception. All other styling uses proper Tailwind tokens (`bg-card`, `border-border`, `rounded-xl`).
 
 ---
 
@@ -639,7 +651,7 @@ ring-ring               // #644a40 - Brown focus ring
 bg-background           // #130f0c - Very dark brown
 text-foreground         // #eeeeee - Light text
 
-bg-card                 // #211c18 - Dark brown card
+bg-card                 // #282420 - Dark brown card
 bg-primary              // #ffe0c2 - Light cream brand
 text-primary-foreground // #081a1b - Dark text on light bg
 
