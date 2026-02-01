@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Button } from "@/components/ui/button"
-import { Search, X, Plus, Check } from "lucide-react"
+import { Search, Plus, Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export type TestType =
@@ -418,7 +418,7 @@ export function BlockBrowserModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[calc(100vw-32rem)] h-[96vh] max-w-[calc(100vw-32rem)] p-0 gap-0 bg-background sm:max-w-[calc(100vw-32rem)] [&>button]:hidden left-[calc((100vw-32rem)/2)] translate-x-[-50%]">
+      <DialogContent className="w-[calc(100vw-48rem)] h-[96vh] max-w-[calc(100vw-48rem)] p-0 gap-0 bg-background sm:max-w-[calc(100vw-48rem)] left-24">
         {/* Accessible title and description for screen readers */}
         <DialogTitle className="sr-only">Test Blocks</DialogTitle>
         <DialogDescription className="sr-only">
@@ -497,21 +497,11 @@ export function BlockBrowserModal({
             <div className="flex-1 flex flex-col overflow-hidden">
               {/* Header */}
               <div className="px-8 pt-6 pb-4 border-b border-border">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h2 className="text-2xl font-bold">Test Blocks</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Choose from pre-built templates to gather feedback and insights from users
-                    </p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => onOpenChange(false)}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
+                <div>
+                  <h2 className="text-2xl font-bold">Test Blocks</h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Choose from pre-built templates to gather feedback and insights from users
+                  </p>
                 </div>
               </div>
 
