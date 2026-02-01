@@ -275,8 +275,8 @@ export function AnnotationOverlay({
         <div
           className="absolute border-2"
           style={{
-            left: `${pendingAnnotation.x - scrollLeft}px`,
-            top: `${pendingAnnotation.y - scrollTop}px`,
+            left: `${pendingAnnotation.x}px`,
+            top: `${pendingAnnotation.y}px`,
             width: `${pendingAnnotation.width}px`,
             height: `${pendingAnnotation.height}px`,
             borderColor: colorMap[currentColor] || "#ef4444",
@@ -295,7 +295,6 @@ export function AnnotationOverlay({
             left: `${pendingAnnotation.x}px`,
             top: `${pendingAnnotation.y + pendingAnnotation.height + 8}px`,
             pointerEvents: "auto",
-            transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
           }}
         >
           <CardContent className="p-3 space-y-2.5">
