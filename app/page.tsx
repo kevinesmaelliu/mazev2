@@ -224,7 +224,7 @@ export default function Home() {
   )
 
   return (
-    <div className="flex flex-col h-screen bg-[#130f0c]">
+    <div className="flex flex-col h-screen bg-background">
       <CanvasHeader
         projectName="Untitled Design Review"
         credits={50}
@@ -243,7 +243,7 @@ export default function Home() {
       {/* Main content area with canvas and sidebar */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto relative bg-[#130f0c]">
+        <div className="flex-1 overflow-auto relative bg-background">
           <Canvas
             mode={currentCanvasState.mode}
             websiteUrl={currentCanvasState.websiteUrl}

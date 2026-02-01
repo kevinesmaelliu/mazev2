@@ -13,6 +13,7 @@ interface WebsiteViewerProps {
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
   onScroll?: (scrollLeft: number, scrollTop: number) => void
+  onLoad?: () => void
 }
 
 export function WebsiteViewer({
@@ -24,6 +25,7 @@ export function WebsiteViewer({
   onAnnotationAdd,
   onAnnotationSelect,
   onScroll,
+  onLoad,
 }: WebsiteViewerProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -46,7 +48,7 @@ export function WebsiteViewer({
     <div
       ref={scrollContainerRef}
       onScroll={handleScroll}
-      className={`relative flex-1 overflow-auto bg-[#130f0c] transition-all duration-200 ${
+      className={`relative flex-1 overflow-auto bg-background transition-all duration-200 ${
         isAnnotating
           ? "scale-98 border border-transparent bg-gradient-to-b from-purple-500/10 to-blue-500/10"
           : ""
@@ -60,6 +62,7 @@ export function WebsiteViewer({
           title="Website Preview"
           className="w-full min-h-full border-none"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+          onLoad={onLoad}
         />
       )}
 
