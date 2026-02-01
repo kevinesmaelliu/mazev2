@@ -150,7 +150,7 @@ export function CanvasSidebar({
                   {/* AI Blocks Generator Button */}
                   <AIBlocksGenerator onBlocksGenerate={handleBlocksGenerated} />
 
-                  <div className="space-y-0">
+                  <div className="space-y-2">
                     {blocks.length === 0 ? (
                       <div className="text-center py-6">
                         <p className="text-xs text-muted-foreground">

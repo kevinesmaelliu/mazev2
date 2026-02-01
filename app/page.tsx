@@ -202,6 +202,16 @@ export default function Home() {
     }))
   }
 
+  // Determine if canvas has content (not in upload modal state)
+  const hasCanvasContent = !(
+    currentCanvasState.mode === "drawing" &&
+    !currentCanvasState.websiteUrl &&
+    !currentCanvasState.figmaUrl &&
+    currentCanvasState.uploadedImages.length === 0 &&
+    currentCanvasState.imageFiles.length === 0 &&
+    currentCanvasState.showUploadModal
+  )
+
   return (
     <div className="flex flex-col h-screen bg-[#130f0c]">
       <CanvasHeader
@@ -246,6 +256,21 @@ export default function Home() {
               />
             </div>
           )}
+          {/* Annotation Toolbar - only show when canvas has content */}
+          {hasCanvasContent && (
+            <AnnotationToolbar
+              isAnnotating={isAnnotating}
+              selectedAnnotationId={selectedAnnotationId}
+              currentColor={annotationColor}
+              onModeChange={setIsAnnotating}
+              onColorChange={setAnnotationColor}
+              onDeleteAnnotation={() => {
+                if (selectedAnnotationId) {
+                  handleDeleteAnnotation(selectedAnnotationId)
+                }
+              }}
+            />
+          )}
         </div>
 
         {/* Sidebar - anchored to right */}
@@ -275,20 +300,6 @@ export default function Home() {
           onUploadComplete={handleUploadComplete}
         />
       )}
-
-      {/* Annotation Toolbar */}
-      <AnnotationToolbar
-        isAnnotating={isAnnotating}
-        selectedAnnotationId={selectedAnnotationId}
-        currentColor={annotationColor}
-        onModeChange={setIsAnnotating}
-        onColorChange={setAnnotationColor}
-        onDeleteAnnotation={() => {
-          if (selectedAnnotationId) {
-            handleDeleteAnnotation(selectedAnnotationId)
-          }
-        }}
-      />
     </div>
   )
 }
