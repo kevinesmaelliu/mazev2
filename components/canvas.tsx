@@ -130,7 +130,7 @@ export function Canvas({
       <div className="w-full h-full bg-background relative">
         {!canvasReady && (
           <div
-            className="absolute inset-0 z-10 flex items-center justify-center p-6"
+            className="absolute inset-0 z-10 flex items-center justify-center"
             aria-busy="true"
             aria-label="Loading canvas"
           >
