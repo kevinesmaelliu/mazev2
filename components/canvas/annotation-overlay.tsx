@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import type { Annotation } from "@/app/page"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -61,6 +61,22 @@ export function AnnotationOverlay({
   } | null>(null)
   const [commentInput, setCommentInput] = useState("")
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // DIAGNOSTIC: Global pointer event reporter
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      const element = document.elementFromPoint(e.clientX, e.clientY)
+      window.__CURRENT_ELEMENT__ = element
+      window.__ELEMENT_INFO__ = {
+        tagName: element?.tagName,
+        className: element?.className,
+        id: element?.id,
+        pointerEvents: window.getComputedStyle(element as Element).pointerEvents,
+      }
+    }
+    window.addEventListener("mousemove", handleGlobalMouseMove)
+    return () => window.removeEventListener("mousemove", handleGlobalMouseMove)
+  }, [])
 
   // Generate auto-incrementing label (A1, A2, A3...)
   const getNextLabel = () => {
@@ -157,6 +173,12 @@ export function AnnotationOverlay({
 
   // Forward wheel events to the scroll container for scrolling
   const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    // DIAGNOSTIC: Event bubbling log
+    console.log('Wheel event captured by Overlay', {
+      deltaY: e.deltaY,
+      deltaX: e.deltaX,
+      hasScrollRef: !!scrollContainerRef?.current,
+    })
     if (scrollContainerRef?.current) {
       scrollContainerRef.current.scrollTop += e.deltaY
       scrollContainerRef.current.scrollLeft += e.deltaX
@@ -207,11 +229,12 @@ export function AnnotationOverlay({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      className="absolute inset-0 will-change-transform pointer-events-none"
+      className="absolute inset-0 will-change-transform pointer-events-none bg-blue-500/10"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
         transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
         pointerEvents: isInteractive ? "auto" : "none",
+        border: "2px dashed red",
       }}
     >
       {/* Render existing annotations */}
