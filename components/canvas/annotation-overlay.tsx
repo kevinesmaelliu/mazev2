@@ -153,6 +153,12 @@ export function AnnotationOverlay({
     })
   }
 
+  // Allow scroll events to pass through
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    // Don't prevent default - let scroll events bubble up to parent
+    // This allows scrolling while annotation overlay is present
+  }
+
   // Handle comment submission
   const handleCommentSubmit = () => {
     if (!pendingAnnotation || !commentInput) return
@@ -196,10 +202,12 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onWheel={handleWheel}
       className="absolute inset-0 will-change-transform"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
-        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`
+        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
+        pointerEvents: "auto",
       }}
     >
       {/* Render existing annotations */}
