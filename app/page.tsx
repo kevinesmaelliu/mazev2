@@ -243,7 +243,7 @@ export default function Home() {
       {/* Main content area with canvas and sidebar */}
       <div className="flex flex-1 overflow-hidden relative">
         {/* Canvas - takes remaining space */}
-        <div className="flex-1 overflow-auto relative bg-background">
+        <div className="flex-1 overflow-hidden relative bg-background">
           <Canvas
             mode={currentCanvasState.mode}
             websiteUrl={currentCanvasState.websiteUrl}

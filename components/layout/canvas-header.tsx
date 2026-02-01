@@ -47,7 +47,7 @@ export function CanvasHeader({
   onProfileClick,
 }: CanvasHeaderProps) {
   return (
-    <header className="flex items-center justify-between bg-card px-6 py-4 pb-0 border-b border-border">
+    <header className="flex items-center justify-between bg-card px-6 py-2 border-b border-border">
       <div className="flex items-center gap-8">
         {/* Back button */}
         <Button
@@ -61,7 +61,7 @@ export function CanvasHeader({
         </Button>
 
         {/* Project name and tabs section */}
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-primary" />
             <span className="text-sm font-medium text-foreground">{projectName}</span>
@@ -73,7 +73,7 @@ export function CanvasHeader({
               <div
                 key={page.id}
                 className={cn(
-                  "group relative flex items-center gap-2 px-4 py-2.5 rounded-t-lg transition-all border border-b-0",
+                  "group relative flex items-center gap-2 px-4 py-1.5 rounded-t-lg transition-all border border-b-0",
                   activeCanvasPageId === page.id
                     ? "tab-connector bg-muted border-border text-foreground z-10"
                     : "bg-transparent text-muted-foreground border-transparent z-0 hover:bg-muted/30"

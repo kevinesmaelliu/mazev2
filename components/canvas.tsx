@@ -127,7 +127,7 @@ export function Canvas({
   // Drawing mode - KonvaCanvas with skeleton loading
   if (isDrawingMode) {
     return (
-      <div className="w-full h-full bg-background border-t border-border relative">
+      <div className="w-full h-full bg-background relative">
         {!canvasReady && (
           <div
             className="absolute inset-0 z-10 flex items-center justify-center p-6"
@@ -160,7 +160,7 @@ export function Canvas({
   // URL preview mode with no loaded content - empty state
   if (isPreviewMode && !websiteUrl && !figmaUrl && !imageUrl) {
     return (
-      <div className="w-full h-full bg-background flex items-center justify-center border-t border-border">
+      <div className="w-full h-full bg-background flex items-center justify-center">
         <div className="text-center">
           <p className="text-muted-foreground">No design loaded</p>
           <p className="text-sm text-muted-foreground mt-2">
@@ -173,9 +173,9 @@ export function Canvas({
 
   // URL preview mode
   return (
-    <div className="w-full h-full bg-background border-t border-border flex flex-col">
+    <div className="w-full h-full bg-background flex flex-col">
       {/* Header with close button */}
-      <div className="flex items-center justify-between p-4 border-b border-border">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-border">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-foreground">
             {websiteUrl ? new URL(websiteUrl).hostname : figmaUrl ? 'Figma' : imageUrl ? 'Image Preview' : 'Preview'}
@@ -204,7 +204,7 @@ export function Canvas({
 
       {/* Website/Figma preview container with annotation support */}
       {(websiteUrl || figmaUrl) && (
-        <div className="flex-1 overflow-hidden relative">
+        <div className="flex-1 overflow-hidden relative flex flex-col">
           <WebsiteViewer
             url={websiteUrl || figmaUrl}
             isAnnotating={isAnnotating || false}
