@@ -11,8 +11,6 @@ interface AnnotationOverlayProps {
   annotations: Annotation[]
   selectedAnnotationId: string | null
   currentColor: string
-  scrollLeft: number
-  scrollTop: number
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
   isInteractive?: boolean
@@ -39,8 +37,6 @@ export function AnnotationOverlay({
   annotations,
   selectedAnnotationId,
   currentColor,
-  scrollLeft,
-  scrollTop,
   onAnnotationAdd,
   onAnnotationSelect,
   isInteractive = true,
@@ -79,19 +75,25 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
-    const startX = e.clientX - rect.left + scrollLeft
-    const startY = e.clientY - rect.top + scrollTop
+    // Calculate position as percentage of overlay dimensions
+    const startX = ((e.clientX - rect.left) / rect.width) * 100
+    const startY = ((e.clientY - rect.top) / rect.height) * 100
 
     // Check if clicking on existing annotation
     const clickedAnnotation = annotations.find((ann) => {
-      // Calculate screen position of annotation accounting for transform
-      const screenLeft = rect.left + ann.x - scrollLeft
-      const screenTop = rect.top + ann.y - scrollTop
+      // Convert annotation percentage to pixel range
+      const annLeft = (ann.x / 100) * rect.width
+      const annTop = (ann.y / 100) * rect.height
+      const annWidth = (ann.width / 100) * rect.width
+      const annHeight = (ann.height / 100) * rect.height
+      const mouseX = e.clientX - rect.left
+      const mouseY = e.clientY - rect.top
+
       return (
-        e.clientX >= screenLeft &&
-        e.clientX <= screenLeft + ann.width &&
-        e.clientY >= screenTop &&
-        e.clientY <= screenTop + ann.height
+        mouseX >= annLeft &&
+        mouseX <= annLeft + annWidth &&
+        mouseY >= annTop &&
+        mouseY <= annTop + annHeight
       )
     })
 
@@ -119,8 +121,9 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
-    const currentX = e.clientX - rect.left + scrollLeft
-    const currentY = e.clientY - rect.top + scrollTop
+    // Calculate position as percentage of overlay dimensions
+    const currentX = ((e.clientX - rect.left) / rect.width) * 100
+    const currentY = ((e.clientY - rect.top) / rect.height) * 100
 
     setDrawingState((prev) => ({
       ...prev,
@@ -136,8 +139,8 @@ export function AnnotationOverlay({
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
 
-    // Only proceed if it has meaningful dimensions
-    if (width > 10 && height > 10) {
+    // Only proceed if it has meaningful dimensions (width/height are in percentages)
+    if (width > 2 && height > 2) {
       const x = Math.min(drawingState.startX, drawingState.currentX)
       const y = Math.min(drawingState.startY, drawingState.currentY)
 
@@ -207,10 +210,9 @@ export function AnnotationOverlay({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
       onWheel={handleWheel}
-      className="absolute inset-0 will-change-transform pointer-events-none"
+      className="absolute inset-0 w-full pointer-events-none"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
-        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
         pointerEvents: isInteractive ? "auto" : "none",
       }}
     >
@@ -224,10 +226,10 @@ export function AnnotationOverlay({
             onClick={() => onAnnotationSelect(annotation.id)}
             className="absolute group cursor-pointer transition-all pointer-events-auto"
             style={{
-              left: `${annotation.x}px`,
-              top: `${annotation.y}px`,
-              width: `${annotation.width}px`,
-              height: `${annotation.height}px`,
+              left: `${annotation.x}%`,
+              top: `${annotation.y}%`,
+              width: `${annotation.width}%`,
+              height: `${annotation.height}%`,
               pointerEvents: "auto",
             }}
           >
@@ -259,10 +261,10 @@ export function AnnotationOverlay({
         <div
           className="absolute border-2 border-dashed"
           style={{
-            left: `${previewBox.left}px`,
-            top: `${previewBox.top}px`,
-            width: `${previewBox.width}px`,
-            height: `${previewBox.height}px`,
+            left: `${previewBox.left}%`,
+            top: `${previewBox.top}%`,
+            width: `${previewBox.width}%`,
+            height: `${previewBox.height}%`,
             borderColor: colorMap[currentColor] || "#ef4444",
             backgroundColor: colorMap[currentColor] || "#ef4444",
             opacity: 0.3,
@@ -275,10 +277,10 @@ export function AnnotationOverlay({
         <div
           className="absolute border-2"
           style={{
-            left: `${pendingAnnotation.x}px`,
-            top: `${pendingAnnotation.y}px`,
-            width: `${pendingAnnotation.width}px`,
-            height: `${pendingAnnotation.height}px`,
+            left: `${pendingAnnotation.x}%`,
+            top: `${pendingAnnotation.y}%`,
+            width: `${pendingAnnotation.width}%`,
+            height: `${pendingAnnotation.height}%`,
             borderColor: colorMap[currentColor] || "#ef4444",
             backgroundColor: colorMap[currentColor] || "#ef4444",
             opacity: 0.3,
@@ -292,8 +294,8 @@ export function AnnotationOverlay({
         <Card
           className="absolute z-50 w-72 shadow-lg bg-popover border-border"
           style={{
-            left: `${pendingAnnotation.x}px`,
-            top: `${pendingAnnotation.y + pendingAnnotation.height + 8}px`,
+            left: `${pendingAnnotation.x}%`,
+            top: `calc(${pendingAnnotation.y + pendingAnnotation.height}% + 8px)`,
             pointerEvents: "auto",
           }}
         >
