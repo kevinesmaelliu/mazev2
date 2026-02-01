@@ -13,9 +13,10 @@ interface AnnotationOverlayProps {
   currentColor: string
   scrollLeft: number
   scrollTop: number
-  isAnnotating: boolean
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
+  isInteractive?: boolean
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>
 }
 
 interface DrawingState {
@@ -40,9 +41,10 @@ export function AnnotationOverlay({
   currentColor,
   scrollLeft,
   scrollTop,
-  isAnnotating,
   onAnnotationAdd,
   onAnnotationSelect,
+  isInteractive = true,
+  scrollContainerRef,
 }: AnnotationOverlayProps) {
   const [drawingState, setDrawingState] = useState<DrawingState>({
     isDrawing: false,
@@ -77,20 +79,19 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
-    const mouseX = e.clientX - rect.left
-    const mouseY = e.clientY - rect.top
-    const startX = mouseX + scrollLeft
-    const startY = mouseY + scrollTop
+    const startX = e.clientX - rect.left + scrollLeft
+    const startY = e.clientY - rect.top + scrollTop
 
     // Check if clicking on existing annotation
     const clickedAnnotation = annotations.find((ann) => {
-      const annLeft = ann.x - scrollLeft
-      const annTop = ann.y - scrollTop
+      // Calculate screen position of annotation accounting for transform
+      const screenLeft = rect.left + ann.x - scrollLeft
+      const screenTop = rect.top + ann.y - scrollTop
       return (
-        mouseX >= annLeft &&
-        mouseX <= annLeft + ann.width &&
-        mouseY >= annTop &&
-        mouseY <= annTop + ann.height
+        e.clientX >= screenLeft &&
+        e.clientX <= screenLeft + ann.width &&
+        e.clientY >= screenTop &&
+        e.clientY <= screenTop + ann.height
       )
     })
 
@@ -99,10 +100,9 @@ export function AnnotationOverlay({
       return
     }
 
-    // Only start drawing if in annotating mode
-    if (!isAnnotating) return
+    // Only start drawing if in interactive mode
+    if (!isInteractive) return
 
-    // Start new annotation
     setDrawingState({
       isDrawing: true,
       startX,
@@ -114,7 +114,7 @@ export function AnnotationOverlay({
 
   // Handle mouse move - update drawing preview
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!drawingState.isDrawing || !isAnnotating) return
+    if (!drawingState.isDrawing) return
 
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -131,7 +131,7 @@ export function AnnotationOverlay({
 
   // Handle mouse up - finalize annotation
   const handleMouseUp = () => {
-    if (!drawingState.isDrawing || !isAnnotating) return
+    if (!drawingState.isDrawing) return
 
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
@@ -153,6 +153,14 @@ export function AnnotationOverlay({
       currentX: 0,
       currentY: 0,
     })
+  }
+
+  // Forward wheel events to the scroll container for scrolling
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (scrollContainerRef?.current) {
+      scrollContainerRef.current.scrollTop += e.deltaY
+      scrollContainerRef.current.scrollLeft += e.deltaX
+    }
   }
 
   // Handle comment submission
@@ -181,8 +189,8 @@ export function AnnotationOverlay({
   const getPreviewBox = () => {
     if (!drawingState.isDrawing) return null
 
-    const left = Math.min(drawingState.startX, drawingState.currentX) - scrollLeft
-    const top = Math.min(drawingState.startY, drawingState.currentY) - scrollTop
+    const left = Math.min(drawingState.startX, drawingState.currentX)
+    const top = Math.min(drawingState.startY, drawingState.currentY)
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
 
@@ -198,25 +206,29 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className={`absolute inset-0 z-10 ${isAnnotating ? "cursor-crosshair" : "cursor-default"}`}
-      style={{ pointerEvents: isAnnotating ? "auto" : "none" }}
+      onWheel={handleWheel}
+      className="absolute inset-0 will-change-transform pointer-events-none"
+      style={{
+        cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
+        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
+        pointerEvents: isInteractive ? "auto" : "none",
+      }}
     >
       {/* Render existing annotations */}
       {annotations.map((annotation) => {
-        const left = annotation.x - scrollLeft
-        const top = annotation.y - scrollTop
         const isSelected = annotation.id === selectedAnnotationId
 
         return (
           <div
             key={annotation.id}
             onClick={() => onAnnotationSelect(annotation.id)}
-            className="absolute group cursor-pointer transition-all"
+            className="absolute group cursor-pointer transition-all pointer-events-auto"
             style={{
-              left: `${left}px`,
-              top: `${top}px`,
+              left: `${annotation.x}px`,
+              top: `${annotation.y}px`,
               width: `${annotation.width}px`,
               height: `${annotation.height}px`,
+              pointerEvents: "auto",
             }}
           >
             {/* Annotation border */}
@@ -280,9 +292,10 @@ export function AnnotationOverlay({
         <Card
           className="absolute z-50 w-72 shadow-lg bg-popover border-border"
           style={{
-            left: `${pendingAnnotation.x - scrollLeft}px`,
-            top: `${pendingAnnotation.y - scrollTop + pendingAnnotation.height + 8}px`,
+            left: `${pendingAnnotation.x}px`,
+            top: `${pendingAnnotation.y + pendingAnnotation.height + 8}px`,
             pointerEvents: "auto",
+            transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
           }}
         >
           <CardContent className="p-3 space-y-2.5">

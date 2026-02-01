@@ -54,45 +54,30 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Content wrapper - both iframe and overlay scroll together */}
-      <div className="relative w-full" style={{ minHeight: "100%" }}>
-        {/* Iframe for website preview - disabled internal scrolling */}
-        {url && (
-          <iframe
-            ref={iframeRef}
-            src={url}
-            title="Website Preview"
-            className="relative block w-full border-none"
-            style={{
-              pointerEvents: isAnnotating ? "none" : "auto",
-              minHeight: "100%",
-            }}
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-            scrolling="no"
-            onLoad={onLoad}
-          />
-        )}
+      {/* Iframe for website preview */}
+      {url && (
+        <iframe
+          ref={iframeRef}
+          src={url}
+          title="Website Preview"
+          className="w-full h-full border-none"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+          onLoad={onLoad}
+        />
+      )}
 
-        {/* Annotation overlay - positioned absolutely over iframe, scrolls with container */}
-        <div
-          className="absolute inset-0 w-full z-10"
-          style={{
-            pointerEvents: isAnnotating ? "auto" : "none",
-            minHeight: "100%",
-          }}
-        >
-          <AnnotationOverlay
-            annotations={annotations}
-            selectedAnnotationId={selectedAnnotationId}
-            currentColor={annotationColor}
-            scrollLeft={scrollOffset.left}
-            scrollTop={scrollOffset.top}
-            isAnnotating={isAnnotating}
-            onAnnotationAdd={onAnnotationAdd}
-            onAnnotationSelect={onAnnotationSelect}
-          />
-        </div>
-      </div>
+      {/* Annotation overlay - always visible, positioned absolutely over content */}
+      <AnnotationOverlay
+        annotations={annotations}
+        selectedAnnotationId={selectedAnnotationId}
+        currentColor={annotationColor}
+        scrollLeft={scrollOffset.left}
+        scrollTop={scrollOffset.top}
+        onAnnotationAdd={onAnnotationAdd}
+        onAnnotationSelect={onAnnotationSelect}
+        isInteractive={isAnnotating}
+        scrollContainerRef={scrollContainerRef}
+      />
     </div>
   )
 }
