@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Plus, MessageSquare, GaugeCircle, ListChecks, Library } from "lucide-react"
+import { Plus, MessageSquare, GaugeCircle, ListChecks, Library, Info } from "lucide-react"
 import {
   Popover,
   PopoverContent,
@@ -14,6 +14,7 @@ interface BlockAddButtonProps {
   onAddShortQuestion?: () => void
   onAddVibeCheck?: () => void
   onAddMultipleChoice?: () => void
+  onAddDescription?: () => void
   onBrowseAllBlocks?: () => void
 }
 
@@ -26,6 +27,7 @@ export function BlockAddButton({
   onAddShortQuestion,
   onAddVibeCheck,
   onAddMultipleChoice,
+  onAddDescription,
   onBrowseAllBlocks,
 }: BlockAddButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
@@ -77,6 +79,18 @@ export function BlockAddButton({
               >
                 <ListChecks className="h-4 w-4" />
                 Multiple Choice
+              </button>
+
+              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                Information
+              </div>
+              <button
+                onClick={() => handleQuickAddBlock(onAddDescription || onAdd)}
+                className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
+                type="button"
+              >
+                <Info className="h-4 w-4" />
+                Description/Instruction
               </button>
 
               <Separator className="my-2" />

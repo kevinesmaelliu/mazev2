@@ -195,6 +195,7 @@ export function CanvasSidebar({
                           onAddShortQuestion={() => handleAddBlockAtIndexWithType(0, "short-question")}
                           onAddVibeCheck={() => handleAddBlockAtIndexWithType(0, "vibe-check")}
                           onAddMultipleChoice={() => handleAddBlockAtIndexWithType(0, "multiple-choice")}
+                          onAddDescription={() => handleAddBlockAtIndexWithType(0, "description")}
                           onBrowseAllBlocks={handleBrowseAllBlocks}
                         />
                         {blocks.map((block, index) => (
@@ -217,6 +218,7 @@ export function CanvasSidebar({
                               onAddShortQuestion={() => handleAddBlockAtIndexWithType(index + 1, "short-question")}
                               onAddVibeCheck={() => handleAddBlockAtIndexWithType(index + 1, "vibe-check")}
                               onAddMultipleChoice={() => handleAddBlockAtIndexWithType(index + 1, "multiple-choice")}
+                              onAddDescription={() => handleAddBlockAtIndexWithType(index + 1, "description")}
                               onBrowseAllBlocks={handleBrowseAllBlocks}
                             />
                           </div>

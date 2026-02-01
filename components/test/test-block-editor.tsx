@@ -16,6 +16,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectLabel,
+  SelectGroup,
 } from "@/components/ui/select"
 import {
   Trash2,
@@ -30,6 +32,7 @@ import {
   Heart,
   LayoutGrid,
   SlidersHorizontal,
+  Info,
   type LucideIcon,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -37,7 +40,7 @@ import { cn } from "@/lib/utils"
 
 export interface TestBlock {
   id: string
-  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice" | "rating-scale" | "semantic-differential" | "matrix" | "likert"
+  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice" | "rating-scale" | "semantic-differential" | "matrix" | "likert" | "description"
   content: string
   description?: string
   scaleLeftLabel?: string
@@ -57,6 +60,7 @@ function getTestTypeIcon(type: TestBlock["type"]): LucideIcon {
     "semantic-differential": SlidersHorizontal,
     matrix: LayoutGrid,
     likert: GaugeCircle,
+    description: Info,
   }
   return icons[type] ?? MessageSquare
 }
@@ -97,6 +101,8 @@ export function TestBlockEditor({
         return "What are your initial thoughts about this design?"
       case "multiple-choice":
         return "Which feature is most important to you?"
+      case "description":
+        return "Add instructions or context for testers..."
       default:
         return "Enter your question here..."
     }
@@ -214,20 +220,29 @@ export function TestBlockEditor({
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="w-56">
-              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                Quick Access
-              </div>
-              {quickAccessTypes.map((type) => {
-                const Icon = type.icon
-                return (
-                  <SelectItem key={type.value} value={type.value} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      {type.label}
-                    </div>
-                  </SelectItem>
-                )
-              })}
+              <SelectGroup>
+                <SelectLabel className="text-xs font-medium">Quick Access</SelectLabel>
+                {quickAccessTypes.map((type) => {
+                  const Icon = type.icon
+                  return (
+                    <SelectItem key={type.value} value={type.value} className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        {type.label}
+                      </div>
+                    </SelectItem>
+                  )
+                })}
+              </SelectGroup>
+              <SelectGroup>
+                <SelectLabel className="text-xs font-medium">Information</SelectLabel>
+                <SelectItem value="description" className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    Description/Instruction
+                  </div>
+                </SelectItem>
+              </SelectGroup>
               <Separator className="my-2" />
               {onBrowseBlocks && (
                 <button
