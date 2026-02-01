@@ -66,18 +66,17 @@ export function WebsiteViewer({
         />
       )}
 
-      {/* Annotation overlay absolutely positioned over iframe */}
-      {isAnnotating && (
-        <AnnotationOverlay
-          annotations={annotations}
-          selectedAnnotationId={selectedAnnotationId}
-          currentColor={annotationColor}
-          scrollLeft={scrollOffset.left}
-          scrollTop={scrollOffset.top}
-          onAnnotationAdd={onAnnotationAdd}
-          onAnnotationSelect={onAnnotationSelect}
-        />
-      )}
+      {/* Annotation overlay - always visible, positioned absolutely over content */}
+      <AnnotationOverlay
+        annotations={annotations}
+        selectedAnnotationId={selectedAnnotationId}
+        currentColor={annotationColor}
+        scrollLeft={scrollOffset.left}
+        scrollTop={scrollOffset.top}
+        onAnnotationAdd={onAnnotationAdd}
+        onAnnotationSelect={onAnnotationSelect}
+        isInteractive={isAnnotating}
+      />
     </div>
   )
 }
