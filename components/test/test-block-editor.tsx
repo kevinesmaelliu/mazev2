@@ -65,7 +65,7 @@ interface TestBlockEditorProps {
   blockNumber: number
   onChange: (block: TestBlock) => void
   onDelete: () => void
-  onBrowseBlocks?: () => void
+  onBrowseBlocks?: (blockId?: string) => void
   moveBlock: (dragIndex: number, hoverIndex: number) => void
 }
 
@@ -235,7 +235,7 @@ export function TestBlockEditor({
                 {onBrowseBlocks && (
                   <button
                     type="button"
-                    onClick={onBrowseBlocks}
+                    onClick={() => onBrowseBlocks(block.id)}
                     className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
                   >
                     <Library className="h-4 w-4" />
