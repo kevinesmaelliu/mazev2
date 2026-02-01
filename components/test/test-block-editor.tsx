@@ -11,12 +11,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+} from "@/components/ui/select"
 import {
-  SlidersHorizontal,
   Trash2,
   MessageSquare,
   GaugeCircle,
@@ -28,6 +31,8 @@ import {
   CheckSquare,
   Heart,
   LayoutGrid,
+  SlidersHorizontal,
+  Info,
   type LucideIcon,
 } from "lucide-react"
 import { toast } from "sonner"
@@ -35,7 +40,7 @@ import { cn } from "@/lib/utils"
 
 export interface TestBlock {
   id: string
-  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice" | "rating-scale" | "semantic-differential" | "matrix" | "likert"
+  type: "first-click" | "task" | "preference" | "short-question" | "vibe-check" | "multiple-choice" | "rating-scale" | "semantic-differential" | "matrix" | "likert" | "description"
   content: string
   description?: string
   scaleLeftLabel?: string
@@ -55,6 +60,7 @@ function getTestTypeIcon(type: TestBlock["type"]): LucideIcon {
     "semantic-differential": SlidersHorizontal,
     matrix: LayoutGrid,
     likert: GaugeCircle,
+    description: Info,
   }
   return icons[type] ?? MessageSquare
 }
@@ -95,6 +101,8 @@ export function TestBlockEditor({
         return "What are your initial thoughts about this design?"
       case "multiple-choice":
         return "Which feature is most important to you?"
+      case "description":
+        return "Add instructions or context for testers..."
       default:
         return "Enter your question here..."
     }
@@ -105,6 +113,10 @@ export function TestBlockEditor({
     { value: "vibe-check" as const, label: "Vibe Check", icon: GaugeCircle },
     { value: "multiple-choice" as const, label: "Multiple Choice", icon: ListChecks },
   ]
+
+  const currentType = quickAccessTypes.find(t => t.value === block.type) ||
+    ({ value: block.type, label: block.type } as any)
+  const CurrentTypeIcon = currentType?.icon ?? MessageSquare
 
   const handleAIGenerate = () => {
     const suggestions: Partial<Record<TestBlock["type"], string[]>> = {
@@ -195,56 +207,58 @@ export function TestBlockEditor({
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Popover>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className="inline-flex items-center justify-center h-7 w-7 rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-                aria-label="Change block type"
-              >
-                <SlidersHorizontal className="h-3.5 w-3.5" />
-              </button>
-            </PopoverTrigger>
-            <PopoverContent className="w-56 p-2" align="end">
-              <div className="space-y-1">
-                <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                  Quick Access
-                </div>
+          <Select
+            value={block.type}
+            onValueChange={(value) => {
+              onChange({
+                ...block,
+                type: value as TestBlock["type"],
+              })
+            }}
+          >
+            <SelectTrigger className="h-8 w-auto gap-1 px-2 border-border text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="w-56">
+              <SelectGroup>
+                <SelectLabel className="text-xs font-medium">Quick Access</SelectLabel>
                 {quickAccessTypes.map((type) => {
                   const Icon = type.icon
                   return (
-                    <button
-                      key={type.value}
-                      type="button"
-                      onClick={() =>
-                        onChange({ ...block, type: type.value })
-                      }
-                      className={cn(
-                        "w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors",
-                        block.type === type.value
-                          ? "bg-primary text-primary-foreground"
-                          : "hover:bg-muted"
-                      )}
-                    >
-                      <Icon className="h-4 w-4" />
-                      {type.label}
-                    </button>
+                    <SelectItem key={type.value} value={type.value} className="cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <Icon className="h-4 w-4" />
+                        {type.label}
+                      </div>
+                    </SelectItem>
                   )
                 })}
-                <Separator className="my-2" />
-                {onBrowseBlocks && (
-                  <button
-                    type="button"
-                    onClick={() => onBrowseBlocks(block.id)}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
-                  >
-                    <Library className="h-4 w-4" />
-                    Browse all blocks
-                  </button>
-                )}
-              </div>
-            </PopoverContent>
-          </Popover>
+              </SelectGroup>
+              <SelectGroup>
+                <SelectLabel className="text-xs font-medium">Information</SelectLabel>
+                <SelectItem value="description" className="cursor-pointer">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    Description/Instruction
+                  </div>
+                </SelectItem>
+              </SelectGroup>
+              <Separator className="my-2" />
+              {onBrowseBlocks && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onBrowseBlocks(block.id)
+                  }}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
+                >
+                  <Library className="h-4 w-4" />
+                  Browse all blocks
+                </button>
+              )}
+            </SelectContent>
+          </Select>
           <button
             type="button"
             onClick={onDelete}

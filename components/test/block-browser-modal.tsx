@@ -24,6 +24,7 @@ export type TestType =
   | "semantic-differential"
   | "matrix"
   | "rating-scale"
+  | "description"
 
 export interface BlockTemplate {
   id: string
@@ -91,6 +92,11 @@ export function getTestTypeIcon(type: TestType) {
     "rating-scale": ({ className }) => (
       <svg className={className} viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2l-2.81 6.63L2 9.24l5.46 4.73L5.82 21z" />
+      </svg>
+    ),
+    "description": ({ className }) => (
+      <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
       </svg>
     ),
   }
@@ -305,6 +311,33 @@ const BLOCK_TEMPLATES: BlockTemplate[] = [
     description: "5-star rating question",
     content: "How would you rate your overall experience?",
   },
+
+  // Description/Instruction
+  {
+    id: "desc-1",
+    type: "description",
+    category: "General",
+    title: "Test instructions",
+    description: "Provide instructions and context for testers",
+    content: "Please review this design and provide feedback on the overall user experience. Focus on areas that feel confusing or unintuitive.",
+    featured: true,
+  },
+  {
+    id: "desc-2",
+    type: "description",
+    category: "General",
+    title: "Background context",
+    description: "Share background information about the design",
+    content: "This is a redesign of our homepage. We're focusing on improving the visual hierarchy and making key features more discoverable.",
+  },
+  {
+    id: "desc-3",
+    type: "description",
+    category: "General",
+    title: "Important note",
+    description: "Add important notes or clarifications",
+    content: "Note: This is a prototype and some interactive features may not be fully functional.",
+  },
 ]
 
 const CATEGORIES = [
@@ -312,6 +345,11 @@ const CATEGORIES = [
     id: "recommended",
     name: "Recommended",
     count: BLOCK_TEMPLATES.filter((b) => b.featured).length,
+  },
+  {
+    id: "General",
+    name: "General",
+    count: BLOCK_TEMPLATES.filter((b) => b.category === "General").length,
   },
   {
     id: "Questions",
