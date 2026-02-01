@@ -213,7 +213,7 @@ The project uses the CoffeeMod theme defined in `app/globals.css`. These CSS var
 ```css
 --background: #130f0c;         /* Very dark brown */
 --foreground: #eeeeee;         /* Light text */
---card: #211c18;               /* Dark brown card */
+--card: #282420;               /* Dark brown card */
 --popover: #191919;            /* Very dark popover */
 --primary: #ffe0c2;            /* Light cream */
 --primary-foreground: #081a1b; /* Dark text on light */
@@ -639,7 +639,7 @@ ring-ring               // #644a40 - Brown focus ring
 bg-background           // #130f0c - Very dark brown
 text-foreground         // #eeeeee - Light text
 
-bg-card                 // #211c18 - Dark brown card
+bg-card                 // #282420 - Dark brown card
 bg-primary              // #ffe0c2 - Light cream brand
 text-primary-foreground // #081a1b - Dark text on light bg
 
