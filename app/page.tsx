@@ -236,7 +236,7 @@ export default function Home() {
         onCanvasPageSelect={(id) => setActivePageId(id)}
         onCanvasPageAdd={handleAddCanvasPage}
         onCanvasPageClose={handleCanvasPageClose}
-        onSave={() => console.log("Save clicked")}
+        onPreview={() => console.log("Preview clicked")}
         onPublish={() => updateCanvasState({ showUploadModal: true })}
         onProfileClick={() => console.log("Profile clicked")}
       />

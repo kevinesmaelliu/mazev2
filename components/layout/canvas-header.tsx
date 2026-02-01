@@ -1,14 +1,14 @@
 /**
  * CanvasHeader - Top navigation bar for canvas page
  * Contains project info, navigation, credits, and primary actions
- * Features (left to right): back button, project name, current tab, add tab button, credits, save, publish and share, profile
+ * Features (left to right): back button, project name, current tab, add tab button, credits, preview, publish and share, profile
  */
 
 "use client"
 
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { ChevronLeft, Plus, Save, X, Layout } from "lucide-react"
+import { ChevronLeft, Plus, Eye, X, Layout } from "lucide-react"
 import { CreditDisplay } from "./credit-display"
 import { cn } from "@/lib/utils"
 
@@ -24,7 +24,7 @@ interface CanvasHeaderProps {
   activeCanvasPageId?: string
   userInitial?: string
   onBack?: () => void
-  onSave?: () => void
+  onPreview?: () => void
   onPublish?: () => void
   onCanvasPageSelect?: (id: string) => void
   onCanvasPageAdd?: () => void
@@ -39,7 +39,7 @@ export function CanvasHeader({
   activeCanvasPageId,
   userInitial = "U",
   onBack,
-  onSave,
+  onPreview,
   onPublish,
   onCanvasPageSelect,
   onCanvasPageAdd,
@@ -121,9 +121,9 @@ export function CanvasHeader({
 
         <div className="h-6 w-px bg-border" />
 
-        <Button variant="outline" size="sm" className="h-8 gap-2" onClick={onSave}>
-          <Save className="h-4 w-4" />
-          Save
+        <Button variant="outline" size="sm" className="h-8 gap-2" onClick={onPreview}>
+          <Eye className="h-4 w-4" />
+          Preview
         </Button>
 
         <Button size="sm" className="h-8 whitespace-nowrap" onClick={onPublish}>
