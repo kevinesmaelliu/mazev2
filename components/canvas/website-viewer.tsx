@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useEffect } from "react"
+import { useState, useRef, useCallback } from "react"
 import { AnnotationOverlay } from "@/components/canvas/annotation-overlay"
 import type { Annotation } from "@/app/page"
 
@@ -31,58 +31,6 @@ export function WebsiteViewer({
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [scrollOffset, setScrollOffset] = useState({ left: 0, top: 0 })
 
-  // Track iframe internal scroll position
-  useEffect(() => {
-    const iframe = iframeRef.current
-    if (!iframe) return
-
-    const updateIframeScroll = () => {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
-        if (iframeDoc) {
-          const newOffset = {
-            left: iframeDoc.documentElement.scrollLeft || iframeDoc.body.scrollLeft,
-            top: iframeDoc.documentElement.scrollTop || iframeDoc.body.scrollTop,
-          }
-          setScrollOffset(newOffset)
-          onScroll?.(newOffset.left, newOffset.top)
-        }
-      } catch (e) {
-        // Cross-origin iframe - can't access scroll position
-        console.warn("Cannot access iframe scroll position (cross-origin)")
-      }
-    }
-
-    const handleIframeLoad = () => {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
-        if (iframeDoc) {
-          // Listen to scroll events inside the iframe
-          iframeDoc.addEventListener("scroll", updateIframeScroll)
-          iframeDoc.defaultView?.addEventListener("scroll", updateIframeScroll)
-          updateIframeScroll() // Initial position
-        }
-      } catch (e) {
-        console.warn("Cannot attach scroll listener (cross-origin)")
-      }
-    }
-
-    iframe.addEventListener("load", handleIframeLoad)
-
-    return () => {
-      iframe.removeEventListener("load", handleIframeLoad)
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document
-        if (iframeDoc) {
-          iframeDoc.removeEventListener("scroll", updateIframeScroll)
-          iframeDoc.defaultView?.removeEventListener("scroll", updateIframeScroll)
-        }
-      } catch (e) {
-        // Ignore cleanup errors
-      }
-    }
-  }, [onScroll])
-
   const handleScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
       const container = e.currentTarget
@@ -106,34 +54,45 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Iframe for website preview */}
-      {url && (
-        <iframe
-          ref={iframeRef}
-          src={url}
-          title="Website Preview"
-          className="w-full border-none"
-          style={{
-            pointerEvents: isAnnotating ? "none" : "auto",
-            minHeight: "100%",
-            display: "block"
-          }}
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-          onLoad={onLoad}
-        />
-      )}
+      {/* Content wrapper - both iframe and overlay scroll together */}
+      <div className="relative w-full" style={{ minHeight: "100%" }}>
+        {/* Iframe for website preview - disabled internal scrolling */}
+        {url && (
+          <iframe
+            ref={iframeRef}
+            src={url}
+            title="Website Preview"
+            className="relative block w-full border-none"
+            style={{
+              pointerEvents: isAnnotating ? "none" : "auto",
+              minHeight: "100%",
+            }}
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+            scrolling="no"
+            onLoad={onLoad}
+          />
+        )}
 
-      {/* Annotation overlay absolutely positioned over iframe - visible in both modes */}
-      <AnnotationOverlay
-        annotations={annotations}
-        selectedAnnotationId={selectedAnnotationId}
-        currentColor={annotationColor}
-        scrollLeft={scrollOffset.left}
-        scrollTop={scrollOffset.top}
-        isAnnotating={isAnnotating}
-        onAnnotationAdd={onAnnotationAdd}
-        onAnnotationSelect={onAnnotationSelect}
-      />
+        {/* Annotation overlay - positioned absolutely over iframe, scrolls with container */}
+        <div
+          className="absolute inset-0 w-full z-10"
+          style={{
+            pointerEvents: isAnnotating ? "auto" : "none",
+            minHeight: "100%",
+          }}
+        >
+          <AnnotationOverlay
+            annotations={annotations}
+            selectedAnnotationId={selectedAnnotationId}
+            currentColor={annotationColor}
+            scrollLeft={scrollOffset.left}
+            scrollTop={scrollOffset.top}
+            isAnnotating={isAnnotating}
+            onAnnotationAdd={onAnnotationAdd}
+            onAnnotationSelect={onAnnotationSelect}
+          />
+        </div>
+      </div>
     </div>
   )
 }
