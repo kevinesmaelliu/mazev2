@@ -54,32 +54,29 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Content wrapper that positions annotations relative to scrollable content */}
-      <div className="relative w-full h-full">
-        {/* Iframe for website preview */}
-        {url && (
-          <iframe
-            ref={iframeRef}
-            src={url}
-            title="Website Preview"
-            className="w-full h-full border-none block"
-            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-            onLoad={onLoad}
-          />
-        )}
-
-        {/* Annotation overlay - positioned absolutely over the content */}
-        <AnnotationOverlay
-          annotations={annotations}
-          selectedAnnotationId={selectedAnnotationId}
-          currentColor={annotationColor}
-          scrollLeft={scrollOffset.left}
-          scrollTop={scrollOffset.top}
-          onAnnotationAdd={onAnnotationAdd}
-          onAnnotationSelect={onAnnotationSelect}
-          isInteractive={isAnnotating}
+      {/* Iframe for website preview */}
+      {url && (
+        <iframe
+          ref={iframeRef}
+          src={url}
+          title="Website Preview"
+          className="w-full h-full border-none"
+          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+          onLoad={onLoad}
         />
-      </div>
+      )}
+
+      {/* Annotation overlay - always visible, positioned absolutely over content */}
+      <AnnotationOverlay
+        annotations={annotations}
+        selectedAnnotationId={selectedAnnotationId}
+        currentColor={annotationColor}
+        scrollLeft={scrollOffset.left}
+        scrollTop={scrollOffset.top}
+        onAnnotationAdd={onAnnotationAdd}
+        onAnnotationSelect={onAnnotationSelect}
+        isInteractive={isAnnotating}
+      />
     </div>
   )
 }
