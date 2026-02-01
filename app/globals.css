@@ -93,22 +93,44 @@
   /* Annotate Mode Visual Feedback */
   .annotate-mode-active {
     position: relative;
-    animation: annotate-glow 2s ease-in-out infinite;
-    box-shadow: 0 0 0 2px rgb(var(--glow-color) / 0.4);
+    animation: annotate-glow 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
 
   @keyframes annotate-glow {
-    0%, 100% {
+    0% {
       box-shadow:
-        0 0 0 2px rgb(var(--glow-color) / 0.4),
-        0 0 15px rgb(var(--glow-color) / 0.3),
-        0 0 30px rgb(var(--glow-color) / 0.2);
+        0 0 0 2px rgb(var(--glow-color) / 0.5),
+        0 0 15px rgb(var(--glow-color) / 0.4),
+        0 0 30px rgb(var(--glow-color) / 0.2),
+        0 0 45px rgb(var(--glow-color) / 0.1);
+    }
+    25% {
+      box-shadow:
+        0 0 0 2px rgb(var(--glow-color) / 0.6),
+        0 0 20px rgb(var(--glow-color) / 0.5),
+        0 0 40px rgb(var(--glow-color) / 0.3),
+        0 0 60px rgb(var(--glow-color) / 0.15);
     }
     50% {
       box-shadow:
+        0 0 0 2px rgb(var(--glow-color) / 0.7),
+        0 0 30px rgb(var(--glow-color) / 0.6),
+        0 0 60px rgb(var(--glow-color) / 0.4),
+        0 0 80px rgb(var(--glow-color) / 0.2);
+    }
+    75% {
+      box-shadow:
         0 0 0 2px rgb(var(--glow-color) / 0.6),
-        0 0 25px rgb(var(--glow-color) / 0.5),
-        0 0 50px rgb(var(--glow-color) / 0.3);
+        0 0 20px rgb(var(--glow-color) / 0.5),
+        0 0 40px rgb(var(--glow-color) / 0.3),
+        0 0 60px rgb(var(--glow-color) / 0.15);
+    }
+    100% {
+      box-shadow:
+        0 0 0 2px rgb(var(--glow-color) / 0.5),
+        0 0 15px rgb(var(--glow-color) / 0.4),
+        0 0 30px rgb(var(--glow-color) / 0.2),
+        0 0 45px rgb(var(--glow-color) / 0.1);
     }
   }
 }
