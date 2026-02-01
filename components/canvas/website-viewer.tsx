@@ -55,7 +55,7 @@ export function WebsiteViewer({
       }`}
     >
       {/* Content wrapper that positions annotations relative to scrollable content */}
-      <div className="relative w-full min-h-full">
+      <div className="relative w-full h-full">
         {/* Iframe for website preview */}
         {url && (
           <iframe
