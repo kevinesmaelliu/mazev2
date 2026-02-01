@@ -16,6 +16,7 @@ interface AnnotationOverlayProps {
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
   isInteractive?: boolean
+  scrollContainerRef?: React.RefObject<HTMLDivElement | null>
 }
 
 interface DrawingState {
@@ -43,6 +44,7 @@ export function AnnotationOverlay({
   onAnnotationAdd,
   onAnnotationSelect,
   isInteractive = true,
+  scrollContainerRef,
 }: AnnotationOverlayProps) {
   const [drawingState, setDrawingState] = useState<DrawingState>({
     isDrawing: false,
@@ -153,6 +155,14 @@ export function AnnotationOverlay({
     })
   }
 
+  // Forward wheel events to the scroll container for scrolling
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    if (scrollContainerRef?.current) {
+      scrollContainerRef.current.scrollTop += e.deltaY
+      scrollContainerRef.current.scrollLeft += e.deltaX
+    }
+  }
+
   // Handle comment submission
   const handleCommentSubmit = () => {
     if (!pendingAnnotation || !commentInput) return
@@ -196,10 +206,12 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="absolute inset-0 will-change-transform"
+      onWheel={handleWheel}
+      className="absolute inset-0 will-change-transform pointer-events-none"
       style={{
         cursor: isInteractive && drawingState.isDrawing ? "crosshair" : "default",
-        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`
+        transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
+        pointerEvents: isInteractive ? "auto" : "none",
       }}
     >
       {/* Render existing annotations */}
@@ -210,12 +222,13 @@ export function AnnotationOverlay({
           <div
             key={annotation.id}
             onClick={() => onAnnotationSelect(annotation.id)}
-            className="absolute group cursor-pointer transition-all"
+            className="absolute group cursor-pointer transition-all pointer-events-auto"
             style={{
               left: `${annotation.x}px`,
               top: `${annotation.y}px`,
               width: `${annotation.width}px`,
               height: `${annotation.height}px`,
+              pointerEvents: "auto",
             }}
           >
             {/* Annotation border */}
@@ -279,9 +292,10 @@ export function AnnotationOverlay({
         <Card
           className="absolute z-50 w-72 shadow-lg bg-popover border-border"
           style={{
-            left: `${pendingAnnotation.x - scrollLeft}px`,
-            top: `${pendingAnnotation.y - scrollTop + pendingAnnotation.height + 8}px`,
+            left: `${pendingAnnotation.x}px`,
+            top: `${pendingAnnotation.y + pendingAnnotation.height + 8}px`,
             pointerEvents: "auto",
+            transform: `translate(${-scrollLeft}px, ${-scrollTop}px)`,
           }}
         >
           <CardContent className="p-3 space-y-2.5">
