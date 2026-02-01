@@ -102,19 +102,14 @@ export function TestBlockEditor({
     }
   }
 
-  const allBlockTypes = [
+  const quickAccessTypes = [
     { value: "short-question" as const, label: "Short Question", icon: MessageSquare },
     { value: "vibe-check" as const, label: "Vibe Check", icon: GaugeCircle },
     { value: "multiple-choice" as const, label: "Multiple Choice", icon: ListChecks },
-    { value: "first-click" as const, label: "First Click", icon: MousePointerClick },
-    { value: "task" as const, label: "Task", icon: CheckSquare },
-    { value: "preference" as const, label: "Preference", icon: Heart },
-    { value: "rating-scale" as const, label: "Rating Scale", icon: GaugeCircle },
-    { value: "semantic-differential" as const, label: "Semantic Differential", icon: SlidersHorizontal },
-    { value: "matrix" as const, label: "Matrix", icon: LayoutGrid },
   ]
 
-  const currentType = allBlockTypes.find(t => t.value === block.type)
+  const currentType = quickAccessTypes.find(t => t.value === block.type) ||
+    ({ value: block.type, label: block.type } as any)
   const CurrentTypeIcon = currentType?.icon ?? MessageSquare
 
   const handleAIGenerate = () => {
@@ -216,16 +211,13 @@ export function TestBlockEditor({
             }}
           >
             <SelectTrigger className="h-8 w-auto gap-1 px-2 border-border text-xs">
-              <div className="flex items-center gap-1">
-                <CurrentTypeIcon className="h-3 w-3" />
-                <SelectValue />
-              </div>
+              <SelectValue />
             </SelectTrigger>
             <SelectContent className="w-56">
               <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
                 Quick Access
               </div>
-              {allBlockTypes.slice(0, 3).map((type) => {
+              {quickAccessTypes.map((type) => {
                 const Icon = type.icon
                 return (
                   <SelectItem key={type.value} value={type.value} className="cursor-pointer">
@@ -237,35 +229,18 @@ export function TestBlockEditor({
                 )
               })}
               <Separator className="my-2" />
-              <div className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
-                All Types
-              </div>
-              {allBlockTypes.slice(3).map((type) => {
-                const Icon = type.icon
-                return (
-                  <SelectItem key={type.value} value={type.value} className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-4 w-4" />
-                      {type.label}
-                    </div>
-                  </SelectItem>
-                )
-              })}
               {onBrowseBlocks && (
-                <>
-                  <Separator className="my-2" />
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      onBrowseBlocks(block.id)
-                    }}
-                    className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
-                  >
-                    <Library className="h-4 w-4" />
-                    Browse all blocks
-                  </button>
-                </>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onBrowseBlocks(block.id)
+                  }}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 text-sm rounded-md transition-colors hover:bg-muted"
+                >
+                  <Library className="h-4 w-4" />
+                  Browse all blocks
+                </button>
               )}
             </SelectContent>
           </Select>
