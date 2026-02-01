@@ -17,6 +17,7 @@ export interface Annotation {
   height: number
   label: string
   color: string
+  comment: string
 }
 
 interface CanvasPageData {

@@ -2,6 +2,10 @@
 
 import { useState, useRef } from "react"
 import type { Annotation } from "@/app/page"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 
 interface AnnotationOverlayProps {
   annotations: Annotation[]
@@ -45,6 +49,13 @@ export function AnnotationOverlay({
     currentX: 0,
     currentY: 0,
   })
+  const [pendingAnnotation, setPendingAnnotation] = useState<{
+    x: number
+    y: number
+    width: number
+    height: number
+  } | null>(null)
+  const [commentInput, setCommentInput] = useState("")
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Generate auto-incrementing label (A1, A2, A3...)
@@ -118,18 +129,14 @@ export function AnnotationOverlay({
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
 
-    // Only create annotation if it has meaningful dimensions
+    // Only proceed if it has meaningful dimensions
     if (width > 10 && height > 10) {
-      const newAnnotation: Annotation = {
-        id: `ann-${Date.now()}`,
-        x: Math.min(drawingState.startX, drawingState.currentX),
-        y: Math.min(drawingState.startY, drawingState.currentY),
-        width,
-        height,
-        label: getNextLabel(),
-        color: currentColor,
-      }
-      onAnnotationAdd(newAnnotation)
+      const x = Math.min(drawingState.startX, drawingState.currentX)
+      const y = Math.min(drawingState.startY, drawingState.currentY)
+
+      // Set pending annotation instead of immediately creating
+      setPendingAnnotation({ x, y, width, height })
+      setCommentInput("")
     }
 
     setDrawingState({
@@ -139,6 +146,28 @@ export function AnnotationOverlay({
       currentX: 0,
       currentY: 0,
     })
+  }
+
+  // Handle comment submission
+  const handleCommentSubmit = () => {
+    if (!pendingAnnotation || !commentInput) return
+
+    const newAnnotation: Annotation = {
+      id: `ann-${Date.now()}`,
+      x: pendingAnnotation.x,
+      y: pendingAnnotation.y,
+      width: pendingAnnotation.width,
+      height: pendingAnnotation.height,
+      label: getNextLabel(),
+      color: currentColor,
+      comment: commentInput,
+    }
+
+    onAnnotationAdd(newAnnotation)
+
+    // Clear pending state
+    setPendingAnnotation(null)
+    setCommentInput("")
   }
 
   // Get drawing preview box if currently drawing
@@ -220,6 +249,83 @@ export function AnnotationOverlay({
             opacity: 0.3,
           }}
         />
+      )}
+
+      {/* Pending Annotation Rectangle - persists while comment box is open */}
+      {pendingAnnotation && (
+        <div
+          className="absolute border-2"
+          style={{
+            left: `${pendingAnnotation.x - scrollLeft}px`,
+            top: `${pendingAnnotation.y - scrollTop}px`,
+            width: `${pendingAnnotation.width}px`,
+            height: `${pendingAnnotation.height}px`,
+            borderColor: colorMap[currentColor] || "#ef4444",
+            backgroundColor: colorMap[currentColor] || "#ef4444",
+            opacity: 0.3,
+            pointerEvents: "none",
+          }}
+        />
+      )}
+
+      {/* Comment Input Box - appears below the pending annotation */}
+      {pendingAnnotation && (
+        <Card
+          className="absolute z-50 w-72 shadow-lg bg-popover border-border"
+          style={{
+            left: `${pendingAnnotation.x - scrollLeft}px`,
+            top: `${pendingAnnotation.y - scrollTop + pendingAnnotation.height + 8}px`,
+            pointerEvents: "auto",
+          }}
+        >
+          <CardContent className="p-3 space-y-2.5">
+            {/* Annotation number badge */}
+            <Badge variant="secondary" className="text-xs px-2 py-0.5">
+              Annotation {annotations.length + 1}
+            </Badge>
+
+            <Input
+              autoFocus
+              type="text"
+              value={commentInput}
+              onChange={(e) => setCommentInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && commentInput) {
+                  handleCommentSubmit()
+                } else if (e.key === "Escape") {
+                  setPendingAnnotation(null)
+                  setCommentInput("")
+                }
+              }}
+              placeholder="Add a comment..."
+              className="bg-background"
+            />
+
+            <div className="flex gap-2 justify-end">
+              <Button
+                size="sm"
+                variant="outline"
+                className="gap-1.5"
+                onClick={() => {
+                  setPendingAnnotation(null)
+                  setCommentInput("")
+                }}
+              >
+                Cancel
+                <kbd className="ml-0.5 rounded bg-muted px-1 py-0.5 text-[10px] font-medium text-muted-foreground">
+                  ESC
+                </kbd>
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleCommentSubmit}
+                disabled={!commentInput}
+              >
+                Save
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   )
