@@ -48,9 +48,9 @@ export function WebsiteViewer({
     <div
       ref={scrollContainerRef}
       onScroll={handleScroll}
-      className={`relative flex-1 overflow-auto bg-background transition-all duration-200 ${
+      className={`relative flex-1 overflow-auto bg-background transition-all duration-300 ease-in-out ${
         isAnnotating
-          ? "scale-98 border border-transparent bg-gradient-to-b from-purple-500/10 to-blue-500/10"
+          ? "scale-[0.98] annotate-mode-active"
           : ""
       }`}
     >

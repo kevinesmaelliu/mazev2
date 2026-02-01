@@ -89,6 +89,45 @@
     position: relative;
     z-index: 1;
   }
+
+  /* Annotate Mode Visual Feedback */
+  .annotate-mode-active {
+    position: relative;
+    animation: annotate-pulse 2s ease-in-out infinite;
+  }
+
+  .annotate-mode-active::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: var(--radius-md);
+    padding: 2px;
+    background: linear-gradient(
+      135deg,
+      hsl(var(--primary) / 0.4),
+      hsl(var(--primary) / 0.6),
+      hsl(var(--primary) / 0.4)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    filter: blur(2px);
+    z-index: -1;
+  }
+
+  @keyframes annotate-pulse {
+    0%, 100% {
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+    50% {
+      opacity: 0.9;
+      filter: blur(3px);
+    }
+  }
 }
 
 
