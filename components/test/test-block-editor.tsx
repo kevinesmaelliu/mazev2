@@ -184,8 +184,9 @@ export function TestBlockEditor({
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
+      style={{ boxShadow: '0 2px 4px 0 rgba(57, 57, 57, 0.25) inset, 0 2px 4px 0 rgba(28, 28, 27, 0.25)' }}
       className={cn(
-        "rounded-lg bg-card border border-border/50 p-4 space-y-3",
+        "rounded-xl bg-card border border-border p-4 space-y-3",
         "cursor-grab active:cursor-grabbing"
       )}
     >

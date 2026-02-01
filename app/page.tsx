@@ -54,7 +54,7 @@ export default function Home() {
   const [blocks, setBlocks] = useState<TestBlock[]>([
     {
       id: "block-1",
-      type: "first-click",
+      type: "short-question",
       content: "",
     },
   ])
@@ -96,13 +96,13 @@ export default function Home() {
   const handleAddBlock = () => {
     const newBlock: TestBlock = {
       id: `block-${Date.now()}`,
-      type: "first-click",
+      type: "short-question",
       content: "",
     }
     setBlocks([...blocks, newBlock])
   }
 
-  const handleAddBlockAtIndex = (index: number, type: TestBlock["type"] = "first-click") => {
+  const handleAddBlockAtIndex = (index: number, type: TestBlock["type"] = "short-question") => {
     const newBlock: TestBlock = {
       id: `block-${Date.now()}`,
       type,
@@ -123,7 +123,7 @@ export default function Home() {
       setBlocks([
         {
           id: `block-${Date.now()}`,
-          type: "first-click",
+          type: "short-question",
           content: "",
         },
       ])
