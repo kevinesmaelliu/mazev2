@@ -59,6 +59,20 @@ export function AnnotationToolbar({
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [isAnnotating, onModeChange])
 
+  // Periodically check if an iframe has focus and blur it to allow keyboard shortcuts
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const activeElement = document.activeElement
+      if (activeElement?.tagName === 'IFRAME') {
+        // Blur the iframe to return focus to the parent document
+        (activeElement as HTMLIFrameElement).blur()
+        window.focus()
+      }
+    }, 100)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-1.5 rounded-lg border border-border bg-card px-2 py-1.5 shadow-lg">
       {/* View Mode Button */}
