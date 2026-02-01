@@ -3,16 +3,15 @@
 import { useState } from "react"
 import {
   Dialog,
-  SuperModalContent,
-  SuperModalHeader,
-  SuperModalBody,
-  SuperModalTitle,
-  SuperModalDescription,
-} from "@/components/ui/super-modal"
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Search } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Search, Plus, Check, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export type TestType =
@@ -42,6 +41,8 @@ interface BlockBrowserModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSelectBlock: (template: BlockTemplate) => void
+  onSelectBlocks?: (templates: BlockTemplate[]) => void
+  singleSelectMode?: boolean
 }
 
 // Icon mapping for test types
@@ -307,7 +308,6 @@ const BLOCK_TEMPLATES: BlockTemplate[] = [
 ]
 
 const CATEGORIES = [
-  { id: "all", name: "All Blocks", count: BLOCK_TEMPLATES.length },
   {
     id: "recommended",
     name: "Recommended",
@@ -348,15 +348,18 @@ const CATEGORIES = [
 
 /**
  * BlockBrowserModal - Comprehensive test block browser
- * Built with SuperModal for a two-column layout with categories and blocks
+ * Coda-inspired clean design with sidebar navigation
  */
 export function BlockBrowserModal({
   open,
   onOpenChange,
   onSelectBlock,
+  onSelectBlocks,
+  singleSelectMode,
 }: BlockBrowserModalProps) {
   const [searchQuery, setSearchQuery] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [selectedCategory, setSelectedCategory] = useState("recommended")
+  const [selectedBlocks, setSelectedBlocks] = useState<BlockTemplate[]>([])
 
   // Filter blocks
   const filteredBlocks = BLOCK_TEMPLATES.filter((block) => {
@@ -366,139 +369,312 @@ export function BlockBrowserModal({
       block.content.toLowerCase().includes(searchQuery.toLowerCase())
 
     const matchesCategory =
-      selectedCategory === "all" ||
       (selectedCategory === "recommended" && block.featured) ||
       block.category === selectedCategory
 
     return matchesSearch && matchesCategory
   })
 
-  const handleSelectBlock = (template: BlockTemplate) => {
-    onSelectBlock(template)
+  const handleToggleBlock = (template: BlockTemplate) => {
+    if (singleSelectMode) {
+      // In single select mode, immediately select and close
+      onSelectBlock(template)
+      onOpenChange(false)
+      setSearchQuery("")
+      setSelectedCategory("recommended")
+    } else {
+      // Multi-select mode
+      setSelectedBlocks((prev) => {
+        const isSelected = prev.some((b) => b.id === template.id)
+        if (isSelected) {
+          return prev.filter((b) => b.id !== template.id)
+        } else {
+          return [...prev, template]
+        }
+      })
+    }
+  }
+
+  const handleRemoveBlock = (blockId: string) => {
+    setSelectedBlocks((prev) => prev.filter((b) => b.id !== blockId))
+  }
+
+  const handleAddBlocks = () => {
+    selectedBlocks.forEach((block) => {
+      onSelectBlock(block)
+    })
+    if (onSelectBlocks) {
+      onSelectBlocks(selectedBlocks)
+    }
+    setSelectedBlocks([])
     onOpenChange(false)
     setSearchQuery("")
-    setSelectedCategory("all")
+    setSelectedCategory("recommended")
+  }
+
+  const isBlockSelected = (blockId: string) => {
+    return selectedBlocks.some((b) => b.id === blockId)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <SuperModalContent
-        className="max-w-[95vw] sm:max-w-[95vw] h-[85vh] w-full"
-        showCloseButton
-      >
-        <SuperModalHeader>
-          <div>
-            <SuperModalTitle className="text-xl">Test Blocks</SuperModalTitle>
-            <SuperModalDescription className="text-sm text-muted-foreground mt-0.5">
-              Choose from pre-built blocks or create your own
-            </SuperModalDescription>
-          </div>
+      <DialogContent className="w-[calc(100vw-26rem)] h-[96vh] max-w-[calc(100vw-26rem)] p-0 gap-0 bg-background sm:max-w-[calc(100vw-26rem)] left-[13rem] translate-x-0">
+        {/* Accessible title and description for screen readers */}
+        <DialogTitle className="sr-only">Test Blocks</DialogTitle>
+        <DialogDescription className="sr-only">
+          Choose from pre-built templates to gather feedback and insights from users
+        </DialogDescription>
 
-          {/* Search */}
-          <div className="relative mt-3">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search blocks..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-background"
-            />
-          </div>
-        </SuperModalHeader>
-
-        <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
-          <aside className="w-56 border-r border-border bg-muted/20">
-            <ScrollArea className="h-full">
-              <div className="p-3 space-y-1">
-                <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                  Categories
+        <div className="flex flex-col h-full overflow-hidden">
+          {/* Main horizontal flex container for sidebar and content */}
+          <div className="flex flex-1 overflow-hidden">
+            {/* Left Sidebar - Coda style */}
+            <aside className="w-64 border-r border-border bg-card flex flex-col">
+              <div className="p-4 space-y-4">
+                {/* Search */}
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-9 h-9"
+                  />
                 </div>
-                {CATEGORIES.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setSelectedCategory(category.id)}
-                    className={cn(
-                      "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
-                      selectedCategory === category.id
-                        ? "bg-primary text-primary-foreground"
-                        : "hover:bg-muted text-foreground"
-                    )}
-                    type="button"
-                  >
-                    <span>{category.name}</span>
-                    <Badge
-                      variant="secondary"
+
+                {/* Start blank block button */}
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-2 h-9 font-normal"
+                  onClick={() => {
+                    // Create a blank block (can be customized)
+                    onSelectBlock({
+                      id: `blank-${Date.now()}`,
+                      type: "short-question",
+                      category: "Questions",
+                      title: "Custom Block",
+                      description: "Create your own question",
+                      content: "",
+                    })
+                    onOpenChange(false)
+                  }}
+                >
+                  <Plus className="h-4 w-4" />
+                  Start blank block
+                </Button>
+              </div>
+
+              <div className="px-4 pt-2 pb-1">
+                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Templates
+                </div>
+              </div>
+
+              <ScrollArea className="flex-1 px-2">
+                <div className="space-y-0.5 pb-4">
+                  {CATEGORIES.map((category) => (
+                    <button
+                      key={category.id}
+                      onClick={() => setSelectedCategory(category.id)}
                       className={cn(
-                        "h-5 px-1.5 text-xs",
-                        selectedCategory === category.id &&
-                          "bg-primary-foreground/20 text-primary-foreground"
+                        "w-full flex items-center justify-between px-3 py-2 text-sm rounded-md transition-colors",
+                        selectedCategory === category.id
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-accent/50 text-foreground"
                       )}
                     >
-                      {category.count}
-                    </Badge>
-                  </button>
-                ))}
+                      <span className="font-medium">{category.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {category.count}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            </aside>
+
+            {/* Main content area */}
+            <div className="flex-1 flex flex-col overflow-hidden">
+              {/* Header */}
+              <div className="px-8 pt-6 pb-4 border-b border-border">
+                <div>
+                  <h2 className="text-2xl font-bold">Test Blocks</h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Choose from pre-built templates to gather feedback and insights from users
+                  </p>
+                </div>
               </div>
-            </ScrollArea>
-          </aside>
 
-          {/* Main content */}
-          <SuperModalBody>
-            <ScrollArea className="h-full" key={selectedCategory}>
-              <div className="p-6">
-                {filteredBlocks.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-sm text-muted-foreground">
-                      No blocks found matching your search
-                    </p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-4">
-                    {filteredBlocks.map((block) => {
-                      const Icon = getTestTypeIcon(block.type)
-                      return (
-                        <button
-                          key={block.id}
-                          onClick={() => handleSelectBlock(block)}
-                          className="group relative rounded-lg border border-border bg-card p-4 text-left transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/10"
-                          type="button"
+              {/* Content grid */}
+              <ScrollArea className="flex-1">
+                <div className="p-8">
+                  {filteredBlocks.length === 0 ? (
+                    <div className="flex items-center justify-center py-20">
+                      <div className="text-center space-y-2">
+                        <p className="text-muted-foreground">
+                          No blocks found matching your search
+                        </p>
+                        <Button
+                          variant="link"
+                          onClick={() => setSearchQuery("")}
+                          className="text-sm"
                         >
-                          {block.featured && (
-                            <Badge
-                              variant="secondary"
-                              className="absolute top-2 right-2 text-xs bg-primary/10 text-primary border-primary/20"
+                          Clear search
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-3 gap-5">
+                      {filteredBlocks.map((block) => {
+                        const Icon = getTestTypeIcon(block.type)
+                        const selected = isBlockSelected(block.id)
+                        return (
+                          <button
+                            key={block.id}
+                            onClick={() => handleToggleBlock(block)}
+                            className={cn(
+                              "group relative rounded-xl border bg-card p-0 transition-all text-left overflow-hidden",
+                              "hover:shadow-lg hover:border-primary/30",
+                              selected
+                                ? "border-primary ring-2 ring-primary/20 shadow-lg"
+                                : "border-border"
+                            )}
+                          >
+                            {/* Preview/Icon area */}
+                            <div
+                              className={cn(
+                                "relative h-32 flex items-center justify-center transition-colors",
+                                selected ? "bg-primary/10" : "bg-muted/30"
+                              )}
                             >
-                              Featured
-                            </Badge>
-                          )}
+                              <div
+                                className={cn(
+                                  "flex items-center justify-center w-16 h-16 rounded-xl transition-all",
+                                  selected
+                                    ? "bg-primary/20 text-primary scale-110"
+                                    : "bg-background text-muted-foreground"
+                                )}
+                              >
+                                <Icon className="h-8 w-8" />
+                              </div>
 
-                          <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg bg-primary/10 text-primary">
-                              <Icon className="h-5 w-5" />
+                              {/* Selection indicator */}
+                              {selected && (
+                                <div className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 rounded-full bg-primary text-primary-foreground">
+                                  <Check className="h-4 w-4" />
+                                </div>
+                              )}
+
+                              {/* Hover indicator for non-selected cards */}
+                              {!selected && !singleSelectMode && (
+                                <div className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Plus className="h-4 w-4" />
+                                </div>
+                              )}
+
+                              {/* Featured badge */}
+                              {block.featured && !selected && (
+                                <Badge
+                                  variant="secondary"
+                                  className="absolute top-3 right-3 text-xs group-hover:opacity-0 transition-opacity"
+                                >
+                                  Featured
+                                </Badge>
+                              )}
                             </div>
-                            <div className="flex-1 min-w-0 space-y-1">
-                              <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
+
+                            {/* Content area */}
+                            <div className="p-4 space-y-2">
+                              <h3
+                                className={cn(
+                                  "font-semibold text-sm",
+                                  selected && "text-primary"
+                                )}
+                              >
                                 {block.title}
                               </h3>
-                              <p className="text-xs text-muted-foreground line-clamp-2">
+                              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                                 {block.description}
                               </p>
-                              <p className="text-xs text-muted-foreground/70 italic line-clamp-1 pt-1">
-                                &ldquo;{block.content}&rdquo;
-                              </p>
                             </div>
-                          </div>
-                        </button>
-                      )
-                    })}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+
+          {/* Bottom action bar - always visible, spans full width */}
+          {!singleSelectMode && (
+            <div className="border-t border-border bg-card/50 backdrop-blur-sm px-8 py-4 flex items-center justify-between gap-4">
+              {selectedBlocks.length === 0 ? (
+                <>
+                  <div className="flex items-center gap-3 flex-1">
+                    <span className="text-sm text-muted-foreground">
+                      Select blocks from the templates above to add them to your test
+                    </span>
                   </div>
-                )}
-              </div>
-            </ScrollArea>
-          </SuperModalBody>
+                  <Button onClick={() => onOpenChange(false)} variant="outline">
+                    Close
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-3 flex-1 overflow-hidden">
+                    <span className="text-sm font-medium whitespace-nowrap">
+                      {selectedBlocks.length} block{selectedBlocks.length !== 1 ? "s" : ""} selected
+                    </span>
+                    <div className="flex items-center gap-2 overflow-x-auto">
+                      {selectedBlocks.slice(0, 3).map((block) => {
+                        const Icon = getTestTypeIcon(block.type)
+                        return (
+                          <div
+                            key={block.id}
+                            className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-muted text-xs group/chip"
+                          >
+                            <Icon className="h-3 w-3" />
+                            <span className="max-w-[120px] truncate">
+                              {block.title}
+                            </span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                handleRemoveBlock(block.id)
+                              }}
+                              className="ml-0.5 hover:text-foreground transition-colors"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        )
+                      })}
+                      {selectedBlocks.length > 3 && (
+                        <span className="text-xs text-muted-foreground px-2">
+                          +{selectedBlocks.length - 3} more
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setSelectedBlocks([])}
+                    >
+                      Clear
+                    </Button>
+                    <Button onClick={handleAddBlocks}>
+                      Add {selectedBlocks.length} Block{selectedBlocks.length !== 1 ? "s" : ""}
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
-      </SuperModalContent>
+      </DialogContent>
     </Dialog>
   )
 }

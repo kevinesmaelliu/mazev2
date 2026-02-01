@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef, useCallback, useMemo } from "react"
+import { useRef, useCallback, useMemo } from "react"
 import { AnnotationOverlay } from "@/components/canvas/annotation-overlay"
 import type { Annotation } from "@/app/page"
 import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
@@ -37,17 +37,11 @@ export function WebsiteViewer({
 }: WebsiteViewerProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const [scrollOffset, setScrollOffset] = useState({ left: 0, top: 0 })
 
   const handleScroll = useCallback(
     (e: React.UIEvent<HTMLDivElement>) => {
       const container = e.currentTarget
-      const newOffset = {
-        left: container.scrollLeft,
-        top: container.scrollTop,
-      }
-      setScrollOffset(newOffset)
-      onScroll?.(newOffset.left, newOffset.top)
+      onScroll?.(container.scrollLeft, container.scrollTop)
     },
     [onScroll]
   )
@@ -67,30 +61,35 @@ export function WebsiteViewer({
           : ""
       }`}
     >
-      {/* Iframe for website preview */}
-      {url && (
-        <iframe
-          ref={iframeRef}
-          src={url}
-          title="Website Preview"
-          className="w-full h-full border-none"
-          sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
-          onLoad={onLoad}
-        />
-      )}
+      {/* Tall wrapper to enable scrolling - both iframe and overlay are positioned within this */}
+      <div className="relative" style={{ minHeight: '3000px' }}>
+        {/* Iframe for website preview */}
+        {url && (
+          <iframe
+            ref={iframeRef}
+            src={url}
+            title="Website Preview"
+            className="absolute inset-0 w-full border-none"
+            style={{ height: '3000px' }}
+            scrolling="no"
+            sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
+            onLoad={onLoad}
+          />
+        )}
 
-      {/* Annotation overlay - always visible, positioned absolutely over content */}
-      <AnnotationOverlay
-        annotations={annotations}
-        selectedAnnotationId={selectedAnnotationId}
-        currentColor={annotationColor}
-        scrollLeft={scrollOffset.left}
-        scrollTop={scrollOffset.top}
-        onAnnotationAdd={onAnnotationAdd}
-        onAnnotationSelect={onAnnotationSelect}
-        isInteractive={isAnnotating}
-        scrollContainerRef={scrollContainerRef}
-      />
+        {/* Annotation overlay - wrapper positioned absolutely */}
+        <div className="absolute inset-0 w-full" style={{ height: '3000px' }}>
+          <AnnotationOverlay
+            annotations={annotations}
+            selectedAnnotationId={selectedAnnotationId}
+            currentColor={annotationColor}
+            onAnnotationAdd={onAnnotationAdd}
+            onAnnotationSelect={onAnnotationSelect}
+            isInteractive={isAnnotating}
+            scrollContainerRef={scrollContainerRef}
+          />
+        </div>
+      </div>
     </div>
   )
 }
