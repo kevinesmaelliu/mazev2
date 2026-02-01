@@ -61,23 +61,23 @@ export function WebsiteViewer({
           src={url}
           title="Website Preview"
           className="w-full h-full border-none"
+          style={{ pointerEvents: isAnnotating ? "none" : "auto" }}
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation"
           onLoad={onLoad}
         />
       )}
 
-      {/* Annotation overlay absolutely positioned over iframe */}
-      {isAnnotating && (
-        <AnnotationOverlay
-          annotations={annotations}
-          selectedAnnotationId={selectedAnnotationId}
-          currentColor={annotationColor}
-          scrollLeft={scrollOffset.left}
-          scrollTop={scrollOffset.top}
-          onAnnotationAdd={onAnnotationAdd}
-          onAnnotationSelect={onAnnotationSelect}
-        />
-      )}
+      {/* Annotation overlay absolutely positioned over iframe - visible in both modes */}
+      <AnnotationOverlay
+        annotations={annotations}
+        selectedAnnotationId={selectedAnnotationId}
+        currentColor={annotationColor}
+        scrollLeft={scrollOffset.left}
+        scrollTop={scrollOffset.top}
+        isAnnotating={isAnnotating}
+        onAnnotationAdd={onAnnotationAdd}
+        onAnnotationSelect={onAnnotationSelect}
+      />
     </div>
   )
 }

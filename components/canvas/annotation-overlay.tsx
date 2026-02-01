@@ -13,6 +13,7 @@ interface AnnotationOverlayProps {
   currentColor: string
   scrollLeft: number
   scrollTop: number
+  isAnnotating: boolean
   onAnnotationAdd: (annotation: Annotation) => void
   onAnnotationSelect: (id: string | null) => void
 }
@@ -39,6 +40,7 @@ export function AnnotationOverlay({
   currentColor,
   scrollLeft,
   scrollTop,
+  isAnnotating,
   onAnnotationAdd,
   onAnnotationSelect,
 }: AnnotationOverlayProps) {
@@ -75,18 +77,20 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
-    const startX = e.clientX - rect.left + scrollLeft
-    const startY = e.clientY - rect.top + scrollTop
+    const mouseX = e.clientX - rect.left
+    const mouseY = e.clientY - rect.top
+    const startX = mouseX + scrollLeft
+    const startY = mouseY + scrollTop
 
     // Check if clicking on existing annotation
     const clickedAnnotation = annotations.find((ann) => {
       const annLeft = ann.x - scrollLeft
       const annTop = ann.y - scrollTop
       return (
-        e.clientX >= rect.left + annLeft &&
-        e.clientX <= rect.left + annLeft + ann.width &&
-        e.clientY >= rect.top + annTop &&
-        e.clientY <= rect.top + annTop + ann.height
+        mouseX >= annLeft &&
+        mouseX <= annLeft + ann.width &&
+        mouseY >= annTop &&
+        mouseY <= annTop + ann.height
       )
     })
 
@@ -94,6 +98,9 @@ export function AnnotationOverlay({
       onAnnotationSelect(clickedAnnotation.id)
       return
     }
+
+    // Only start drawing if in annotating mode
+    if (!isAnnotating) return
 
     // Start new annotation
     setDrawingState({
@@ -107,7 +114,7 @@ export function AnnotationOverlay({
 
   // Handle mouse move - update drawing preview
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!drawingState.isDrawing) return
+    if (!drawingState.isDrawing || !isAnnotating) return
 
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -124,7 +131,7 @@ export function AnnotationOverlay({
 
   // Handle mouse up - finalize annotation
   const handleMouseUp = () => {
-    if (!drawingState.isDrawing) return
+    if (!drawingState.isDrawing || !isAnnotating) return
 
     const width = Math.abs(drawingState.currentX - drawingState.startX)
     const height = Math.abs(drawingState.currentY - drawingState.startY)
@@ -191,8 +198,8 @@ export function AnnotationOverlay({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
-      className="absolute inset-0 cursor-crosshair"
-      style={{ cursor: drawingState.isDrawing ? "crosshair" : "default" }}
+      className={`absolute inset-0 z-10 ${isAnnotating ? "cursor-crosshair" : "cursor-default"}`}
+      style={{ pointerEvents: isAnnotating ? "auto" : "none" }}
     >
       {/* Render existing annotations */}
       {annotations.map((annotation) => {
