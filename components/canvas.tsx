@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { KonvaCanvas } from "@/components/canvas/konva-canvas"
 import { WebsiteViewer } from "@/components/canvas/website-viewer"
+import { ProxyToggle } from "@/components/canvas/proxy-toggle"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
 import type { Annotation } from "@/app/page"
@@ -32,6 +33,8 @@ interface CanvasProps {
   annotationColor?: HighlightColor
   onAnnotationAdd?: (annotation: Annotation) => void
   onAnnotationSelect?: (id: string | null) => void
+  useProxy?: boolean
+  onProxyToggle?: (enabled: boolean) => void
 }
 
 export function Canvas({
@@ -51,6 +54,8 @@ export function Canvas({
   annotationColor = "red",
   onAnnotationAdd,
   onAnnotationSelect,
+  useProxy = false,
+  onProxyToggle,
 }: CanvasProps) {
   const [isLoading, setIsLoading] = useState(!!websiteUrl || !!figmaUrl || !!imageUrl || !!imageFiles)
   const [canvasReady, setCanvasReady] = useState(false)
@@ -205,6 +210,12 @@ export function Canvas({
       {/* Website/Figma preview container with annotation support */}
       {(websiteUrl || figmaUrl) && (
         <div className="flex-1 overflow-hidden relative flex flex-col">
+          {websiteUrl && (
+            <ProxyToggle
+              enabled={useProxy}
+              onToggle={onProxyToggle || (() => {})}
+            />
+          )}
           <WebsiteViewer
             url={websiteUrl || figmaUrl}
             isAnnotating={isAnnotating || false}
@@ -214,6 +225,7 @@ export function Canvas({
             onAnnotationAdd={onAnnotationAdd || (() => {})}
             onAnnotationSelect={onAnnotationSelect || (() => {})}
             onLoad={() => setIsLoading(false)}
+            useProxy={useProxy}
           />
         </div>
       )}

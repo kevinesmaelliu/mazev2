@@ -75,19 +75,27 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
+    // Account for scroll position in parent container
+    const scrollTop = scrollContainerRef?.current?.scrollTop ?? 0
+    const scrollLeft = scrollContainerRef?.current?.scrollLeft ?? 0
+
     // Calculate position as percentage of overlay dimensions
-    const startX = ((e.clientX - rect.left) / rect.width) * 100
-    const startY = ((e.clientY - rect.top) / rect.height) * 100
+    const startX = ((e.clientX - rect.left + scrollLeft) / rect.width) * 100
+    const startY = ((e.clientY - rect.top + scrollTop) / rect.height) * 100
 
     // Check if clicking on existing annotation
     const clickedAnnotation = annotations.find((ann) => {
+      // Account for scroll position
+      const scrollTop = scrollContainerRef?.current?.scrollTop ?? 0
+      const scrollLeft = scrollContainerRef?.current?.scrollLeft ?? 0
+
       // Convert annotation percentage to pixel range
       const annLeft = (ann.x / 100) * rect.width
       const annTop = (ann.y / 100) * rect.height
       const annWidth = (ann.width / 100) * rect.width
       const annHeight = (ann.height / 100) * rect.height
-      const mouseX = e.clientX - rect.left
-      const mouseY = e.clientY - rect.top
+      const mouseX = e.clientX - rect.left + scrollLeft
+      const mouseY = e.clientY - rect.top + scrollTop
 
       return (
         mouseX >= annLeft &&
@@ -121,9 +129,13 @@ export function AnnotationOverlay({
     const rect = containerRef.current?.getBoundingClientRect()
     if (!rect) return
 
+    // Account for scroll position in parent container
+    const scrollTop = scrollContainerRef?.current?.scrollTop ?? 0
+    const scrollLeft = scrollContainerRef?.current?.scrollLeft ?? 0
+
     // Calculate position as percentage of overlay dimensions
-    const currentX = ((e.clientX - rect.left) / rect.width) * 100
-    const currentY = ((e.clientY - rect.top) / rect.height) * 100
+    const currentX = ((e.clientX - rect.left + scrollLeft) / rect.width) * 100
+    const currentY = ((e.clientY - rect.top + scrollTop) / rect.height) * 100
 
     setDrawingState((prev) => ({
       ...prev,
