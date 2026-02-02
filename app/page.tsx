@@ -49,7 +49,7 @@ export default function Home() {
       uploadedImages: [],
       imageFiles: [],
       showUploadModal: true,
-      useProxy: false,
+      useProxy: true,
     },
   })
   const [testTitle, setTestTitle] = useState("")
@@ -77,7 +77,7 @@ export default function Home() {
         uploadedImages: data.method === "canvas" ? [] : prev[activePageId]?.uploadedImages || [],
         imageFiles: [],
         showUploadModal: false,
-        useProxy: false,
+        useProxy: true,
       },
     }))
   }
@@ -92,7 +92,7 @@ export default function Home() {
         uploadedImages: [],
         imageFiles: [],
         showUploadModal: true,
-        useProxy: false,
+        useProxy: true,
       },
     }))
   }
@@ -171,7 +171,7 @@ export default function Home() {
         uploadedImages: [],
         imageFiles: [],
         showUploadModal: true,
-        useProxy: false,
+        useProxy: true,
       },
     }))
     setActivePageId(newPageId)
