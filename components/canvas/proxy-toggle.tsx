@@ -1,7 +1,6 @@
 "use client"
 
 import { Network } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 interface ProxyToggleProps {
@@ -12,19 +11,18 @@ interface ProxyToggleProps {
 
 export function ProxyToggle({ enabled, onToggle, disabled }: ProxyToggleProps) {
   return (
-    <Button
-      variant={enabled ? "default" : "outline"}
-      size="sm"
+    <button
       onClick={() => onToggle(!enabled)}
       disabled={disabled}
       className={cn(
-        "absolute top-4 right-4 z-40 gap-2",
-        enabled && "bg-blue-600 hover:bg-blue-700"
+        "absolute top-4 right-4 z-40 p-2 rounded-lg transition-colors",
+        "text-foreground hover:bg-muted",
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+        enabled && "text-primary"
       )}
       title={enabled ? "CORS proxy enabled" : "CORS proxy disabled"}
     >
-      <Network className="h-4 w-4" />
-      <span className="text-xs">{enabled ? "Proxy ON" : "Proxy OFF"}</span>
-    </Button>
+      <Network className="h-5 w-5" />
+    </button>
   )
 }
