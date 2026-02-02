@@ -33,6 +33,7 @@ interface CanvasState {
   uploadedImages: string[]
   imageFiles: File[]
   showUploadModal: boolean
+  useProxy?: boolean
 }
 
 export default function Home() {
@@ -48,6 +49,7 @@ export default function Home() {
       uploadedImages: [],
       imageFiles: [],
       showUploadModal: true,
+      useProxy: false,
     },
   })
   const [testTitle, setTestTitle] = useState("")
@@ -75,6 +77,7 @@ export default function Home() {
         uploadedImages: data.method === "canvas" ? [] : prev[activePageId]?.uploadedImages || [],
         imageFiles: [],
         showUploadModal: false,
+        useProxy: false,
       },
     }))
   }
@@ -89,6 +92,7 @@ export default function Home() {
         uploadedImages: [],
         imageFiles: [],
         showUploadModal: true,
+        useProxy: false,
       },
     }))
   }
@@ -167,6 +171,7 @@ export default function Home() {
         uploadedImages: [],
         imageFiles: [],
         showUploadModal: true,
+        useProxy: false,
       },
     }))
     setActivePageId(newPageId)
@@ -212,6 +217,10 @@ export default function Home() {
         ...updates,
       },
     }))
+  }
+
+  const handleProxyToggle = (enabled: boolean) => {
+    updateCanvasState({ useProxy: enabled })
   }
 
   // Determine if canvas has content (not in upload modal state)
@@ -272,6 +281,8 @@ export default function Home() {
             annotationColor={annotationColor}
             onAnnotationAdd={handleAnnotationAdd}
             onAnnotationSelect={setSelectedAnnotationId}
+            useProxy={currentCanvasState.useProxy || false}
+            onProxyToggle={handleProxyToggle}
           />
           {currentCanvasState.mode === "drawing" && !currentCanvasState.websiteUrl && !currentCanvasState.figmaUrl && currentCanvasState.uploadedImages.length === 0 && currentCanvasState.imageFiles.length === 0 && currentCanvasState.showUploadModal && (
             <div className="absolute inset-0 z-20 flex items-center justify-center">
