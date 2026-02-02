@@ -138,12 +138,19 @@ export function WebsiteViewer({
     }
   }, [iframeHeight])
 
+
   // Detect height on iframe load
   useEffect(() => {
     if (!url || !iframeRef.current) return
 
     setIframeHeight(FALLBACK_HEIGHT)
     setHeightDetectionStatus('pending')
+
+    // Reset scroll position when URL changes
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0
+      scrollContainerRef.current.scrollLeft = 0
+    }
 
     const iframe = iframeRef.current
     let timeoutId: NodeJS.Timeout
