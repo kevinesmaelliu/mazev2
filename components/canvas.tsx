@@ -10,7 +10,7 @@ import { WebsiteViewer } from "@/components/canvas/website-viewer"
 import { ProxyToggle } from "@/components/canvas/proxy-toggle"
 import { insertImageFromFile } from "@/lib/konva-utils-client"
 import type Konva from "konva"
-import type { Annotation } from "@/app/page"
+import type { Annotation } from "@/types/annotation"
 import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 
 type CanvasMode = 'drawing' | 'url-preview'

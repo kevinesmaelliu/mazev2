@@ -1,6 +1,6 @@
 "use client"
 
-import type { Annotation } from "@/app/page"
+import type { Annotation } from "@/types/annotation"
 
 interface AnnotationsListProps {
   annotations: Annotation[]

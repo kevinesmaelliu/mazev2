@@ -1,6 +1,6 @@
 "use client"
 
-import { Annotation } from "@/app/page"
+import { Annotation } from "@/types/annotation"
 
 interface CanvasPageData {
   id: string

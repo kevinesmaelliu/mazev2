@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
-import type { Annotation } from "@/app/page"
+import type { Annotation } from "@/types/annotation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"

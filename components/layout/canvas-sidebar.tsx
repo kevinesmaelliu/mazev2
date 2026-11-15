@@ -12,7 +12,7 @@ import { BlockAddButton } from "@/components/test/block-add-button"
 import { BlockBrowserModal, BlockTemplate } from "@/components/test/block-browser-modal"
 import { AIBlocksGenerator } from "@/components/test/ai-blocks-generator"
 import { AnnotationsList } from "@/components/canvas/annotations-list"
-import type { Annotation } from "@/app/page"
+import type { Annotation } from "@/types/annotation"
 
 interface CanvasSidebarProps {
   testTitle?: string

@@ -1,0 +1,36 @@
+{
+  "name": "luma",
+  "like": "neutral",
+  "mode": "both",
+  "settings": [
+    {
+      "thing": "accent",
+      "value": "#0F6E56",
+      "source": "dial"
+    },
+    {
+      "thing": "headings",
+      "value": "bold",
+      "source": "dial",
+      "axis": "weight"
+    },
+    {
+      "thing": "font",
+      "value": "figtree",
+      "source": "dial"
+    },
+    {
+      "thing": "font",
+      "value": "source-serif",
+      "source": "dial",
+      "on": "heading"
+    },
+    {
+      "thing": "text-size",
+      "value": "17",
+      "source": "dial"
+    }
+  ],
+  "lifted": [],
+  "palette": "8084e94dd5b9d8e428e4a6283583cda8c8d3c21ee92a46641aa12dcb18151b7b"
+}

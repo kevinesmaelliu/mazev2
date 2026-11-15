@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { TestBlock } from "@/components/test/test-block-editor"
-import { Annotation } from "@/app/page"
+import { Annotation } from "@/types/annotation"
 import { PreviewHeader } from "./preview-header"
 import { CanvasPreviewPanel } from "./canvas-preview-panel"
 import { ReviewerChecklist } from "./reviewer-checklist"

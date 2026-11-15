@@ -2,7 +2,7 @@
 
 import { useRef, useCallback, useMemo, useState, useEffect } from "react"
 import { AnnotationOverlay } from "@/components/canvas/annotation-overlay"
-import type { Annotation } from "@/app/page"
+import type { Annotation } from "@/types/annotation"
 import type { HighlightColor } from "@/components/canvas/annotation-toolbar"
 import { transformUrlForIframe, validateUrl } from "@/lib/url-transform"
 
