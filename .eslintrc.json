@@ -1,3 +1,4 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "extends": ["next/core-web-vitals", "next/typescript"],
+  "ignorePatterns": ["src/themes/**/*.d.ts", "lime.eslint.config.mjs", "lib/lime/lint/**"]
 }
