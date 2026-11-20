@@ -1,8 +1,9 @@
 {
   "mcpServers": {
     "paper": {
-      "type": "http",
-      "url": "https://mcp.paper.design"
+      "type": "stdio",
+      "command": "${userHome}/.paper/bin/paper",
+      "args": ["mcp"]
     }
   }
 }
