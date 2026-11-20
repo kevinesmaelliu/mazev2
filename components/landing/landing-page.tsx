@@ -10,7 +10,7 @@ import { ProductWindow } from "@/components/landing/product-window"
  * Plan (taste-skill software + Lime tokens)
  * kind: software · site-kind: software
  * deal: hero-centred · nav-centre · footer-dark · close-type · surface-pairs · solid · wordmark
- * palette kept on Lime (acid lime), not card-pastels pink
+ * palette kept on Lime tokens (amber accent), not card-pastels pink
  * visuals: product window in hero (loop), app-frame credits, results window
  * copy: tech budget ~60–80 words/screen outside UI mocks
  */
