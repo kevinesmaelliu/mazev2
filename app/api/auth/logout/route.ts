@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
 import { sessionCookieName } from "@/lib/auth/session"
-import { getPreviewMode } from "@/lib/preview-env"
+import { getRequestPreviewMode } from "@/lib/preview-mode.server"
 
 export async function POST() {
-  const previewMode = getPreviewMode()
+  const previewMode = await getRequestPreviewMode()
   const response = NextResponse.json({
     previewMode,
     user: null,

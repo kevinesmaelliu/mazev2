@@ -16,7 +16,9 @@ type AuthState = {
   previewMode: PreviewMode
   user: SessionUser | null
   loading: boolean
+  canSwitchPreview: boolean
   refresh: () => Promise<void>
+  setPreviewMode: (mode: PreviewMode) => Promise<SessionUser | null>
   loginSimulated: () => Promise<SessionUser>
   loginWithCredentials: (input: {
     email: string
@@ -29,9 +31,10 @@ type AuthState = {
 const AuthContext = createContext<AuthState | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [previewMode, setPreviewMode] = useState<PreviewMode>("dev")
+  const [previewMode, setPreviewModeState] = useState<PreviewMode>("dev")
   const [user, setUser] = useState<SessionUser | null>(null)
   const [loading, setLoading] = useState(true)
+  const [canSwitchPreview, setCanSwitchPreview] = useState(true)
 
   const refresh = useCallback(async () => {
     const res = await fetch("/api/auth/session", { cache: "no-store" })
@@ -43,15 +46,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const data = (await res.json()) as {
       previewMode: PreviewMode
       user: SessionUser | null
+      canSwitchPreview?: boolean
     }
-    setPreviewMode(data.previewMode)
+    setPreviewModeState(data.previewMode)
     setUser(data.user)
+    setCanSwitchPreview(data.canSwitchPreview !== false)
     setLoading(false)
   }, [])
 
   useEffect(() => {
     void refresh()
   }, [refresh])
+
+  const setPreviewMode = useCallback(async (mode: PreviewMode) => {
+    const res = await fetch("/api/preview/mode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode }),
+    })
+    const data = await res.json()
+    if (!res.ok) {
+      throw new Error(data.error || "Could not switch preview mode.")
+    }
+    setPreviewModeState(data.previewMode)
+    const nextUser = (data.user ?? null) as SessionUser | null
+    setUser(nextUser)
+    return nextUser
+  }, [])
 
   const loginSimulated = useCallback(async () => {
     const res = await fetch("/api/auth/login", {
@@ -61,7 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     })
     const data = await res.json()
     if (!res.ok) throw new Error(data.error || "Could not start simulated login.")
-    setPreviewMode(data.previewMode)
+    setPreviewModeState(data.previewMode)
     setUser(data.user)
     return data.user as SessionUser
   }, [])
@@ -75,7 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Could not sign in.")
-      setPreviewMode(data.previewMode)
+      setPreviewModeState(data.previewMode)
       setUser(data.user)
       return data.user as SessionUser
     },
@@ -92,7 +113,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       previewMode,
       user,
       loading,
+      canSwitchPreview,
       refresh,
+      setPreviewMode,
       loginSimulated,
       loginWithCredentials,
       logout,
@@ -101,7 +124,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       previewMode,
       user,
       loading,
+      canSwitchPreview,
       refresh,
+      setPreviewMode,
       loginSimulated,
       loginWithCredentials,
       logout,

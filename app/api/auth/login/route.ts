@@ -6,7 +6,8 @@ import {
   sessionCookieOptions,
   type SessionUser,
 } from "@/lib/auth/session"
-import { getPreviewMode, isDevPreview } from "@/lib/preview-env"
+import { isDevPreview, type PreviewMode } from "@/lib/preview-env"
+import { getRequestPreviewMode } from "@/lib/preview-mode.server"
 
 type LoginBody = {
   mode?: "simulate" | "credentials"
@@ -16,11 +17,11 @@ type LoginBody = {
 }
 
 export async function POST(request: Request) {
-  const previewMode = getPreviewMode()
+  const previewMode = await getRequestPreviewMode()
   const body = (await request.json().catch(() => ({}))) as LoginBody
 
   if (body.mode === "simulate") {
-    if (!isDevPreview()) {
+    if (!isDevPreview(previewMode)) {
       return NextResponse.json(
         {
           error:
@@ -67,10 +68,7 @@ export async function POST(request: Request) {
   return setSessionResponse(user, previewMode)
 }
 
-function setSessionResponse(
-  user: SessionUser,
-  previewMode: ReturnType<typeof getPreviewMode>
-) {
+function setSessionResponse(user: SessionUser, previewMode: PreviewMode) {
   const response = NextResponse.json({ previewMode, user })
   response.cookies.set(
     sessionCookieName(previewMode),

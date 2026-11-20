@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 /**
- * Local preview launcher: choose Dev (simulated login) or Staging.
+ * Local preview launcher.
+ *
+ * Starts one Next server. Switch Dev ↔ Staging in the top banner inside the browser.
+ * Optional CLI default still seeds NEXT_PUBLIC_PREVIEW_MODE until the UI cookie overrides it.
  *
  *   npm run preview
  *   npm run preview:dev
@@ -14,19 +17,18 @@ import { fileURLToPath } from "node:url"
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, "..")
+const PORT = 3000
 
 const MODES = {
   dev: {
     id: "dev",
     label: "Dev",
-    blurb: "Simulated login · no real credentials · port 3000",
-    port: 3000,
+    blurb: "Default Dev · switch to Staging in the browser banner",
   },
   staging: {
     id: "staging",
     label: "Staging",
-    blurb: "Credentials required · closer to shared staging · port 3001",
-    port: 3001,
+    blurb: "Default Staging · switch to Dev in the browser banner",
   },
 }
 
@@ -35,13 +37,12 @@ function printHelp() {
 Luma local preview launcher
 
 Usage:
-  npm run preview              Interactive picker
-  npm run preview:dev          Dev preview (simulated login)
-  npm run preview:staging      Staging preview (credentials)
+  npm run preview              Interactive picker for the starting mode
+  npm run preview:dev          Start on Dev (switchable in UI)
+  npm run preview:staging      Start on Staging (switchable in UI)
 
-Env:
-  NEXT_PUBLIC_PREVIEW_MODE=dev|staging
-  STAGING_LOGIN_EMAIL / STAGING_LOGIN_PASSWORD  (optional staging gate)
+In the browser, use the Dev / Staging control in the top banner.
+Both modes share http://localhost:${PORT}.
 `)
 }
 
@@ -51,11 +52,12 @@ async function askMode() {
     new Promise((resolve) => rl.question(q, (answer) => resolve(answer.trim())))
 
   console.log("\nLuma local preview\n")
-  console.log("  1) Dev      — simulated login, no real credentials  (port 3000)")
-  console.log("  2) Staging  — credentials required                 (port 3001)")
+  console.log("  1) Dev      — start here (simulated login available)")
+  console.log("  2) Staging  — start here (credentials required)")
   console.log("")
+  console.log("You can switch either way later from the in-app banner.\n")
 
-  const answer = await question("Choose preview [1/2]: ")
+  const answer = await question("Start on [1/2]: ")
   rl.close()
 
   if (answer === "2" || /^stag/i.test(answer)) return MODES.staging
@@ -65,7 +67,9 @@ async function askMode() {
 }
 
 function resolveMode(argv) {
-  const flag = argv.find((a) => a === "dev" || a === "staging" || a.startsWith("--mode="))
+  const flag = argv.find(
+    (a) => a === "dev" || a === "staging" || a.startsWith("--mode=")
+  )
   if (!flag) return null
   if (flag === "dev" || flag === "--mode=dev") return MODES.dev
   if (flag === "staging" || flag === "--mode=staging") return MODES.staging
@@ -86,20 +90,20 @@ async function main() {
     process.exit(1)
   }
 
-  console.log(`\nStarting ${mode.label} preview on http://localhost:${mode.port}`)
+  console.log(`\nStarting on http://localhost:${PORT}`)
+  console.log(`Initial mode: ${mode.label}`)
   console.log(mode.blurb)
   console.log("Press Ctrl+C to stop.\n")
 
   const child = spawn(
     process.execPath,
-    [nextBin, "dev", "--hostname", "0.0.0.0", "--port", String(mode.port)],
+    [nextBin, "dev", "--hostname", "0.0.0.0", "--port", String(PORT)],
     {
       cwd: root,
       stdio: "inherit",
       env: {
         ...process.env,
         NEXT_PUBLIC_PREVIEW_MODE: mode.id,
-        // Keep Next in development; this only names our preview flavor.
         LUMA_PREVIEW_MODE: mode.id,
       },
     }
