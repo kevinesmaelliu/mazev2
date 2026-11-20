@@ -1,16 +1,16 @@
 /* Lime tokens. The one file to retune.
 
-   Lime is a light system for consumer apps with one acid yellow-green accent: a white page,
+   Lime is a light system for consumer apps with one amber accent (Luma retune from acid lime): a white page,
    warm-grey surfaces, near-black text, no blue. The one gradient is the glow: see Glow below.
 
    Rules
-   - Lime is for the primary action, the chosen thing, a highlight and focus. It is never a page, card or
+   - The accent is for the primary action, the chosen thing, a highlight and focus. It is never a page, card or
      section background. Everything else is white, warm grey and ink.
-   - Text on the accent is --on-accent, near-black, in both themes. Black on the mark is 15.6:1.
+   - Text on the accent is --on-accent, near-black, in both themes.
    - The accent has five steps. mark: the fill of a primary action. hover and active: its states.
-     wash: a selected row, a highlighted answer, a soft chip. line: a darker olive for focus rings,
-     outlines and icons on white (3.95:1 on the page, 3.62:1 on a warm-grey surface). The mark alone is
-     1.23:1 on white, so it never draws a line or a ring on a light surface.
+     wash: a selected row, a highlighted answer, a soft chip. line: a darker amber for focus rings,
+     outlines and icons on white. The mark alone is low contrast on white, so it never draws a line or a ring
+     on a light surface.
    - Status keeps its own hues (green, amber, red). There is no info hue, so there is no blue.
    - Components read roles, never hex and never a dark: variant. The dark theme redefines the roles.
    - No gradients, with one deliberate exception: the glow, a solid accent body lit from inside, on the primary
@@ -54,12 +54,12 @@
   --ink-hover: #2a2a26; /* ink on hover | solid button */
   --ink-active: #3f3f3a; /* ink pressed | solid button */
 
-  /* == Accent: acid lime == */
-  --accent: #e4f222; /* the mark: the fill of a primary action, 15.6:1 with --on-accent | primary button, selected segment, switch on, slider fill, progress */
-  --accent-hover: #d6e41a; /* the mark on hover, 13.7:1 with --on-accent | primary button */
-  --accent-active: #c4d211; /* the mark pressed, 11.5:1 with --on-accent | primary button */
-  --accent-wash: #f5f9c4; /* a soft highlight, 17.6:1 with --fg | selected row, highlighted option, the current answer */
-  --accent-line: #7c8700; /* olive line step, 3.95:1 on --page and 3.62:1 on --surface | focus ring, outline, icon on white */
+  /* == Accent: warm amber (Luma retune; was acid lime #e4f222) == */
+  --accent: #f5a623; /* the mark: the fill of a primary action, near-black --on-accent | primary button, selected segment, switch on, slider fill, progress */
+  --accent-hover: #e89612; /* the mark on hover | primary button */
+  --accent-active: #d4870a; /* the mark pressed | primary button */
+  --accent-wash: #fff1d6; /* a soft amber highlight | selected row, highlighted option, the current answer */
+  --accent-line: #9a6700; /* darker amber line step for focus rings and outlines on light surfaces | focus ring, outline, icon on white */
   --ring: var(--accent-line); /* the focus ring colour | every focus-visible state */
 
   /* == Status: three hues, each with a mark, a tint and a text step == */
@@ -82,22 +82,22 @@
   --shadow-overlay: 0 24px 48px -12px rgb(var(--shadow-ink) / 0.24), 0 4px 12px rgb(var(--shadow-ink) / 0.08); /* a dialog or sheet | dialog, alert-dialog, sheet */
   --thumb: #ffffff; /* the knob of a switch, white | switch */
   --switch-on: var(--accent); /* a switch's track when on | switch */
-  --switch-on-thumb: var(--thumb); /* a switch's knob when on: white on the lime | switch */
+  --switch-on-thumb: var(--thumb); /* a switch's knob when on: white on the amber | switch */
   --shadow-thumb: 0 2px 5px rgb(var(--shadow-ink) / 0.1), 0 1px 1px rgb(var(--shadow-ink) / 0.07), 0 0 0 0.5px rgb(var(--shadow-ink) / 0.1); /* the knob's lift, like a phone's switch: a soft drop, a contact shadow and a hairline edge | switch */
 
   /* == Glow: a lit surface == */
-  --glow-accent-from: #dbec1c; /* top of the lime body, black text 15.1:1 at the darkest stop | primary button, balance chip, featured card */
-  --glow-accent-to: #f6ff7c; /* bottom of the lime body | primary button, balance chip, featured card */
+  --glow-accent-from: #e89612; /* top of the amber body | primary button, balance chip, featured card */
+  --glow-accent-to: #ffc857; /* bottom of the amber body | primary button, balance chip, featured card */
   --glow-accent-edge: rgb(255 255 255 / 0.7); /* the crisp light line on the lower inner edge | glow-accent */
   --glow-accent-bloom: rgb(255 255 255 / 0.28); /* the soft inner bloom | glow-accent */
-  --glow-accent-cast: 112 120 20; /* the olive outer cast, an RGB triplet | glow-accent */
+  --glow-accent-cast: 180 120 20; /* the amber outer cast, an RGB triplet | glow-accent */
   --glow-accent-light: 1; /* strength of the white sheen and bloom on the body | glow-accent */
-  --glow-accent-from-lit: #e4f42c; /* top of the body when powered on (hover), black text 16.3:1 at the darkest stop | glow-accent */
-  --glow-accent-to-lit: #faff9c; /* bottom of the body when powered on | glow-accent */
+  --glow-accent-from-lit: #f5a623; /* top of the body when powered on (hover) | glow-accent */
+  --glow-accent-to-lit: #ffd67a; /* bottom of the body when powered on | glow-accent */
   --glow-accent-edge-lit: rgb(255 255 255 / 0.9); /* the lower edge line when powered on | glow-accent */
   --glow-accent-bloom-lit: rgb(255 255 255 / 0.4); /* the inner bloom when powered on | glow-accent */
-  --glow-accent-from-press: #c8d915; /* top of the body while pressed, a darker body, black text 12.4:1 at the darkest stop | glow-accent */
-  --glow-accent-to-press: #e6f24a; /* bottom of the body while pressed | glow-accent */
+  --glow-accent-from-press: #c97a08; /* top of the body while pressed, a darker body | glow-accent */
+  --glow-accent-to-press: #f5a623; /* bottom of the body while pressed | glow-accent */
   --glow-danger-from: #a31f1f; /* top of the red body, white text 6.1:1 at the worst point | destructive button */
   --glow-danger-to: #c42b2b; /* bottom of the red body | destructive button */
   --glow-danger-edge: rgb(255 255 255 / 0.4); /* the lower edge line | glow-danger */
@@ -209,12 +209,12 @@
   --ink-hover: #e1dfd7;
   --ink-active: #cfcdc4;
 
-  --accent: #cad649; /* the lime a step calmer for a dark page: 12.2:1 on --page, 12.1:1 with --on-accent */
-  --accent-hover: #d6e262;
-  --accent-active: #bac534;
-  --accent-wash: #2b2e0c; /* 12.6:1 with --fg */
-  --accent-line: #cad649; /* the line step is the mark on dark */
-  /* A switch's white knob on the lime needs a little more lift on a dark page. */
+  --accent: #e8b03a; /* amber a step calmer for a dark page, near-black --on-accent */
+  --accent-hover: #f0bc4e;
+  --accent-active: #d4a02e;
+  --accent-wash: #2e2209; /* soft amber wash on dark */
+  --accent-line: #e8b03a; /* the line step is the mark on dark */
+  /* A switch's white knob on the amber needs a little more lift on a dark page. */
   --shadow-thumb: 0 2px 5px rgb(0 0 0 / 0.22), 0 1px 1px rgb(0 0 0 / 0.16), 0 0 0 0.5px rgb(0 0 0 / 0.2);
 
   --success: #4ade80;
@@ -235,15 +235,15 @@
   --shadow-overlay: 0 24px 48px -12px rgb(var(--shadow-ink) / 0.7), 0 0 0 1px var(--line);
 
   --glow-accent-cast: 0 0 0;
-  /* The glow on a dark page: the same calmer lime with ink on it, lit faintly, so it glows from inside instead of
-     shining a light rim on the page. Black text is 9.8:1 or more at the darkest (pressed) stop. */
+  /* The glow on a dark page: the same calmer amber with ink on it, lit faintly, so it glows from inside instead of
+     shining a light rim on the page. */
   --glow-accent-fg: #0f0f0d;
-  --glow-accent-from: #c2cd3f;
-  --glow-accent-to: #d1e376;
-  --glow-accent-from-lit: #c8d447;
-  --glow-accent-to-lit: #d8e983;
-  --glow-accent-from-press: #b7c230;
-  --glow-accent-to-press: #c6d65f;
+  --glow-accent-from: #d4a02e;
+  --glow-accent-to: #e8b03a;
+  --glow-accent-from-lit: #e0ac36;
+  --glow-accent-to-lit: #f0bc4e;
+  --glow-accent-from-press: #c49020;
+  --glow-accent-to-press: #d9a832;
   --glow-accent-light: 0.25;
   --glow-accent-edge: rgb(255 255 255 / 0.3);
   --glow-accent-bloom: rgb(255 255 255 / 0.12);
