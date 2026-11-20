@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
+  other: {
+    "page-type": "software",
+    "site-kind": "software",
+  },
 }
 
 export default function RootLayout({
@@ -33,7 +37,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="min-h-dvh">
+    <html lang="en" data-type="software" className="min-h-dvh">
       <body
         className={`lime min-h-dvh bg-page text-fg antialiased ${geistSans.variable} ${geistMono.variable}`}
       >

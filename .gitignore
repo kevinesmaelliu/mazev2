@@ -41,3 +41,7 @@ next-env.d.ts
 # UI review scratch
 .ui-review/
 
+# Taste skill local kit + gate state (reinstall via skills-lock / npx skills add)
+.taste-skill/
+/public/assets/
+

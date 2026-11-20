@@ -4,63 +4,29 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/lime/ui/button"
 import { Separator } from "@/components/lime/ui/separator"
-import {
-  ProductStage,
-  type LandingChapter,
-} from "@/components/landing/product-stage"
+import { ProductWindow } from "@/components/landing/product-window"
 
-const CHAPTERS: Array<{
-  id: LandingChapter
-  heading: string
-  body: string
-}> = [
-  {
-    id: "create",
-    heading: "Create the test today",
-    body: "Upload a screen, write tasks, and publish. Luma does not wait on a participant budget to let you build.",
-  },
-  {
-    id: "trade",
-    heading: "Trade tests for reviews",
-    body: "Complete two peer tests to earn two credits. Spend them to unlock reviews on yours.",
-  },
-  {
-    id: "results",
-    heading: "Turn answers into changes",
-    body: "See where people clicked, what they said, and what to fix next in the design.",
-  },
-]
-
+/**
+ * Plan (taste-skill software + Lime tokens)
+ * kind: software · site-kind: software
+ * deal: hero-centred · nav-centre · footer-dark · close-type · surface-pairs · solid · wordmark
+ * palette kept on Lime (acid lime), not card-pastels pink
+ * visuals: product window in hero (loop), app-frame credits, results window
+ * copy: tech budget ~60–80 words/screen outside UI mocks
+ */
 export function LandingPage() {
-  const [chapter, setChapter] = useState<LandingChapter>("create")
   const [scrolled, setScrolled] = useState(false)
+  const [entered, setEntered] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8)
     onScroll()
     window.addEventListener("scroll", onScroll, { passive: true })
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
-
-  useEffect(() => {
-    const nodes = CHAPTERS.map((item) =>
-      document.getElementById(item.id)
-    ).filter((node): node is HTMLElement => Boolean(node))
-    if (nodes.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        const next = visible?.target.id as LandingChapter | undefined
-        if (next) setChapter(next)
-      },
-      { rootMargin: "-35% 0px -35% 0px", threshold: [0.2, 0.5, 0.8] }
-    )
-
-    nodes.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
+    const enter = window.requestAnimationFrame(() => setEntered(true))
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.cancelAnimationFrame(enter)
+    }
   }, [])
 
   return (
@@ -70,106 +36,194 @@ export function LandingPage() {
           scrolled ? "border-b border-line" : ""
         }`}
       >
-        <Link
-          href="/"
-          className="text-base font-semibold tracking-tight text-fg"
-        >
-          Luma
-        </Link>
-        <div className="ms-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            render={<Link href="/login" />}
-            nativeButton={false}
+        <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
+          <Link
+            href="/"
+            className="text-base font-semibold tracking-tight text-fg"
           >
-            Log in
-          </Button>
-          <Button
-            variant="solid"
-            size="sm"
-            render={<Link href="/login" />}
-            nativeButton={false}
-          >
-            Start your first test
-          </Button>
+            Luma
+          </Link>
+          <nav className="ms-8 hidden items-center gap-5 text-sm font-medium text-fg-2 sm:flex">
+            <a href="#studio" className="hover:text-fg">
+              Studio
+            </a>
+            <a href="#credits" className="hover:text-fg">
+              Credits
+            </a>
+            <a href="#findings" className="hover:text-fg">
+              Findings
+            </a>
+          </nav>
+          <div className="ms-auto flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              render={<Link href="/login" />}
+              nativeButton={false}
+            >
+              Log in
+            </Button>
+            <Button
+              variant="solid"
+              size="sm"
+              render={<Link href="/login" />}
+              nativeButton={false}
+            >
+              Start your first test
+            </Button>
+          </div>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-2xl flex-col gap-16 px-4 pt-10 pb-16 sm:px-6 sm:pt-14">
-        <section className="flex flex-col gap-6">
-          <div className="flex flex-col gap-3">
-            <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-2xl">
+      <main>
+        {/* Hero: one screen. Short copy. Product window is the subject. */}
+        <section
+          data-enter={entered ? "in" : "out"}
+          className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-4 pt-8 pb-0 sm:px-6 sm:pt-10"
+        >
+          <div
+            className={`mx-auto flex max-w-2xl flex-col items-center gap-4 text-center transition-[opacity,transform] duration-(--dur-slow) ease-out ${
+              entered
+                ? "translate-y-0 opacity-100"
+                : "translate-y-3 opacity-0"
+            }`}
+          >
+            <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-3xl">
               UX research for design students
             </h1>
-            <p className="max-w-prose text-base text-fg-2">
-              Create tests now. Take two peer tests, spend the credits, and get
-              your study reviewed. Complete 2 tests. Get 1 review.
+            <p className="max-w-xl text-base text-fg-2">
+              Build a test, take two peer studies, spend the credits for one
+              review round.
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <Button
+                size="lg"
+                render={<Link href="/login" />}
+                nativeButton={false}
+              >
+                Start your first test
+              </Button>
+              <Button
+                variant="link"
+                render={<a href="#credits" />}
+                nativeButton={false}
+              >
+                See the credit loop
+              </Button>
+            </div>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+
+          <div
+            className={`mt-8 min-h-0 flex-1 transition-[opacity,transform] duration-(--dur-slow) ease-out ${
+              entered
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
+            }`}
+          >
+            <div className="relative max-h-dvh overflow-hidden">
+              <ProductWindow
+                loop
+                label="Luma studio building a checkout first-click test"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* Studio / app-frame */}
+        <section
+          id="studio"
+          className="scroll-mt-14 border-t border-line bg-surface"
+        >
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Studio for a live test
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Upload a screen, drop tasks, publish. Reviews wait until credits
+                are spent.
+              </p>
+            </div>
+            <ProductWindow
+              scene="build"
+              label="Luma studio with tasks beside the annotated checkout screen"
+            />
+          </div>
+        </section>
+
+        {/* Credits */}
+        <section id="credits" className="scroll-mt-14 bg-page">
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Credits from peer tests
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Finish two classmate studies. Spend those credits to open reviews
+                on yours.
+              </p>
+            </div>
+            <ProductWindow
+              scene="trade"
+              label="Peer test queue with credit unlocks for classmates"
+            />
+          </div>
+        </section>
+
+        {/* Findings */}
+        <section
+          id="findings"
+          className="scroll-mt-14 border-t border-line bg-surface"
+        >
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Findings on the screen
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Clicks and answers land on the same artboard so the next Figma
+                change is obvious.
+              </p>
+            </div>
+            <ProductWindow
+              scene="results"
+              label="Click map and findings list for a checkout study"
+            />
+          </div>
+        </section>
+
+        <Separator />
+
+        <section className="bg-page">
+          <div className="mx-auto flex w-full max-w-5xl flex-col items-start gap-4 px-4 py-16 sm:px-6">
+            <h2 className="text-xl font-semibold tracking-tight text-fg sm:text-2xl">
+              Ready for the studio critique
+            </h2>
+            <p className="max-w-prose text-base text-fg-2">
+              Ship the study this week. Earn the review by helping a classmate
+              with theirs.
+            </p>
             <Button
+              variant="solid"
               size="lg"
               render={<Link href="/login" />}
               nativeButton={false}
             >
               Start your first test
             </Button>
-            <Button variant="link" render={<a href="#trade" />} nativeButton={false}>
-              See how credits work
-            </Button>
           </div>
-          <ProductStage chapter="create" />
-        </section>
-
-        <section className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-10">
-          <div className="flex flex-col gap-8">
-            {CHAPTERS.map((item) => (
-              <section
-                key={item.id}
-                id={item.id}
-                className="flex min-h-[50svh] flex-col justify-center gap-3 scroll-mt-20"
-              >
-                <h2 className="text-lg font-semibold text-fg">{item.heading}</h2>
-                <p className="max-w-prose text-base text-fg-2">{item.body}</p>
-              </section>
-            ))}
-          </div>
-          <div className="sticky top-20 hidden lg:block">
-            <ProductStage chapter={chapter} />
-          </div>
-        </section>
-
-        <Separator />
-
-        <section className="flex flex-col items-start gap-4">
-          <h2 className="text-lg font-semibold text-fg">
-            Ready when your class project is
-          </h2>
-          <p className="max-w-prose text-base text-fg-2">
-            Build the study today. Earn reviews by helping classmates with
-            theirs.
-          </p>
-          <Button
-            variant="solid"
-            size="lg"
-            render={<Link href="/login" />}
-            nativeButton={false}
-          >
-            Start your first test
-          </Button>
         </section>
       </main>
 
-      <footer className="border-t border-line">
-        <div className="mx-auto flex w-full max-w-2xl flex-wrap items-center gap-3 px-4 py-6 sm:px-6">
-          <p className="text-sm font-semibold text-fg">Luma</p>
-          <p className="text-sm text-fg-2">
+      <footer className="border-t border-line bg-ink text-fg-inverse">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-8 sm:px-6">
+          <p className="text-sm font-semibold">Luma</p>
+          <p className="text-sm text-fg-inverse opacity-70">
             Peer UX research for design students
           </p>
           <Link
             href="/login"
-            className="ms-auto text-sm font-medium text-fg underline-offset-4 hover:underline"
+            className="ms-auto text-sm font-medium underline-offset-4 hover:underline"
           >
             Log in
           </Link>
