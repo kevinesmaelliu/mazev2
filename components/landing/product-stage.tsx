@@ -1,20 +1,30 @@
 "use client"
 
-import { Badge } from "@astryxdesign/core/Badge"
-import { Button } from "@astryxdesign/core/Button"
-import { Divider } from "@astryxdesign/core/Divider"
-import { EmptyState } from "@astryxdesign/core/EmptyState"
-import { List, ListItem } from "@astryxdesign/core/List"
-import { Section } from "@astryxdesign/core/Section"
-import { HStack, StackItem, VStack } from "@astryxdesign/core/Stack"
-import { Heading, Text } from "@astryxdesign/core/Text"
-import { Icon } from "@astryxdesign/core/Icon"
 import {
-  ClipboardDocumentListIcon,
-  LockClosedIcon,
-  MagnifyingGlassIcon,
-  PencilSquareIcon,
-} from "@heroicons/react/24/outline"
+  Edit,
+  Locked,
+  Search,
+  Receipt,
+  Icon,
+} from "@/components/lime/icon"
+import { Badge } from "@/components/lime/ui/badge"
+import { Button } from "@/components/lime/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/lime/ui/card"
+import {
+  Empty,
+  EmptyDescription,
+  EmptyIcon,
+  EmptyTitle,
+} from "@/components/lime/ui/empty"
+import { List, ListIcon, ListItem } from "@/components/lime/ui/list"
+import { Separator } from "@/components/lime/ui/separator"
 
 export type LandingChapter = "create" | "trade" | "results"
 
@@ -25,12 +35,12 @@ const CHAPTER_COPY: Record<
   create: {
     title: "Build a test in one sitting",
     detail:
-      "Upload a screen, add tasks, publish. Reviews wait until you spend credits.",
+      "Upload a screen, add tasks, then publish. Reviews wait until you spend credits.",
   },
   trade: {
     title: "Take 2. Unlock 1.",
     detail:
-      "Each completed peer test earns a credit. Two credits buys one review round.",
+      "Finish two peer tests to earn two credits. Spend them to unlock one review round.",
   },
   results: {
     title: "Read what to change next",
@@ -43,141 +53,112 @@ export function ProductStage({ chapter }: { chapter: LandingChapter }) {
   const copy = CHAPTER_COPY[chapter]
 
   return (
-    <Section padding={5} variant="section" width="100%">
-      <VStack gap={4}>
-        <HStack gap={3} vAlign="center">
-          <Text type="label" weight="semibold">
-            Luma
-          </Text>
-          <StackItem size="fill">
-            <Text type="supporting" color="secondary">
-              Checkout redesign · draft
-            </Text>
-          </StackItem>
-          <Badge
-            label={chapter === "results" ? "2 credits spent" : "0 reviews yet"}
-            variant={chapter === "results" ? "success" : "neutral"}
-          />
-        </HStack>
-
-        <Divider />
-
-        <VStack gap={3}>
-          <Heading level={3} type="display-3">
-            {copy.title}
-          </Heading>
-          <Text type="body" color="secondary">
-            {copy.detail}
-          </Text>
-          {chapter === "create" && <CreatePanel />}
-          {chapter === "trade" && <TradePanel />}
-          {chapter === "results" && <ResultsPanel />}
-        </VStack>
-      </VStack>
-    </Section>
+    <Card variant="outline" className="w-full">
+      <CardHeader>
+        <div className="flex items-center justify-between gap-3">
+          <CardTitle>Checkout redesign</CardTitle>
+          <Badge variant={chapter === "results" ? "success" : "neutral"}>
+            {chapter === "results" ? "2 credits spent" : "0 reviews yet"}
+          </Badge>
+        </div>
+        <CardDescription>Draft · Luma studio project</CardDescription>
+      </CardHeader>
+      <Separator />
+      <CardContent className="flex flex-col gap-4 pt-5">
+        <div className="flex flex-col gap-1">
+          <h3 className="text-lg font-semibold text-fg">{copy.title}</h3>
+          <p className="text-sm text-fg-2">{copy.detail}</p>
+        </div>
+        {chapter === "create" && <CreatePanel />}
+        {chapter === "trade" && <TradePanel />}
+        {chapter === "results" && <ResultsPanel />}
+      </CardContent>
+      {chapter === "create" && (
+        <CardFooter className="flex flex-wrap items-center gap-3">
+          <Button variant="solid" size="sm">
+            Publish test
+          </Button>
+          <p className="text-sm text-fg-2">
+            Live now. Waiting on credits for reviews.
+          </p>
+        </CardFooter>
+      )}
+    </Card>
   )
 }
 
 function CreatePanel() {
   return (
-    <VStack gap={4}>
-      <List hasDividers density="compact">
-        <ListItem
-          label="First click: Find checkout"
-          description="Where do people tap to pay?"
-          startContent={<Icon icon={PencilSquareIcon} size="sm" />}
-        />
-        <ListItem
-          label="Task: Complete purchase"
-          description="Can they finish without help?"
-          startContent={<Icon icon={ClipboardDocumentListIcon} size="sm" />}
-        />
-        <ListItem
-          label="Preference: A or B confirmation"
-          description="Which receipt screen feels clearer?"
-          startContent={<Icon icon={MagnifyingGlassIcon} size="sm" />}
-        />
-      </List>
-      <HStack gap={3} vAlign="center">
-        <Button label="Publish test" variant="primary" size="sm" />
-        <Text type="supporting" color="secondary">
-          Live now · waiting on credits for reviews
-        </Text>
-      </HStack>
-    </VStack>
+    <List className="-mx-1">
+      <ListItem
+        leading={<ListIcon icon={Edit} />}
+        title="First click: Find checkout"
+        description="Where do people tap to pay?"
+      />
+      <ListItem
+        leading={<ListIcon icon={Receipt} />}
+        title="Task: Complete purchase"
+        description="Can they finish without help?"
+      />
+      <ListItem
+        leading={<ListIcon icon={Search} />}
+        title="Preference: A or B confirmation"
+        description="Which receipt screen feels clearer?"
+      />
+    </List>
   )
 }
 
 function TradePanel() {
   return (
-    <VStack gap={4}>
-      <HStack gap={8}>
-        <VStack gap={1}>
-          <Text type="display-2" weight="bold">
-            0
-          </Text>
-          <Text type="supporting" color="secondary">
-            credits
-          </Text>
-        </VStack>
-        <VStack gap={1}>
-          <Text type="display-2" weight="bold">
-            2
-          </Text>
-          <Text type="supporting" color="secondary">
-            tests to take
-          </Text>
-        </VStack>
-        <VStack gap={1}>
-          <Text type="display-2" weight="bold">
-            1
-          </Text>
-          <Text type="supporting" color="secondary">
-            review unlocked
-          </Text>
-        </VStack>
-      </HStack>
-      <List hasDividers density="compact">
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-fg">
+        Finish 2 peer tests to unlock 1 review round on this draft.
+      </p>
+      <List className="-mx-1">
         <ListItem
-          label="Nav study · Maya · RISD"
+          title="Nav study · Maya · RISD"
           description="+1 credit when finished"
         />
         <ListItem
-          label="Onboarding flow · Jordan · SCAD"
+          title="Onboarding flow · Jordan · SCAD"
           description="+1 credit when finished"
         />
       </List>
-      <EmptyState
-        isCompact
-        headingLevel={4}
-        icon={<Icon icon={LockClosedIcon} />}
-        title="Your test is live, reviews are locked"
-        description="Finish two peer tests, spend the credits, then responses start coming in."
-      />
-    </VStack>
+      <Empty className="px-0 py-6">
+        <EmptyIcon>
+          <Icon icon={Locked} size={24} />
+        </EmptyIcon>
+        <EmptyTitle>Reviews are locked</EmptyTitle>
+        <EmptyDescription>
+          Your test is live. Finish two peer tests, spend the credits, then
+          responses start coming in.
+        </EmptyDescription>
+      </Empty>
+    </div>
   )
 }
 
 function ResultsPanel() {
   return (
-    <VStack gap={3}>
-      <List hasDividers density="compact">
+    <div className="flex flex-col gap-3">
+      <List className="-mx-1">
         <ListItem
-          label="11 of 14 missed the pay button"
+          title="11 of 14 missed the pay button"
           description="Move checkout into the primary sticky bar."
         />
         <ListItem
-          label="Median task time 2m 40s"
+          title="Median task time 2m 40s"
           description="Cut the address step before card entry."
         />
         <ListItem
-          label="Preference lean: B confirmation"
+          title="Preference lean: B confirmation"
           description="9 preferred the quieter receipt layout."
         />
       </List>
-      <Text type="supporting" color="secondary">
-        Next design change is ready to ship back into Figma.
-      </Text>
-    </VStack>
+      <p className="text-sm text-fg-2">
+        Next design change is ready to take back into Figma.
+      </p>
+    </div>
   )
 }

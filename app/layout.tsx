@@ -1,13 +1,8 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import { Toaster } from "sonner"
-import "@fontsource/figtree/400.css"
-import "@fontsource/figtree/500.css"
-import "@fontsource/figtree/600.css"
-import "@fontsource/figtree/700.css"
-import "@fontsource/source-serif-4/400.css"
-import "@fontsource/source-serif-4/600.css"
-import "@fontsource/source-serif-4/700.css"
+import { LimePortalProvider } from "@/lib/lime/portal"
+import "@/components/lime/styles.css"
 import "./layers.css"
 import "./globals.css"
 import { Providers } from "./providers"
@@ -38,14 +33,16 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="min-h-screen">
+    <html lang="en" className="min-h-dvh">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`lime min-h-dvh bg-page text-fg antialiased ${geistSans.variable} ${geistMono.variable}`}
       >
-        <Providers>
-          {children}
-          <Toaster />
-        </Providers>
+        <LimePortalProvider>
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
+        </LimePortalProvider>
       </body>
     </html>
   )

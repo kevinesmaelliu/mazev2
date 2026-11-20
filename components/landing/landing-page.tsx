@@ -1,22 +1,9 @@
 "use client"
 
-import { useEffect, useState, type CSSProperties } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { AppShell } from "@astryxdesign/core/AppShell"
-import { Button } from "@astryxdesign/core/Button"
-import { Grid } from "@astryxdesign/core/Grid"
-import { Icon } from "@astryxdesign/core/Icon"
-import {
-  Layout,
-  LayoutContent,
-  LayoutFooter,
-} from "@astryxdesign/core/Layout"
-import { Section } from "@astryxdesign/core/Section"
-import { HStack, StackItem, VStack } from "@astryxdesign/core/Stack"
-import { Heading, Text } from "@astryxdesign/core/Text"
-import { TopNav } from "@astryxdesign/core/TopNav"
-import { Link as AstryxLink } from "@astryxdesign/core/Link"
-import { ArrowRightIcon } from "@heroicons/react/20/solid"
+import { Button } from "@/components/lime/ui/button"
+import { Separator } from "@/components/lime/ui/separator"
 import {
   ProductStage,
   type LandingChapter,
@@ -44,20 +31,16 @@ const CHAPTERS: Array<{
   },
 ]
 
-const stickyStage: CSSProperties = {
-  position: "sticky",
-  top: 88,
-}
-
-const screenSection: CSSProperties = {
-  minHeight: "100svh",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-}
-
 export function LandingPage() {
   const [chapter, setChapter] = useState<LandingChapter>("create")
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   useEffect(() => {
     const nodes = CHAPTERS.map((item) =>
@@ -81,183 +64,117 @@ export function LandingPage() {
   }, [])
 
   return (
-    <AppShell
-      height="auto"
-      variant="wash"
-      contentPadding={0}
-      topNav={
-        <TopNav
-          label="Luma"
-          heading={
-            <AstryxLink
-              href="/"
-              as={Link}
-              type="large"
-              weight="bold"
-              color="primary"
+    <div className="min-h-dvh bg-page text-fg">
+      <header
+        className={`sticky top-0 z-10 flex h-14 items-center gap-2 bg-page px-4 sm:px-6 ${
+          scrolled ? "border-b border-line" : ""
+        }`}
+      >
+        <Link
+          href="/"
+          className="text-base font-semibold tracking-tight text-fg"
+        >
+          Luma
+        </Link>
+        <div className="ms-auto flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            render={<Link href="/login" />}
+            nativeButton={false}
+          >
+            Log in
+          </Button>
+          <Button
+            variant="solid"
+            size="sm"
+            render={<Link href="/login" />}
+            nativeButton={false}
+          >
+            Start your first test
+          </Button>
+        </div>
+      </header>
+
+      <main className="mx-auto flex w-full max-w-2xl flex-col gap-16 px-4 pt-10 pb-16 sm:px-6 sm:pt-14">
+        <section className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-2xl">
+              UX research for design students
+            </h1>
+            <p className="max-w-prose text-base text-fg-2">
+              Create tests now. Take two peer tests, spend the credits, and get
+              your study reviewed. Complete 2 tests. Get 1 review.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              size="lg"
+              render={<Link href="/login" />}
+              nativeButton={false}
             >
-              Luma
-            </AstryxLink>
-          }
-          endContent={
-            <HStack gap={2} vAlign="center">
-              <Button label="Log in" variant="ghost" href="/login" as={Link} />
-              <Button
-                label="Start your first test"
-                variant="primary"
-                href="/login"
-                as={Link}
-              />
-            </HStack>
-          }
-        />
-      }
-    >
-      <Layout
-        height="auto"
-        contentWidth={1120}
-        padding={0}
-        content={
-          <LayoutContent padding={0}>
-            <VStack gap={0}>
-              <Section padding={6} variant="transparent" style={screenSection}>
-                <VStack gap={8} hAlign="center">
-                  <VStack gap={4} hAlign="center" maxWidth={780}>
-                    <Text
-                      type="display-1"
-                      weight="bold"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      Luma
-                    </Text>
-                    <Heading
-                      level={1}
-                      type="display-2"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      UX research for design students
-                    </Heading>
-                    <Text
-                      type="large"
-                      color="secondary"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      Create tests now. Take two peer tests, spend the credits,
-                      and get your study reviewed.
-                    </Text>
-                    <Text type="body" weight="semibold" justify="center">
-                      Complete 2 tests. Get 1 review.
-                    </Text>
-                  </VStack>
-                  <HStack gap={3}>
-                    <Button
-                      label="Start your first test"
-                      variant="primary"
-                      href="/login"
-                      as={Link}
-                      endContent={
-                        <Icon
-                          icon={ArrowRightIcon}
-                          size="sm"
-                          color="inherit"
-                        />
-                      }
-                    />
-                    <Button
-                      label="See how credits work"
-                      variant="secondary"
-                      href="#trade"
-                      as={Link}
-                    />
-                  </HStack>
-                  <ProductStage chapter="create" />
-                </VStack>
-              </Section>
+              Start your first test
+            </Button>
+            <Button variant="link" render={<a href="#trade" />} nativeButton={false}>
+              See how credits work
+            </Button>
+          </div>
+          <ProductStage chapter="create" />
+        </section>
 
-              <Section padding={6} variant="muted">
-                <Grid
-                  gap={8}
-                  columns={{ minWidth: 320, repeat: "fit" }}
-                  align="start"
-                >
-                  <VStack gap={0}>
-                    {CHAPTERS.map((item) => (
-                      <VStack
-                        key={item.id}
-                        id={item.id}
-                        gap={3}
-                        style={screenSection}
-                        maxWidth={480}
-                      >
-                        <Heading level={2} type="display-3" textWrap="balance">
-                          {item.heading}
-                        </Heading>
-                        <Text type="large" color="secondary" textWrap="pretty">
-                          {item.body}
-                        </Text>
-                      </VStack>
-                    ))}
-                  </VStack>
-                  <StackItem style={stickyStage}>
-                    <ProductStage chapter={chapter} />
-                  </StackItem>
-                </Grid>
-              </Section>
+        <section className="flex flex-col gap-10 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start lg:gap-10">
+          <div className="flex flex-col gap-8">
+            {CHAPTERS.map((item) => (
+              <section
+                key={item.id}
+                id={item.id}
+                className="flex min-h-[50svh] flex-col justify-center gap-3 scroll-mt-20"
+              >
+                <h2 className="text-lg font-semibold text-fg">{item.heading}</h2>
+                <p className="max-w-prose text-base text-fg-2">{item.body}</p>
+              </section>
+            ))}
+          </div>
+          <div className="sticky top-20 hidden lg:block">
+            <ProductStage chapter={chapter} />
+          </div>
+        </section>
 
-              <Section padding={6} variant="transparent" style={screenSection}>
-                <VStack gap={5} hAlign="center" maxWidth={640}>
-                  <Heading
-                    level={2}
-                    type="display-2"
-                    justify="center"
-                    textWrap="balance"
-                  >
-                    Ready when your class project is
-                  </Heading>
-                  <Text
-                    type="large"
-                    color="secondary"
-                    justify="center"
-                    textWrap="balance"
-                  >
-                    Build the study today. Earn reviews by helping classmates
-                    with theirs.
-                  </Text>
-                  <Button
-                    label="Start your first test"
-                    variant="primary"
-                    href="/login"
-                    as={Link}
-                    endContent={
-                      <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
-                    }
-                  />
-                </VStack>
-              </Section>
-            </VStack>
-          </LayoutContent>
-        }
-        footer={
-          <LayoutFooter hasDivider>
-            <HStack gap={4} vAlign="center">
-              <Text type="label" weight="semibold">
-                Luma
-              </Text>
-              <StackItem size="fill">
-                <Text type="supporting" color="secondary">
-                  Peer UX research for design students
-                </Text>
-              </StackItem>
-              <AstryxLink href="/login" as={Link} type="supporting">
-                Log in
-              </AstryxLink>
-            </HStack>
-          </LayoutFooter>
-        }
-      />
-    </AppShell>
+        <Separator />
+
+        <section className="flex flex-col items-start gap-4">
+          <h2 className="text-lg font-semibold text-fg">
+            Ready when your class project is
+          </h2>
+          <p className="max-w-prose text-base text-fg-2">
+            Build the study today. Earn reviews by helping classmates with
+            theirs.
+          </p>
+          <Button
+            variant="solid"
+            size="lg"
+            render={<Link href="/login" />}
+            nativeButton={false}
+          >
+            Start your first test
+          </Button>
+        </section>
+      </main>
+
+      <footer className="border-t border-line">
+        <div className="mx-auto flex w-full max-w-2xl flex-wrap items-center gap-3 px-4 py-6 sm:px-6">
+          <p className="text-sm font-semibold text-fg">Luma</p>
+          <p className="text-sm text-fg-2">
+            Peer UX research for design students
+          </p>
+          <Link
+            href="/login"
+            className="ms-auto text-sm font-medium text-fg underline-offset-4 hover:underline"
+          >
+            Log in
+          </Link>
+        </div>
+      </footer>
+    </div>
   )
 }

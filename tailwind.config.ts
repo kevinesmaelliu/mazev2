@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-    darkMode: ["class"],
+    darkMode: "class",
     // Astryx reset owns the document; Tailwind preflight's h1–h6
     // font-size: inherit otherwise overrides Astryx display type.
     corePlugins: {
