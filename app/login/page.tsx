@@ -1,93 +1,164 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { Suspense, useMemo, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Button } from "@astryxdesign/core/Button"
-import { Card } from "@astryxdesign/core/Card"
-import { Center } from "@astryxdesign/core/Center"
-import { Divider } from "@astryxdesign/core/Divider"
-import { Link as AstryxLink } from "@astryxdesign/core/Link"
-import { Section } from "@astryxdesign/core/Section"
-import { HStack, VStack } from "@astryxdesign/core/Stack"
-import { Text } from "@astryxdesign/core/Text"
-import { TextInput } from "@astryxdesign/core/TextInput"
+import { Button } from "@/components/lime/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/lime/ui/card"
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/components/lime/ui/field"
+import { Input } from "@/components/lime/ui/input"
+import { Separator } from "@/components/lime/ui/separator"
+import { useAuth } from "@/lib/auth/auth-context"
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const { previewMode, loginSimulated, loginWithCredentials } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
+  const [pending, setPending] = useState<"simulate" | "credentials" | null>(
+    null
+  )
 
-  const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      setError("Add your school email and a password to continue.")
-      return
-    }
+  const nextPath = useMemo(() => {
+    const raw = searchParams.get("next") || "/onboarding"
+    return raw.startsWith("/") ? raw : "/onboarding"
+  }, [searchParams])
+
+  const isDev = previewMode === "dev"
+
+  async function continueSimulated() {
     setError(null)
-    setIsLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 600))
-    setIsLoading(false)
-    router.push("/onboarding")
+    setPending("simulate")
+    try {
+      await loginSimulated()
+      router.push(nextPath)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not simulate login.")
+    } finally {
+      setPending(null)
+    }
+  }
+
+  async function continueWithCredentials() {
+    setError(null)
+    setPending("credentials")
+    try {
+      await loginWithCredentials({ email, password })
+      router.push(nextPath)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not sign in.")
+    } finally {
+      setPending(null)
+    }
   }
 
   return (
-    <Center axis="both" padding={6} minHeight="100vh">
-      <Card padding={0} maxWidth={440} width="100%">
-        <Section padding={6} variant="transparent">
-          <VStack gap={5}>
-            <VStack gap={1}>
-              <AstryxLink href="/" as={Link} type="large" weight="bold" color="primary">
-                Luma
-              </AstryxLink>
-              <Text type="display-3" weight="semibold">
-                Sign in to start a test
-              </Text>
-              <Text type="body" color="secondary">
-                Create now. Reviews unlock after two peer tests and a credit
-                spend.
-              </Text>
-            </VStack>
+    <div className="flex min-h-dvh items-center justify-center bg-page px-4 py-10 text-fg">
+      <Card variant="outline" className="w-full max-w-md">
+        <CardHeader>
+          <Link href="/" className="text-base font-semibold text-fg">
+            Luma
+          </Link>
+          <CardTitle>Sign in to start a test</CardTitle>
+          <CardDescription>
+            {isDev
+              ? "Dev preview can sign you in as a simulated student with one click."
+              : "Staging preview needs school email and password before studio routes open."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-5">
+          {isDev ? (
+            <div className="flex flex-col gap-3">
+              <Button
+                size="lg"
+                className="w-full"
+                pending={pending === "simulate"}
+                onClick={() => void continueSimulated()}
+              >
+                Continue as Dev Student
+              </Button>
+              <p className="text-sm text-fg-2">
+                No password. Lands you in onboarding with 2 demo credits.
+              </p>
+            </div>
+          ) : null}
 
-            <VStack gap={3}>
-              <TextInput
-                label="School email"
+          {isDev ? <Separator decorative /> : null}
+
+          <div className="flex flex-col gap-3">
+            {!isDev ? (
+              <p className="text-sm font-medium text-fg">School credentials</p>
+            ) : (
+              <p className="text-sm font-medium text-fg">
+                Or use a school email
+              </p>
+            )}
+            <Field>
+              <FieldLabel>School email</FieldLabel>
+              <Input
                 type="email"
                 value={email}
-                onChange={setEmail}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="you@school.edu"
-                status={error ? { type: "error", message: error } : undefined}
+                aria-invalid={Boolean(error) || undefined}
               />
-              <TextInput
-                label="Password"
+            </Field>
+            <Field>
+              <FieldLabel>Password</FieldLabel>
+              <Input
                 type="password"
                 value={password}
-                onChange={setPassword}
+                onChange={(event) => setPassword(event.target.value)}
                 placeholder="••••••••"
+                aria-invalid={Boolean(error) || undefined}
               />
-              <Button
-                label="Continue to Luma"
-                variant="primary"
-                width="100%"
-                isLoading={isLoading}
-                clickAction={handleLogin}
-              />
-            </VStack>
+              {error ? <FieldError>{error}</FieldError> : null}
+            </Field>
+            <Button
+              variant={isDev ? "solid" : "primary"}
+              size="lg"
+              className="w-full"
+              pending={pending === "credentials"}
+              onClick={() => void continueWithCredentials()}
+            >
+              Continue to Luma
+            </Button>
+          </div>
 
-            <Divider label="or" />
-
-            <HStack gap={2} hAlign="center">
-              <Text type="supporting" color="secondary">
-                New here?
-              </Text>
-              <AstryxLink href="/onboarding" as={Link} type="supporting">
-                Create an account
-              </AstryxLink>
-            </HStack>
-          </VStack>
-        </Section>
+          <p className="text-sm text-fg-2">
+            New here?{" "}
+            <Link href="/onboarding" className="font-medium text-fg underline-offset-4 hover:underline">
+              Create an account
+            </Link>
+          </p>
+        </CardContent>
       </Card>
-    </Center>
+    </div>
+  )
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-dvh items-center justify-center bg-page text-fg">
+          Loading sign in…
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
   )
 }

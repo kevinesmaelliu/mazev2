@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:clean": "rm -rf .next && next dev",
+    "preview": "node scripts/dev-launcher.mjs",
+    "preview:dev": "node scripts/dev-launcher.mjs --mode=dev",
+    "preview:staging": "node scripts/dev-launcher.mjs --mode=staging",
     "build": "next build",
     "build:clean": "rm -rf .next && next build",
     "start": "next start",
