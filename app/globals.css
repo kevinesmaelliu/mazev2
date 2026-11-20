@@ -1,8 +1,10 @@
 /*
   Astryx owns the reset + component cascade.
   Tailwind preflight is disabled in tailwind.config.ts (corePlugins.preflight).
-  Keep @tailwind base so custom @layer base blocks below still compile.
+  Lime theme ships as a separate stylesheet (components/lime/styles.css) on <body class="lime">.
 */
+@config "../tailwind.config.ts";
+
 @layer reset, astryx-base, astryx-theme, base, components, utilities;
 
 @import "@astryxdesign/core/reset.css";
@@ -12,9 +14,8 @@
 @import "../src/themes/luma/luma.css";
 @import "../src/themes/luma/luma.fonts.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
 
 @layer utilities {
   .text-balance {
@@ -273,9 +274,10 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 }

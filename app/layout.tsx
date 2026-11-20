@@ -8,9 +8,11 @@ import "@fontsource/figtree/700.css"
 import "@fontsource/source-serif-4/400.css"
 import "@fontsource/source-serif-4/600.css"
 import "@fontsource/source-serif-4/700.css"
+import "@/components/lime/styles.css"
 import "./layers.css"
 import "./globals.css"
 import { Providers } from "./providers"
+import { LimePortalProvider } from "@/lib/lime/portal"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -40,12 +42,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="min-h-screen">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
+        className={`lime ${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        <Providers>
-          {children}
-          <Toaster />
-        </Providers>
+        <LimePortalProvider>
+          <Providers>
+            {children}
+            <Toaster />
+          </Providers>
+        </LimePortalProvider>
       </body>
     </html>
   )
