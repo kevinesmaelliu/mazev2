@@ -1,263 +1,234 @@
 "use client"
 
-import { useEffect, useState, type CSSProperties } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
-import { AppShell } from "@astryxdesign/core/AppShell"
-import { Button } from "@astryxdesign/core/Button"
-import { Grid } from "@astryxdesign/core/Grid"
-import { Icon } from "@astryxdesign/core/Icon"
-import {
-  Layout,
-  LayoutContent,
-  LayoutFooter,
-} from "@astryxdesign/core/Layout"
-import { Section } from "@astryxdesign/core/Section"
-import { HStack, StackItem, VStack } from "@astryxdesign/core/Stack"
-import { Heading, Text } from "@astryxdesign/core/Text"
-import { TopNav } from "@astryxdesign/core/TopNav"
-import { Link as AstryxLink } from "@astryxdesign/core/Link"
-import { ArrowRightIcon } from "@heroicons/react/20/solid"
-import {
-  ProductStage,
-  type LandingChapter,
-} from "@/components/landing/product-stage"
+import { Button } from "@/components/lime/ui/button"
+import { Separator } from "@/components/lime/ui/separator"
+import { ProductWindow } from "@/components/landing/product-window"
 
-const CHAPTERS: Array<{
-  id: LandingChapter
-  heading: string
-  body: string
-}> = [
-  {
-    id: "create",
-    heading: "Create the test today",
-    body: "Upload a screen, write tasks, and publish. Luma does not wait on a participant budget to let you build.",
-  },
-  {
-    id: "trade",
-    heading: "Trade tests for reviews",
-    body: "Complete two peer tests to earn two credits. Spend them to unlock reviews on yours.",
-  },
-  {
-    id: "results",
-    heading: "Turn answers into changes",
-    body: "See where people clicked, what they said, and what to fix next in the design.",
-  },
-]
-
-const stickyStage: CSSProperties = {
-  position: "sticky",
-  top: 88,
-}
-
-const screenSection: CSSProperties = {
-  minHeight: "100svh",
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "center",
-}
-
+/**
+ * Plan (taste-skill software + Lime tokens)
+ * kind: software · site-kind: software
+ * deal: hero-centred · nav-centre · footer-dark · close-type · surface-pairs · solid · wordmark
+ * palette kept on Lime tokens (amber accent), not card-pastels pink
+ * visuals: product window in hero (loop), app-frame credits, results window
+ * copy: tech budget ~60–80 words/screen outside UI mocks
+ */
 export function LandingPage() {
-  const [chapter, setChapter] = useState<LandingChapter>("create")
+  const [scrolled, setScrolled] = useState(false)
+  const [entered, setEntered] = useState(false)
 
   useEffect(() => {
-    const nodes = CHAPTERS.map((item) =>
-      document.getElementById(item.id)
-    ).filter((node): node is HTMLElement => Boolean(node))
-    if (nodes.length === 0) return
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        const next = visible?.target.id as LandingChapter | undefined
-        if (next) setChapter(next)
-      },
-      { rootMargin: "-35% 0px -35% 0px", threshold: [0.2, 0.5, 0.8] }
-    )
-
-    nodes.forEach((node) => observer.observe(node))
-    return () => observer.disconnect()
+    const onScroll = () => setScrolled(window.scrollY > 8)
+    onScroll()
+    window.addEventListener("scroll", onScroll, { passive: true })
+    const enter = window.requestAnimationFrame(() => setEntered(true))
+    return () => {
+      window.removeEventListener("scroll", onScroll)
+      window.cancelAnimationFrame(enter)
+    }
   }, [])
 
   return (
-    <AppShell
-      height="auto"
-      variant="wash"
-      contentPadding={0}
-      topNav={
-        <TopNav
-          label="Luma"
-          heading={
-            <AstryxLink
-              href="/"
-              as={Link}
-              type="large"
-              weight="bold"
-              color="primary"
+    <div className="min-h-dvh bg-page text-fg">
+      <header
+        className={`sticky top-0 z-10 flex h-14 items-center gap-2 bg-page px-4 sm:px-6 ${
+          scrolled ? "border-b border-line" : ""
+        }`}
+      >
+        <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
+          <Link
+            href="/"
+            className="text-base font-semibold tracking-tight text-fg"
+          >
+            Luma
+          </Link>
+          <nav className="ms-8 hidden items-center gap-5 text-sm font-medium text-fg-2 sm:flex">
+            <a href="#studio" className="hover:text-fg">
+              Studio
+            </a>
+            <a href="#credits" className="hover:text-fg">
+              Credits
+            </a>
+            <a href="#findings" className="hover:text-fg">
+              Findings
+            </a>
+          </nav>
+          <div className="ms-auto flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              render={<Link href="/login" />}
+              nativeButton={false}
             >
-              Luma
-            </AstryxLink>
-          }
-          endContent={
-            <HStack gap={2} vAlign="center">
-              <Button label="Log in" variant="ghost" href="/login" as={Link} />
+              Log in
+            </Button>
+            <Button
+              variant="solid"
+              size="sm"
+              render={<Link href="/login" />}
+              nativeButton={false}
+            >
+              Start your first test
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        {/* Hero: one screen. Short copy. Product window is the subject. */}
+        <section
+          data-enter={entered ? "in" : "out"}
+          className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-4 pt-8 pb-0 sm:px-6 sm:pt-10"
+        >
+          <div
+            className={`mx-auto flex max-w-2xl flex-col items-center gap-4 text-center transition-[opacity,transform] duration-(--dur-slow) ease-out ${
+              entered
+                ? "translate-y-0 opacity-100"
+                : "translate-y-3 opacity-0"
+            }`}
+          >
+            <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-3xl">
+              UX research for design students
+            </h1>
+            <p className="max-w-xl text-base text-fg-2">
+              Build a test, take two peer studies, spend the credits for one
+              review round.
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-3">
               <Button
-                label="Start your first test"
-                variant="primary"
-                href="/login"
-                as={Link}
+                size="lg"
+                render={<Link href="/login" />}
+                nativeButton={false}
+              >
+                Start your first test
+              </Button>
+              <Button
+                variant="link"
+                render={<a href="#credits" />}
+                nativeButton={false}
+              >
+                See the credit loop
+              </Button>
+            </div>
+          </div>
+
+          <div
+            className={`mt-8 min-h-0 flex-1 transition-[opacity,transform] duration-(--dur-slow) ease-out ${
+              entered
+                ? "translate-y-0 opacity-100"
+                : "translate-y-4 opacity-0"
+            }`}
+          >
+            <div className="relative max-h-dvh overflow-hidden">
+              <ProductWindow
+                loop
+                label="Luma studio building a checkout first-click test"
               />
-            </HStack>
-          }
-        />
-      }
-    >
-      <Layout
-        height="auto"
-        contentWidth={1120}
-        padding={0}
-        content={
-          <LayoutContent padding={0}>
-            <VStack gap={0}>
-              <Section padding={6} variant="transparent" style={screenSection}>
-                <VStack gap={8} hAlign="center">
-                  <VStack gap={4} hAlign="center" maxWidth={780}>
-                    <Text
-                      type="display-1"
-                      weight="bold"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      Luma
-                    </Text>
-                    <Heading
-                      level={1}
-                      type="display-2"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      UX research for design students
-                    </Heading>
-                    <Text
-                      type="large"
-                      color="secondary"
-                      justify="center"
-                      textWrap="balance"
-                    >
-                      Create tests now. Take two peer tests, spend the credits,
-                      and get your study reviewed.
-                    </Text>
-                    <Text type="body" weight="semibold" justify="center">
-                      Complete 2 tests. Get 1 review.
-                    </Text>
-                  </VStack>
-                  <HStack gap={3}>
-                    <Button
-                      label="Start your first test"
-                      variant="primary"
-                      href="/login"
-                      as={Link}
-                      endContent={
-                        <Icon
-                          icon={ArrowRightIcon}
-                          size="sm"
-                          color="inherit"
-                        />
-                      }
-                    />
-                    <Button
-                      label="See how credits work"
-                      variant="secondary"
-                      href="#trade"
-                      as={Link}
-                    />
-                  </HStack>
-                  <ProductStage chapter="create" />
-                </VStack>
-              </Section>
+            </div>
+          </div>
+        </section>
 
-              <Section padding={6} variant="muted">
-                <Grid
-                  gap={8}
-                  columns={{ minWidth: 320, repeat: "fit" }}
-                  align="start"
-                >
-                  <VStack gap={0}>
-                    {CHAPTERS.map((item) => (
-                      <VStack
-                        key={item.id}
-                        id={item.id}
-                        gap={3}
-                        style={screenSection}
-                        maxWidth={480}
-                      >
-                        <Heading level={2} type="display-3" textWrap="balance">
-                          {item.heading}
-                        </Heading>
-                        <Text type="large" color="secondary" textWrap="pretty">
-                          {item.body}
-                        </Text>
-                      </VStack>
-                    ))}
-                  </VStack>
-                  <StackItem style={stickyStage}>
-                    <ProductStage chapter={chapter} />
-                  </StackItem>
-                </Grid>
-              </Section>
+        {/* Studio / app-frame */}
+        <section
+          id="studio"
+          className="scroll-mt-14 border-t border-line bg-surface"
+        >
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Studio for a live test
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Upload a screen, drop tasks, publish. Reviews wait until credits
+                are spent.
+              </p>
+            </div>
+            <ProductWindow
+              scene="build"
+              label="Luma studio with tasks beside the annotated checkout screen"
+            />
+          </div>
+        </section>
 
-              <Section padding={6} variant="transparent" style={screenSection}>
-                <VStack gap={5} hAlign="center" maxWidth={640}>
-                  <Heading
-                    level={2}
-                    type="display-2"
-                    justify="center"
-                    textWrap="balance"
-                  >
-                    Ready when your class project is
-                  </Heading>
-                  <Text
-                    type="large"
-                    color="secondary"
-                    justify="center"
-                    textWrap="balance"
-                  >
-                    Build the study today. Earn reviews by helping classmates
-                    with theirs.
-                  </Text>
-                  <Button
-                    label="Start your first test"
-                    variant="primary"
-                    href="/login"
-                    as={Link}
-                    endContent={
-                      <Icon icon={ArrowRightIcon} size="sm" color="inherit" />
-                    }
-                  />
-                </VStack>
-              </Section>
-            </VStack>
-          </LayoutContent>
-        }
-        footer={
-          <LayoutFooter hasDivider>
-            <HStack gap={4} vAlign="center">
-              <Text type="label" weight="semibold">
-                Luma
-              </Text>
-              <StackItem size="fill">
-                <Text type="supporting" color="secondary">
-                  Peer UX research for design students
-                </Text>
-              </StackItem>
-              <AstryxLink href="/login" as={Link} type="supporting">
-                Log in
-              </AstryxLink>
-            </HStack>
-          </LayoutFooter>
-        }
-      />
-    </AppShell>
+        {/* Credits */}
+        <section id="credits" className="scroll-mt-14 bg-page">
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Credits from peer tests
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Finish two classmate studies. Spend those credits to open reviews
+                on yours.
+              </p>
+            </div>
+            <ProductWindow
+              scene="trade"
+              label="Peer test queue with credit unlocks for classmates"
+            />
+          </div>
+        </section>
+
+        {/* Findings */}
+        <section
+          id="findings"
+          className="scroll-mt-14 border-t border-line bg-surface"
+        >
+          <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col justify-center gap-8 px-4 py-14 sm:px-6">
+            <div className="grid gap-4 lg:grid-cols-12 lg:items-end">
+              <h2 className="text-lg font-semibold text-fg lg:col-span-5">
+                Findings on the screen
+              </h2>
+              <p className="text-base text-fg-2 lg:col-span-6 lg:col-start-7">
+                Clicks and answers land on the same artboard so the next Figma
+                change is obvious.
+              </p>
+            </div>
+            <ProductWindow
+              scene="results"
+              label="Click map and findings list for a checkout study"
+            />
+          </div>
+        </section>
+
+        <Separator />
+
+        <section className="bg-page">
+          <div className="mx-auto flex w-full max-w-5xl flex-col items-start gap-4 px-4 py-16 sm:px-6">
+            <h2 className="text-xl font-semibold tracking-tight text-fg sm:text-2xl">
+              Ready for the studio critique
+            </h2>
+            <p className="max-w-prose text-base text-fg-2">
+              Ship the study this week. Earn the review by helping a classmate
+              with theirs.
+            </p>
+            <Button
+              variant="solid"
+              size="lg"
+              render={<Link href="/login" />}
+              nativeButton={false}
+            >
+              Start your first test
+            </Button>
+          </div>
+        </section>
+      </main>
+
+      <footer className="border-t border-line bg-ink text-fg-inverse">
+        <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-3 px-4 py-8 sm:px-6">
+          <p className="text-sm font-semibold">Luma</p>
+          <p className="text-sm text-fg-inverse opacity-70">
+            Peer UX research for design students
+          </p>
+          <Link
+            href="/login"
+            className="ms-auto text-sm font-medium underline-offset-4 hover:underline"
+          >
+            Log in
+          </Link>
+        </div>
+      </footer>
+    </div>
   )
 }

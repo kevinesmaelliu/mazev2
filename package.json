@@ -5,6 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "dev:clean": "rm -rf .next && next dev",
+    "preview": "node scripts/dev-launcher.mjs",
+    "preview:dev": "node scripts/dev-launcher.mjs --mode=dev",
+    "preview:staging": "node scripts/dev-launcher.mjs --mode=staging",
     "build": "next build",
     "build:clean": "rm -rf .next && next build",
     "start": "next start",
@@ -17,6 +20,8 @@
     "@astryxdesign/cli": "^0.7.16",
     "@astryxdesign/core": "^0.7.16",
     "@astryxdesign/theme-neutral": "^0.7.16",
+    "@base-ui/react": "^1.9.0",
+    "@carbon/icons-react": "^11.92.0",
     "@fontsource/figtree": "^5.3.0",
     "@fontsource/source-serif-4": "^5.3.1",
     "@heroicons/react": "^2.2.0",
@@ -32,6 +37,7 @@
     "@radix-ui/react-slot": "^1.2.4",
     "@radix-ui/react-tabs": "^1.1.13",
     "@stylexjs/stylex": "^0.19.0",
+    "@tailwindcss/postcss": "^4.3.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "gsap": "^3.14.2",
@@ -42,18 +48,19 @@
     "react-dom": "^19",
     "react-konva": "^19",
     "sonner": "^2.0.7",
-    "tailwind-merge": "^3.4.0",
+    "tailwind-merge": "^3.7.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@typescript-eslint/parser": "^8.73.0",
     "autoprefixer": "^10.4.24",
-    "eslint": "^8",
+    "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.29",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "tailwindcss": "^4.3.5",
     "typescript": "^5"
   }
 }
