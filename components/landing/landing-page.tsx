@@ -7,6 +7,7 @@ import { Button } from "@/components/lime/ui/button"
 import { Separator } from "@/components/lime/ui/separator"
 import { ProductWindow } from "@/components/landing/product-window"
 import "./cta-sky.css"
+import "./hero-sky.css"
 
 /** Client-only: Stageshow Stage measures the DOM and conflicts with SSR/film hooks. */
 const HeroFlow = dynamic(
@@ -50,8 +51,10 @@ export function LandingPage() {
   return (
     <div className="min-h-dvh bg-page text-fg">
       <header
-        className={`sticky top-0 z-10 flex h-14 items-center gap-2 bg-page px-4 sm:px-6 ${
-          scrolled ? "border-b border-line" : ""
+        className={`sticky top-0 z-10 flex h-14 items-center gap-2 px-4 sm:px-6 ${
+          scrolled
+            ? "border-b border-line bg-page"
+            : "border-b border-transparent bg-transparent"
         }`}
       >
         <div className="mx-auto flex w-full max-w-5xl items-center gap-2">
@@ -94,48 +97,51 @@ export function LandingPage() {
       </header>
 
       <main>
-        {/* Hero: one screen. Short copy. Product window is the subject. */}
+        {/* Hero: one screen. Dithered sky wash stays in this viewport only. */}
         <section
           data-enter={entered ? "in" : "out"}
-          className="mx-auto flex min-h-dvh w-full max-w-5xl flex-col px-4 pt-8 pb-0 sm:px-6 sm:pt-10"
+          className="landing-hero flex min-h-dvh w-full flex-col"
         >
-          <div
-            className={`mx-auto flex max-w-2xl flex-col items-center gap-4 text-center transition-[opacity,transform] duration-(--dur-slow) ease-out ${
-              entered
-                ? "translate-y-0 opacity-100"
-                : "translate-y-3 opacity-0"
-            }`}
-          >
-            <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-3xl">
-              UX research for design students
-            </h1>
-            <p className="max-w-xl text-base text-fg-2">
-              Build a test, take two peer studies, spend the credits for one
-              review round.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              <Button
-                size="lg"
-                className="gradient-blue-sky"
-                render={<Link href="/login" />}
-                nativeButton={false}
-              >
-                Start your first test
-              </Button>
-              <Button
-                variant="link"
-                render={<a href="#credits" />}
-                nativeButton={false}
-              >
-                See the credit loop
-              </Button>
+          <div className="landing-hero-sky" aria-hidden />
+          <div className="mx-auto flex min-h-dvh w-full max-w-5xl flex-1 flex-col px-4 pt-8 pb-0 sm:px-6 sm:pt-10">
+            <div
+              className={`mx-auto flex max-w-2xl flex-col items-center gap-4 text-center transition-[opacity,transform] duration-(--dur-slow) ease-out ${
+                entered
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-3 opacity-0"
+              }`}
+            >
+              <h1 className="text-xl leading-tight font-semibold tracking-tight sm:text-3xl">
+                UX research for design students
+              </h1>
+              <p className="max-w-xl text-base text-fg-2">
+                Build a test, take two peer studies, spend the credits for one
+                review round.
+              </p>
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <Button
+                  size="lg"
+                  className="gradient-blue-sky"
+                  render={<Link href="/login" />}
+                  nativeButton={false}
+                >
+                  Start your first test
+                </Button>
+                <Button
+                  variant="link"
+                  render={<a href="#credits" />}
+                  nativeButton={false}
+                >
+                  See the credit loop
+                </Button>
+              </div>
             </div>
-          </div>
 
-          {/* Keep the stageshow visible from first paint (poster / film / LCP). */}
-          <div className="mt-8 min-h-0 flex-1">
-            <div className="relative max-h-dvh overflow-hidden">
-              <HeroFlow />
+            {/* Keep the stageshow visible from first paint (poster / film / LCP). */}
+            <div className="mt-8 min-h-0 flex-1">
+              <div className="relative max-h-dvh overflow-hidden">
+                <HeroFlow />
+              </div>
             </div>
           </div>
         </section>

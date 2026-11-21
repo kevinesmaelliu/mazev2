@@ -1,0 +1,96 @@
+/* Landing hero: dithered sky wash — first viewport only.
+ * Soft blue pool at the bottom, radially fading to white toward the top.
+ * Grain uses the same vertical falloff so the dither dissolves with the sky.
+ */
+
+.landing-hero {
+  position: relative;
+  isolation: isolate;
+}
+
+.landing-hero-sky {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Radial sky field: strongest at bottom-center → white by the top */
+.landing-hero-sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      ellipse 130% 95% at 50% 108%,
+      #6699e6 0%,
+      #80b3ff 18%,
+      #b3d9ff 42%,
+      #e6f2ff 62%,
+      rgb(255 255 255 / 0.55) 78%,
+      rgb(255 255 255 / 0) 100%
+    ),
+    linear-gradient(
+      to top,
+      #b3d9ff 0%,
+      #e6f2ff 28%,
+      #ffffff 72%
+    );
+}
+
+@supports (background: radial-gradient(in oklab, #000, #fff)) {
+  .landing-hero-sky::before {
+    background:
+      radial-gradient(
+        ellipse 130% 95% at 50% 108% in oklab,
+        #6699e6 0%,
+        #80b3ff 18%,
+        #b3d9ff 42%,
+        #e6f2ff 62%,
+        rgb(255 255 255 / 0.55) 78%,
+        rgb(255 255 255 / 0) 100%
+      ),
+      linear-gradient(
+        to top in oklab,
+        #b3d9ff 0%,
+        #e6f2ff 28%,
+        #ffffff 72%
+      );
+  }
+}
+
+/* Dither grain — masked bottom→top so texture dies with the wash */
+.landing-hero-sky::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/textures/sky-grain.png") repeat;
+  background-size: 64px 64px;
+  image-rendering: pixelated;
+  mix-blend-mode: soft-light;
+  opacity: 0.42;
+  -webkit-mask-image: radial-gradient(
+    ellipse 120% 90% at 50% 100%,
+    #000 0%,
+    #000 40%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(
+    ellipse 120% 90% at 50% 100%,
+    #000 0%,
+    #000 40%,
+    transparent 78%
+  );
+}
+
+.landing-hero > *:not(.landing-hero-sky) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-hero-sky::after {
+    opacity: 0.28;
+  }
+}
