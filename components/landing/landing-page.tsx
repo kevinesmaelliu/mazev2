@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/lime/ui/button"
 import { Separator } from "@/components/lime/ui/separator"
 import { ProductWindow } from "@/components/landing/product-window"
+import "./cta-sky.css"
 
 /** Client-only: Stageshow Stage measures the DOM and conflicts with SSR/film hooks. */
 const HeroFlow = dynamic(
@@ -115,6 +116,7 @@ export function LandingPage() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Button
                 size="lg"
+                className="gradient-blue-sky"
                 render={<Link href="/login" />}
                 nativeButton={false}
               >

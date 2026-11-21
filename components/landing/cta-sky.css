@@ -1,0 +1,65 @@
+/* Landing CTA: Feral “Blue sky” behind Lime’s glass hover sheen.
+ * Colours: MISTED SKY #E6F2FF, #B3D9FF · SKY HAZE #80B3FF · RIVER INDIGO #6699E6
+ * Glass stays in .glow::before’s upper layers; sky is the body + lit tokens. */
+
+.gradient-blue-sky {
+  /* Lit body tokens the glow stack already reads */
+  --glow-from-lit: #e6f2ff;
+  --glow-to-lit: #6699e6;
+  --glow-edge-lit: rgb(255 255 255 / 0.92);
+  --glow-bloom-lit: rgb(230 242 255 / 0.55);
+  --glow-cast: 102 153 230;
+}
+
+/* Replace the 2-stop lit body with Kevin’s 4-stop sky; keep glass sheens above it */
+.gradient-blue-sky.glow::before {
+  background-image:
+    linear-gradient(180deg, rgb(255 255 255 / calc(0.38 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 48%),
+    radial-gradient(110% 95% at 22% 0%, rgb(255 255 255 / calc(0.3 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 62%),
+    radial-gradient(75% 65% at 50% 115%, rgb(255 255 255 / calc(0.42 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 72%),
+    linear-gradient(135deg, #e6f2ff 12.5%, #b3d9ff 37.5%, #80b3ff 62.5%, #6699e6 87.5%);
+}
+
+@supports (background: linear-gradient(in oklab, #000, #fff)) {
+  .gradient-blue-sky.glow::before {
+    background-image:
+      linear-gradient(180deg, rgb(255 255 255 / calc(0.38 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 48%),
+      radial-gradient(110% 95% at 22% 0%, rgb(255 255 255 / calc(0.3 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 62%),
+      radial-gradient(75% 65% at 50% 115%, rgb(255 255 255 / calc(0.42 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 72%),
+      linear-gradient(135deg in oklab, #e6f2ff 12.5%, #b3d9ff 37.5%, #80b3ff 62.5%, #6699e6 87.5%);
+  }
+}
+
+/* Soft grain over the sky, under the label — fades in with the lit layer */
+.gradient-blue-sky.glow::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  background: url("/textures/sky-grain.png") repeat;
+  background-size: 64px 64px;
+  image-rendering: pixelated;
+  mix-blend-mode: overlay;
+}
+
+@media (hover: hover) {
+  .gradient-blue-sky.glow:not(.glow-still):hover::after {
+    opacity: 0.04;
+  }
+}
+
+.gradient-blue-sky.glow:not(.glow-still)[data-force-hover]::after {
+  opacity: 0.04;
+}
+
+.gradient-blue-sky.glow:not(.glow-still):is(:active, [data-force-active])::after {
+  opacity: 0;
+}
+
+.gradient-blue-sky.glow:is(:disabled, [data-disabled], [aria-disabled="true"])::after {
+  display: none;
+}
