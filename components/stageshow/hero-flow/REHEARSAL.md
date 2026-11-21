@@ -1,30 +1,20 @@
 # Rehearsal: Luma hero flow
 
-Abstract kit story (no browser Window, no Phone). Surfaces: `Card`, `Avatar`, `Facepile`, `Chart`, `Meter`, `Badge`, `Button`, `Collapse`, `Roll`, `Spinner`, `Check`, `Count`.
+Kit story (no browser Window, no Phone, no demo cursor). Surfaces: `Card`, `Row`, `Avatar`, `Facepile`, `Meter`, `Badge`, `Button`, `Collapse`, `Roll`, `Spinner`, `Check`, `Count`, `Stream`, `Bar`.
 
-Beats (no demo cursor — timed `set` cuts only):
-1. Compose — second block opens on its own
-2. Compose — third block opens
-3. Share → Draft → Live on the compose Card
-4. Network — hub + clockwise avatar orbit (people ring)
-5. Feedback — chips return from the ring toward the hub
-6. Digest — Spinner clockwise → Check (“Analyzing” → “Digested”)
-7. Reports — three pretty report Cards (Chart + Meter + Badge + Facepile)
-Loop ~16s; snap reset after reports fold.
+Beats (timed `set` cuts only):
+1. Compose — blocks open; Share → Live
+2. Takes — peer take Rows fill an inbox (left)
+3. Agents — Click map / Task path / Preference queue → run → done with concrete outputs (right)
+4. Findings — one board: click heat pins, 11/14 task rate, A/B + streamed quote
+Loop ~18s; snap reset after findings.
 
-Marks: `compose`, `share`, `network`, `feedback`, `digest`, `reports`.
+Marks: `compose`, `share`, `takes`, `agents`, `findings`.
 
-Poster = reports payoff (digested hub + three report cards).
+Poster = findings board with all three agents done.
 
 Widths: design 900×420; compact at 358.
 
-**Stills / posters stale:** `shots/` and `poster.png` still show the old Window+Phone device-pair. Re-film when convenient (`film.mjs`); do not treat those stills as current.
+**Stills / posters stale:** `shots/` and `poster.png` still show an older cut. Re-film when convenient (`film.mjs`); do not treat those stills as current.
 
 Gate: stock `film.mjs --gate` was not green on this host previously (networkidle + Next). Manual review of the live stage instead.
-
-Review assumptions:
-- Share language (not “Publish”) fits the abstract send-to-network beat
-- Network is peer avatars, not a phone handoff
-- Report titles map to the three compose blocks
-
-Assumptions Kevin can correct: exact feedback chip copy, report metrics, whether Share should stay “Publish”.
