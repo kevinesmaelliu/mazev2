@@ -1,29 +1,26 @@
 # Rehearsal: Luma hero flow
 
-Gold: `device-pair` (layout: studio window + phone satellite) + cursor beats from `hero-demo`.
+Abstract kit story (no browser Window, no Phone, no demo cursor, no product desks). Surfaces: `Card`, `Avatar`, `Facepile`, `Meter`, `Badge`, `Button`, `Collapse`, `Roll`, `Spinner`, `Check`, `Count`, `Bar`.
 
-Beats:
-1. Add block → second block opens
-2. Add block → third block opens
-3. Publish in toolbar → Draft → Live
-4. Phone: recruiting “You’re a match” (screener passed)
-5. Payoff: phone live test + first-click task; studio shows “1 participant in”
-Loop ~12s; snap reset while phone returns to idle.
+Beats (timed `set` cuts only):
+1. Compose — blocks open; Share → Live
+2. Network — hub + clockwise peer `Avatar` orbit
+3. Takes — short notes drift in from the ring toward the hub
+4. Agents — named floating tokens (Click map / Task path / Preference) run → done with concrete outputs; takes settle inward
+5. Reports — three differentiated Cards (heat pins, 11/14 meter, A/B pref)
+Loop ~18s; snap reset after reports fold.
 
-Captured: poster (`--reduced`), open/blocks/publish/recruit/test stills via Playwright `load` (stock `film.mjs` `networkidle` stalls on Next HMR). Widths: design 900×420; compact defined at 358.
+Marks: `compose`, `share`, `network`, `takes`, `agents`, `reports`.
 
-Gate: stock `film.mjs --gate` not green on this host (networkidle + Next). Manual review of stills instead.
+Poster = reports payoff (orbit on, three agents done, three report cards).
 
-Film / fixes:
-- Publish was cut by the stage crop → moved to toolbar
-- Phone idle no longer mirrors the canvas wireframe
-- Recruit/test copy shortened so actions stay whole in the phone crop
+Widths: design 900×420; compact at 358.
+
+**Stills / posters stale:** `shots/` and `poster.png` still show an older cut. Re-film when convenient (`film.mjs`); do not treat those stills as current.
+
+Gate: stock `film.mjs --gate` was not green on this host previously (networkidle + Next). Manual review of the live stage instead.
 
 Review assumptions:
-- Participant is a peer design student (credit loop)
-- Study title “Checkout redesign” matches existing landing copy
-- Recruiting = screener + consent, then live test handoff
-
-Not checked: official `--gate` contact sheet; 390 compact film pass.
-
-Assumptions Kevin can correct: exact recruiting copy, whether the phone should be LockScreen+Notification instead of in-app screens.
+- Share language (not “Publish”) fits the abstract send-to-network beat
+- Agents are spatial tokens around the hub, not inbox/desk panels
+- Report titles map to the three compose blocks

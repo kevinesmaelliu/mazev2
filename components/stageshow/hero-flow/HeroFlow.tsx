@@ -2,35 +2,45 @@
 
 import { useEffect, useState } from "react"
 import {
+  Avatar,
   Badge,
   Bar,
   Button,
+  Card,
+  Check,
   Collapse,
-  Phone,
+  Count,
+  Facepile,
+  Meter,
   Roll,
+  Spinner,
   Stage,
   Text,
-  Window,
   type Act,
 } from "@/components/stageshow/kit"
 import "@/components/stageshow/luma-look.css"
 import "./hero-flow.css"
 
 /**
- * Luma hero stageshow: build blocks → publish → participant who passed
- * recruiting starts the test.
- *
- * Gold layout: device-pair. Cursor motion: hero-demo. Payoff on the phone.
+ * Luma hero: compose → peer orbit → takes drift in → agents digest →
+ * reports bloom. Abstract spatial story (no Window, Phone, cursor, or
+ * product panels).
  */
 
-type PhoneScene = "idle" | "recruit" | "test"
+type Phase = "compose" | "network" | "takes" | "agents" | "reports"
+
+type AgentStatus = "idle" | "run" | "done"
 
 type S = {
   blocks: number
   hot: number
-  status: "draft" | "live"
-  phone: PhoneScene
-  published: boolean
+  shared: boolean
+  phase: Phase
+  orbiting: boolean
+  takes: number
+  agents: number
+  agentStatus: [AgentStatus, AgentStatus, AgentStatus]
+  reports: number
 }
 
 const BLOCKS = [
@@ -39,61 +49,202 @@ const BLOCKS = [
   { title: "A or B confirmation", kind: "Preference" },
 ] as const
 
+const PEOPLE = ["Jordan", "Sam", "Riley", "Casey", "Avery", "Quinn", "Morgan", "Reese"] as const
+
+const TAKES = [
+  { name: "Jordan", note: "Cart first" },
+  { name: "Sam", note: "Header CTA" },
+  { name: "Riley", note: "3:12 done" },
+  { name: "Casey", note: "Stuck · ship" },
+  { name: "Avery", note: "Chose B" },
+  { name: "Quinn", note: "Chose B" },
+] as const
+
+const AGENTS = [
+  { name: "Click map", run: "Clustering taps", done: "Cart · 9" },
+  { name: "Task path", run: "Timing paths", done: "11 / 14" },
+  { name: "Preference", run: "Tallying A/B", done: "B wins" },
+] as const
+
+const REPORTS = [
+  {
+    title: "First click",
+    by: "Click map",
+    badge: "Cart 9",
+    tone: "success" as const,
+    kind: "heat" as const,
+  },
+  {
+    title: "Task",
+    by: "Task path",
+    badge: "11/14",
+    tone: "accent" as const,
+    kind: "stat" as const,
+    meter: 0.79,
+  },
+  {
+    title: "Preference",
+    by: "Preference",
+    badge: "B · 9",
+    tone: "neutral" as const,
+    kind: "pref" as const,
+    a: 0.36,
+    b: 0.64,
+  },
+] as const
+
 const initial: S = {
   blocks: 1,
   hot: 0,
-  status: "draft",
-  phone: "idle",
-  published: false,
+  shared: false,
+  phase: "compose",
+  orbiting: false,
+  takes: 0,
+  agents: 0,
+  agentStatus: ["idle", "idle", "idle"],
+  reports: 0,
 }
 
-/** Poster = payoff: published study + participant on first task. */
 const POSTER: S = {
   blocks: 3,
-  hot: 0,
-  status: "live",
-  phone: "test",
-  published: true,
+  hot: -1,
+  shared: true,
+  phase: "reports",
+  orbiting: true,
+  takes: TAKES.length,
+  agents: 3,
+  agentStatus: ["done", "done", "done"],
+  reports: 3,
 }
-
-const REST = { wide: { x: 520, y: 280 }, compact: { x: 300, y: 300 } }
 
 async function script(a: Act<S>) {
   await a.wait(700)
 
-  // Beat 1 — add the second block
-  await a.move("add")
-  await a.wait(280)
-  await a.click()
+  a.mark("compose")
   await a.set({ blocks: 2, hot: 1 })
+  await a.wait(700)
+  await a.set({ blocks: 3, hot: 2 })
+  await a.wait(750)
+
+  a.mark("share")
+  await a.set({ shared: true, hot: -1 })
   await a.wait(650)
 
-  // Beat 1b — add the third block
-  await a.move("add")
-  await a.wait(220)
-  await a.click()
-  await a.set({ blocks: 3, hot: 2 })
-  await a.wait(700)
+  a.mark("network")
+  await a.set({ phase: "network", orbiting: true })
+  await a.wait(1200)
 
-  // Beat 2 — publish (toolbar control stays in the crop)
-  await a.move("publish")
-  await a.wait(280)
-  await a.click()
-  await a.set({ status: "live", published: true, hot: -1 })
-  await a.wait(800)
+  a.mark("takes")
+  await a.set({ phase: "takes" })
+  for (let i = 1; i <= TAKES.length; i++) {
+    await a.set({ takes: i })
+    await a.wait(200)
+  }
+  await a.wait(520)
 
-  // Beat 3 — recruiting passed, then the live test
-  await a.set({ phone: "recruit" })
-  await a.wait(1400)
-  await a.set({ phone: "test" })
-  await a.move("rest")
+  a.mark("agents")
+  await a.set({ phase: "agents", agents: 3 })
+  for (let i = 0; i < AGENTS.length; i++) {
+    const next: [AgentStatus, AgentStatus, AgentStatus] = ["idle", "idle", "idle"]
+    for (let j = 0; j < i; j++) next[j] = "done"
+    next[i] = "run"
+    await a.set({ agentStatus: next })
+    await a.wait(880)
+    const done = [...next] as [AgentStatus, AgentStatus, AgentStatus]
+    done[i] = "done"
+    await a.set({ agentStatus: done })
+    await a.wait(240)
+  }
+  await a.wait(360)
+
+  a.mark("reports")
+  await a.set({ phase: "reports" })
+  for (let i = 1; i <= REPORTS.length; i++) {
+    await a.set({ reports: i })
+    await a.wait(360)
+  }
   await a.wait(2400)
 
-  // Reset with a cause: snap while the phone leaves
-  await a.set({ phone: "idle" })
-  await a.wait(400)
-  await a.snap({ ...initial })
+  await a.set({ reports: 0, orbiting: false })
   await a.wait(350)
+  await a.snap({ ...initial })
+  await a.wait(300)
+}
+
+function OrbitNode({
+  name,
+  index,
+  total,
+  active,
+}: {
+  name: string
+  index: number
+  total: number
+  active: boolean
+}) {
+  const angle = (360 / total) * index - 90
+  return (
+    <div
+      className="hf-orbit-slot"
+      style={{ ["--hf-angle" as string]: `${angle}deg` }}
+      data-on={active || undefined}
+    >
+      <div className="hf-orbit-node">
+        <Avatar name={name} size={36} tone="person" ring={active ? "confirmed" : "pending"} />
+      </div>
+    </div>
+  )
+}
+
+function ReportBody({
+  report,
+  show,
+}: {
+  report: (typeof REPORTS)[number]
+  show: boolean
+}) {
+  if (report.kind === "heat") {
+    return (
+      <div className="hf-heat" aria-hidden>
+        <span className="hf-heat-pin" style={{ left: "28%", top: "42%" }}>
+          9
+        </span>
+        <span className="hf-heat-pin" data-soft style={{ left: "70%", top: "22%" }}>
+          3
+        </span>
+        <span className="hf-heat-pin" data-soft style={{ left: "52%", top: "70%" }}>
+          2
+        </span>
+        <Bar w={72} h={6} tone={2} style={{ position: "absolute", left: 12, top: 12 }} />
+        <Bar w={52} h={6} tone={1} style={{ position: "absolute", left: 12, top: 24 }} />
+      </div>
+    )
+  }
+  if (report.kind === "stat") {
+    return (
+      <div className="hf-stat">
+        <div className="hf-stat-row">
+          <span className="hf-stat-num">11/14</span>
+          <span className="hf-stat-unit">finished</span>
+        </div>
+        <Meter value={report.meter ?? 0.79} tone="accent" />
+      </div>
+    )
+  }
+  return (
+    <div className="hf-pref" data-show={show || undefined}>
+      <div className="hf-pref-col">
+        <span>A</span>
+        <Meter value={report.a ?? 0.36} tone="ink" />
+        <span className="hf-pref-n">5</span>
+      </div>
+      <div className="hf-pref-col" data-win>
+        <span>B</span>
+        <Meter value={report.b ?? 0.64} tone="accent" />
+        <span className="hf-pref-n">9</span>
+      </div>
+    </div>
+  )
 }
 
 export function HeroFlow() {
@@ -120,196 +271,208 @@ export function HeroFlow() {
       initial={initial}
       poster={POSTER}
       script={script}
-      cursor={{ at: REST }}
       theme="light"
       palette="accent"
       fidelity="standard"
       className="look-luma hf-section"
     >
-      {(s, _rect, layout) => (
-        <>
-          <span
-            data-target="rest"
-            style={{
-              position: "absolute",
-              left: REST[layout].x,
-              top: REST[layout].y,
-              width: 1,
-              height: 1,
-            }}
-          />
-          <Window
-            title="Luma"
-            className="hf-window"
-            data-cursor="pointer"
-          >
-            <aside className="hf-side">
-              <div className="hf-side-head">
-                <div>
-                  <div className="hf-side-title">Blocks</div>
-                  <div className="hf-side-meta">
-                    <Roll>{`${s.blocks} in study`}</Roll>
+      {(s) => {
+        const showCompose = s.phase === "compose"
+        const showNetwork = s.phase !== "compose"
+        const showReports = s.phase === "reports" && s.reports > 0
+        const running = s.agentStatus.findIndex((x) => x === "run")
+        const hubAgent = running >= 0 ? AGENTS[running] : null
+        const allDone = s.agentStatus.every((x) => x === "done")
+
+        return (
+          <>
+            <div
+              className="hf-compose"
+              data-phase={s.phase}
+              data-shared={s.shared || undefined}
+              aria-hidden={!showCompose}
+            >
+              <Card lift pad="medium" gap={14} className="hf-compose-card">
+                <div className="hf-compose-head">
+                  <div>
+                    <div className="hf-compose-title">Checkout redesign</div>
+                    <div className="hf-compose-meta">
+                      <Roll>{`${s.blocks} blocks`}</Roll>
+                      <span>· studio critique</span>
+                    </div>
                   </div>
+                  <Badge tone={s.shared ? "success" : "neutral"} dot>
+                    <Roll>{s.shared ? "Live" : "Draft"}</Roll>
+                  </Badge>
                 </div>
-                <Badge tone={s.status === "live" ? "success" : "neutral"}>
-                  <Roll>{s.status === "live" ? "Live" : "Draft"}</Roll>
-                </Badge>
+
+                <div className="hf-blocks">
+                  {BLOCKS.map((block, i) => (
+                    <Collapse key={block.title} open={s.blocks > i} reveal="clip">
+                      <div
+                        className="hf-block"
+                        data-hot={s.hot === i || undefined}
+                      >
+                        <span className="hf-block-num">{i + 1}</span>
+                        <span>
+                          <span className="hf-block-title">{block.title}</span>
+                          <span className="hf-block-kind">{block.kind}</span>
+                        </span>
+                      </div>
+                    </Collapse>
+                  ))}
+                </div>
+
+                <div className="hf-compose-actions">
+                  <Button
+                    variant="secondary"
+                    size="medium"
+                    style={{ flex: 1, justifyContent: "center" }}
+                  >
+                    Add block
+                  </Button>
+                  <Button
+                    variant="primary"
+                    size="medium"
+                    style={{ flex: 1, justifyContent: "center" }}
+                  >
+                    {s.shared ? "Shared" : "Share"}
+                  </Button>
+                </div>
+              </Card>
+            </div>
+
+            <div
+              className="hf-network"
+              data-on={showNetwork || undefined}
+              data-orbiting={s.orbiting || undefined}
+              data-phase={s.phase}
+            >
+              <div className="hf-hub">
+                <Card lift pad="small" gap={8} className="hf-hub-card">
+                  {s.phase === "agents" && hubAgent ? (
+                    <>
+                      <Spinner size={22} />
+                      <Text className="hf-hub-label">{hubAgent.name}</Text>
+                      <span className="hf-hub-sub">{hubAgent.run}</span>
+                    </>
+                  ) : s.phase === "agents" && allDone ? (
+                    <>
+                      <Check on size={22} />
+                      <Text className="hf-hub-label">Ready</Text>
+                      <span className="hf-hub-sub">3 reports</span>
+                    </>
+                  ) : s.phase === "reports" ? (
+                    <>
+                      <Check on size={22} />
+                      <Text className="hf-hub-label">Reports</Text>
+                      <span className="hf-hub-sub">
+                        <Count value={s.reports} /> ready
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Facepile names={[...PEOPLE].slice(0, 4)} size={26} />
+                      <span className="hf-hub-label">
+                        <Count value={Math.max(s.takes, s.orbiting ? PEOPLE.length : 0)} />{" "}
+                        {s.takes > 0 ? "takes" : "peers"}
+                      </span>
+                    </>
+                  )}
+                </Card>
               </div>
 
-              <div className="hf-blocks">
-                {BLOCKS.map((block, i) => (
-                  <Collapse key={block.title} open={s.blocks > i} reveal="clip">
+              {/* Named agents as floating tokens around the hub */}
+              <div
+                className="hf-agents"
+                data-on={
+                  s.phase === "agents" || s.phase === "reports" || undefined
+                }
+              >
+                {AGENTS.map((agent, i) => {
+                  const status = s.agentStatus[i]!
+                  return (
                     <div
-                      className="hf-block"
-                      data-hot={s.hot === i || undefined}
-                      data-target={i === 0 ? "block-0" : undefined}
+                      key={agent.name}
+                      className="hf-agent"
+                      data-i={i}
+                      data-status={status}
+                      data-in={s.agents > i || undefined}
                     >
-                      <span className="hf-block-num">{i + 1}</span>
-                      <span>
-                        <span className="hf-block-title">{block.title}</span>
-                        <span className="hf-block-kind">{block.kind}</span>
+                      <span className="hf-agent-mark" aria-hidden>
+                        {status === "run" ? (
+                          <Spinner size={14} />
+                        ) : status === "done" ? (
+                          <Check on size={14} />
+                        ) : null}
+                      </span>
+                      <span className="hf-agent-name">{agent.name}</span>
+                      <span className="hf-agent-out">
+                        {status === "done" ? agent.done : status === "run" ? "…" : ""}
                       </span>
                     </div>
-                  </Collapse>
+                  )
+                })}
+              </div>
+
+              <div className="hf-orbit" aria-hidden>
+                <div className="hf-orbit-ring" data-spin={s.orbiting || undefined} />
+                <div className="hf-orbit-faces" data-spin={s.orbiting || undefined}>
+                  {PEOPLE.map((name, i) => (
+                    <OrbitNode
+                      key={name}
+                      name={name}
+                      index={i}
+                      total={PEOPLE.length}
+                      active={s.takes > i || allDone}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Takes as quiet notes drifting toward the hub */}
+              <div
+                className="hf-takes"
+                data-on={
+                  s.phase === "takes" ||
+                  s.phase === "agents" ||
+                  s.phase === "reports" ||
+                  undefined
+                }
+              >
+                {TAKES.map((item, i) => (
+                  <div
+                    key={item.name}
+                    className="hf-take"
+                    style={{ ["--hf-i" as string]: String(i) }}
+                    data-in={s.takes > i || undefined}
+                  >
+                    <Avatar name={item.name} size={18} tone="person" />
+                    <span>{item.note}</span>
+                  </div>
                 ))}
               </div>
-
-              <div className="hf-side-foot">
-                <Button
-                  data-target="add"
-                  variant="secondary"
-                  size="medium"
-                  style={{ width: "100%", justifyContent: "center" }}
-                >
-                  Add block
-                </Button>
-              </div>
-            </aside>
-
-            <div className="hf-main">
-              <div className="hf-toolbar">
-                <div className="hf-study">
-                  Checkout redesign <span>/ first-click</span>
-                </div>
-                {s.status === "live" ? (
-                  <Text className="hf-status" style={{ color: "var(--ss-success-text)" }}>
-                    1 participant in
-                  </Text>
-                ) : (
-                  <Bar w={56} h={8} tone={2} style={{ marginLeft: 8 }} />
-                )}
-                <Button
-                  data-target="publish"
-                  variant="primary"
-                  size="small"
-                  style={{ marginLeft: "auto" }}
-                >
-                  {s.published ? "Published" : "Publish"}
-                </Button>
-              </div>
-              <div className="hf-canvas" aria-hidden>
-                <div className="hf-artboard">
-                  <Bar w={120} h={8} tone={3} />
-                  <Bar w={180} h={8} tone={2} />
-                  <Bar w={90} h={28} r={6} tone={3} style={{ marginTop: 18 }} />
-                  <Bar
-                    w={140}
-                    h={34}
-                    r={8}
-                    tone={4}
-                    style={{ marginTop: "auto", alignSelf: "flex-end" }}
-                  />
-                  {s.blocks >= 1 && (
-                    <span className="hf-pin" style={{ left: 48, top: 36 }}>
-                      1
-                    </span>
-                  )}
-                  {s.blocks >= 2 && (
-                    <span className="hf-pin" style={{ right: 36, bottom: 48 }}>
-                      2
-                    </span>
-                  )}
-                  {s.blocks >= 3 && (
-                    <span className="hf-pin" style={{ left: 110, top: 110 }}>
-                      3
-                    </span>
-                  )}
-                </div>
-              </div>
             </div>
-          </Window>
 
-          <Phone width={236} frame="pro" className="hf-phone" dark={false}>
-            {s.phone === "idle" && (
-              <div className="hf-idle" aria-hidden>
-                <div className="hf-idle-mark">Luma</div>
-                <Bar w={88} h={8} tone={2} style={{ marginBottom: 10 }} />
-                <Bar w={140} h={8} tone={1} style={{ marginBottom: 18 }} />
-                <div className="hf-idle-card">
-                  <Bar w={72} h={6} tone={2} />
-                  <Bar w={110} h={6} tone={1} style={{ marginTop: 8 }} />
-                </div>
-              </div>
-            )}
-
-            {s.phone === "recruit" && (
-              <div className="hf-recruit">
-                <div className="hf-recruit-kicker">Recruiting</div>
-                <div className="hf-recruit-title">You&apos;re a match</div>
-                <div className="hf-recruit-body">
-                  Design student · used checkout apps last month.
-                </div>
-                <div className="hf-recruit-checks">
-                  <div className="hf-check">
-                    <span className="hf-check-dot">✓</span>
-                    Screener passed
-                  </div>
-                  <div className="hf-check">
-                    <span className="hf-check-dot">✓</span>
-                    Consent on file
-                  </div>
-                </div>
-                <Button
-                  variant="primary"
-                  size="medium"
-                  style={{ justifyContent: "center", width: "100%" }}
-                >
-                  Continue
-                </Button>
-              </div>
-            )}
-
-            {s.phone === "test" && (
-              <div className="hf-test">
-                <div className="hf-test-kicker">Live test · Jordan</div>
-                <div className="hf-test-title">Checkout redesign</div>
-                <div className="hf-test-body">
-                  Passed recruiting · 3 blocks · ~4 min
-                </div>
-                <div className="hf-test-task">
-                  <div className="hf-test-task-label">Block 1 · First click</div>
-                  <div className="hf-test-task-text">
-                    Where would you tap to check out?
-                  </div>
-                </div>
-                <Button
-                  variant="primary"
-                  size="medium"
-                  style={{ marginTop: 12, justifyContent: "center", width: "100%" }}
-                >
-                  Start block
-                </Button>
-                {/* Filler below stays in the stage crop */}
-                <div className="hf-test-fill" aria-hidden>
-                  <Bar w={120} h={8} tone={1} style={{ marginTop: 22 }} />
-                  <Bar w={160} h={8} tone={1} style={{ marginTop: 8 }} />
-                  <Bar w={100} h={8} tone={1} style={{ marginTop: 8 }} />
-                </div>
-              </div>
-            )}
-          </Phone>
-        </>
-      )}
+            <div className="hf-reports" data-on={showReports || undefined}>
+              {REPORTS.map((report, i) => (
+                <Collapse key={report.title} open={s.reports > i} reveal="drop" from="below">
+                  <Card lift pad="small" gap={10} className="hf-report">
+                    <div className="hf-report-head">
+                      <div>
+                        <span className="hf-report-title">{report.title}</span>
+                        <span className="hf-report-by">{report.by}</span>
+                      </div>
+                      <Badge tone={report.tone}>{report.badge}</Badge>
+                    </div>
+                    <ReportBody report={report} show={s.reports > i} />
+                  </Card>
+                </Collapse>
+              ))}
+            </div>
+          </>
+        )
+      }}
     </Stage>
   )
 }
