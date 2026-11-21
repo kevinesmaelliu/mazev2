@@ -13,10 +13,8 @@ import {
   Facepile,
   Meter,
   Roll,
-  Row,
   Spinner,
   Stage,
-  Stream,
   Text,
   type Act,
 } from "@/components/stageshow/kit"
@@ -24,11 +22,12 @@ import "@/components/stageshow/luma-look.css"
 import "./hero-flow.css"
 
 /**
- * Luma hero: compose → share to peers → takes come back → named agents
- * process the takes → findings board. No Window, Phone, or demo cursor.
+ * Luma hero: compose → peer orbit → takes drift in → agents digest →
+ * reports bloom. Abstract spatial story (no Window, Phone, cursor, or
+ * product panels).
  */
 
-type Phase = "compose" | "takes" | "agents" | "findings"
+type Phase = "compose" | "network" | "takes" | "agents" | "reports"
 
 type AgentStatus = "idle" | "run" | "done"
 
@@ -37,11 +36,11 @@ type S = {
   hot: number
   shared: boolean
   phase: Phase
+  orbiting: boolean
   takes: number
   agents: number
   agentStatus: [AgentStatus, AgentStatus, AgentStatus]
-  findingWords: number
-  findings: number
+  reports: number
 }
 
 const BLOCKS = [
@@ -50,157 +49,201 @@ const BLOCKS = [
   { title: "A or B confirmation", kind: "Preference" },
 ] as const
 
+const PEOPLE = ["Jordan", "Sam", "Riley", "Casey", "Avery", "Quinn", "Morgan", "Reese"] as const
+
 const TAKES = [
-  { name: "Jordan", line: "First tap on cart", block: "1 · click" },
-  { name: "Sam", line: "Looked for Pay in header", block: "1 · click" },
-  { name: "Riley", line: "Finished in 3:12", block: "2 · task" },
-  { name: "Casey", line: "Stuck on shipping", block: "2 · task" },
-  { name: "Avery", line: "Chose B — clearer total", block: "3 · pref" },
-  { name: "Quinn", line: "Chose B", block: "3 · pref" },
+  { name: "Jordan", note: "Cart first" },
+  { name: "Sam", note: "Header CTA" },
+  { name: "Riley", note: "3:12 done" },
+  { name: "Casey", note: "Stuck · ship" },
+  { name: "Avery", note: "Chose B" },
+  { name: "Quinn", note: "Chose B" },
 ] as const
 
 const AGENTS = [
-  {
-    name: "Click map",
-    job: "Cluster first taps",
-    run: "Plotting 14 taps…",
-    done: "Cart 9 · header 3 · other 2",
-  },
-  {
-    name: "Task path",
-    job: "Score completion",
-    run: "Timing drop-offs…",
-    done: "11 of 14 finished · median 3:40",
-  },
-  {
-    name: "Preference",
-    job: "Tally A vs B",
-    run: "Reading reasons…",
-    done: "B 9 · A 5",
-  },
+  { name: "Click map", run: "Clustering taps", done: "Cart · 9" },
+  { name: "Task path", run: "Timing paths", done: "11 / 14" },
+  { name: "Preference", run: "Tallying A/B", done: "B wins" },
 ] as const
 
-const FINDING_QUOTE =
-  "B made the total feel honest — Avery, year 3"
+const REPORTS = [
+  {
+    title: "First click",
+    by: "Click map",
+    badge: "Cart 9",
+    tone: "success" as const,
+    kind: "heat" as const,
+  },
+  {
+    title: "Task",
+    by: "Task path",
+    badge: "11/14",
+    tone: "accent" as const,
+    kind: "stat" as const,
+    meter: 0.79,
+  },
+  {
+    title: "Preference",
+    by: "Preference",
+    badge: "B · 9",
+    tone: "neutral" as const,
+    kind: "pref" as const,
+    a: 0.36,
+    b: 0.64,
+  },
+] as const
 
 const initial: S = {
   blocks: 1,
   hot: 0,
   shared: false,
   phase: "compose",
+  orbiting: false,
   takes: 0,
   agents: 0,
   agentStatus: ["idle", "idle", "idle"],
-  findingWords: 0,
-  findings: 0,
+  reports: 0,
 }
 
 const POSTER: S = {
   blocks: 3,
   hot: -1,
   shared: true,
-  phase: "findings",
+  phase: "reports",
+  orbiting: true,
   takes: TAKES.length,
   agents: 3,
   agentStatus: ["done", "done", "done"],
-  findingWords: FINDING_QUOTE.split(" ").length,
-  findings: 3,
+  reports: 3,
 }
 
 async function script(a: Act<S>) {
-  await a.wait(650)
+  await a.wait(700)
 
   a.mark("compose")
   await a.set({ blocks: 2, hot: 1 })
-  await a.wait(680)
+  await a.wait(700)
   await a.set({ blocks: 3, hot: 2 })
-  await a.wait(720)
+  await a.wait(750)
 
   a.mark("share")
   await a.set({ shared: true, hot: -1 })
-  await a.wait(520)
+  await a.wait(650)
 
-  // Takes arrive as a quiet list — peers who ran the study
+  a.mark("network")
+  await a.set({ phase: "network", orbiting: true })
+  await a.wait(1200)
+
   a.mark("takes")
   await a.set({ phase: "takes" })
   for (let i = 1; i <= TAKES.length; i++) {
     await a.set({ takes: i })
-    await a.wait(240)
+    await a.wait(200)
   }
-  await a.wait(480)
+  await a.wait(520)
 
-  // Named agents pick up the work, one after another
   a.mark("agents")
   await a.set({ phase: "agents", agents: 3 })
   for (let i = 0; i < AGENTS.length; i++) {
-    const next = ["idle", "idle", "idle"] as [AgentStatus, AgentStatus, AgentStatus]
+    const next: [AgentStatus, AgentStatus, AgentStatus] = ["idle", "idle", "idle"]
     for (let j = 0; j < i; j++) next[j] = "done"
     next[i] = "run"
     await a.set({ agentStatus: next })
-    await a.wait(900)
+    await a.wait(880)
     const done = [...next] as [AgentStatus, AgentStatus, AgentStatus]
     done[i] = "done"
     await a.set({ agentStatus: done })
-    await a.wait(280)
+    await a.wait(240)
   }
   await a.wait(360)
 
-  // Findings board fills from what the agents produced
-  a.mark("findings")
-  await a.set({ phase: "findings", findings: 1 })
-  await a.wait(420)
-  await a.set({ findings: 2 })
-  await a.wait(420)
-  await a.set({ findings: 3 })
-  const words = FINDING_QUOTE.split(" ").length
-  for (let w = 1; w <= words; w++) {
-    await a.set({ findingWords: w })
-    await a.wait(55)
+  a.mark("reports")
+  await a.set({ phase: "reports" })
+  for (let i = 1; i <= REPORTS.length; i++) {
+    await a.set({ reports: i })
+    await a.wait(360)
   }
   await a.wait(2400)
 
-  await a.set({ findings: 0, findingWords: 0, takes: 0, agents: 0 })
-  await a.wait(320)
+  await a.set({ reports: 0, orbiting: false })
+  await a.wait(350)
   await a.snap({ ...initial })
-  await a.wait(280)
+  await a.wait(300)
 }
 
-function AgentRow({
-  agent,
-  status,
+function OrbitNode({
+  name,
+  index,
+  total,
+  active,
 }: {
-  agent: (typeof AGENTS)[number]
-  status: AgentStatus
+  name: string
+  index: number
+  total: number
+  active: boolean
 }) {
-  const subtitle =
-    status === "run" ? agent.run : status === "done" ? agent.done : agent.job
+  const angle = (360 / total) * index - 90
   return (
-    <Row
-      className="hf-agent-row"
-      data-status={status}
-      pad={10}
-      selected={status === "run"}
-      lead={
-        status === "run" ? (
-          <Spinner size={18} />
-        ) : status === "done" ? (
-          <Check on size={18} />
-        ) : (
-          <span className="hf-agent-mark" aria-hidden />
-        )
-      }
-      title={agent.name}
-      subtitle={subtitle}
-      meta={
-        status === "run" ? (
-          <Badge tone="accent">Running</Badge>
-        ) : status === "done" ? (
-          <Badge tone="success">Done</Badge>
-        ) : (
-          <Badge tone="neutral">Queued</Badge>
-        )
-      }
-    />
+    <div
+      className="hf-orbit-slot"
+      style={{ ["--hf-angle" as string]: `${angle}deg` }}
+      data-on={active || undefined}
+    >
+      <div className="hf-orbit-node">
+        <Avatar name={name} size={36} tone="person" ring={active ? "confirmed" : "pending"} />
+      </div>
+    </div>
+  )
+}
+
+function ReportBody({
+  report,
+  show,
+}: {
+  report: (typeof REPORTS)[number]
+  show: boolean
+}) {
+  if (report.kind === "heat") {
+    return (
+      <div className="hf-heat" aria-hidden>
+        <span className="hf-heat-pin" style={{ left: "28%", top: "42%" }}>
+          9
+        </span>
+        <span className="hf-heat-pin" data-soft style={{ left: "70%", top: "22%" }}>
+          3
+        </span>
+        <span className="hf-heat-pin" data-soft style={{ left: "52%", top: "70%" }}>
+          2
+        </span>
+        <Bar w={72} h={6} tone={2} style={{ position: "absolute", left: 12, top: 12 }} />
+        <Bar w={52} h={6} tone={1} style={{ position: "absolute", left: 12, top: 24 }} />
+      </div>
+    )
+  }
+  if (report.kind === "stat") {
+    return (
+      <div className="hf-stat">
+        <div className="hf-stat-row">
+          <span className="hf-stat-num">11/14</span>
+          <span className="hf-stat-unit">finished</span>
+        </div>
+        <Meter value={report.meter ?? 0.79} tone="accent" />
+      </div>
+    )
+  }
+  return (
+    <div className="hf-pref" data-show={show || undefined}>
+      <div className="hf-pref-col">
+        <span>A</span>
+        <Meter value={report.a ?? 0.36} tone="ink" />
+        <span className="hf-pref-n">5</span>
+      </div>
+      <div className="hf-pref-col" data-win>
+        <span>B</span>
+        <Meter value={report.b ?? 0.64} tone="accent" />
+        <span className="hf-pref-n">9</span>
+      </div>
+    </div>
   )
 }
 
@@ -235,13 +278,14 @@ export function HeroFlow() {
     >
       {(s) => {
         const showCompose = s.phase === "compose"
-        const showTakes = s.phase === "takes" || s.phase === "agents"
-        const showAgents = s.phase === "agents" || s.phase === "findings"
-        const showFindings = s.phase === "findings" && s.findings > 0
+        const showNetwork = s.phase !== "compose"
+        const showReports = s.phase === "reports" && s.reports > 0
+        const running = s.agentStatus.findIndex((x) => x === "run")
+        const hubAgent = running >= 0 ? AGENTS[running] : null
+        const allDone = s.agentStatus.every((x) => x === "done")
 
         return (
           <>
-            {/* Compose */}
             <div
               className="hf-compose"
               data-phase={s.phase}
@@ -254,7 +298,7 @@ export function HeroFlow() {
                     <div className="hf-compose-title">Checkout redesign</div>
                     <div className="hf-compose-meta">
                       <Roll>{`${s.blocks} blocks`}</Roll>
-                      <span>· studio critique study</span>
+                      <span>· studio critique</span>
                     </div>
                   </div>
                   <Badge tone={s.shared ? "success" : "neutral"} dot>
@@ -298,151 +342,133 @@ export function HeroFlow() {
               </Card>
             </div>
 
-            {/* Takes inbox — left */}
             <div
-              className="hf-takes"
-              data-on={showTakes || undefined}
+              className="hf-network"
+              data-on={showNetwork || undefined}
+              data-orbiting={s.orbiting || undefined}
               data-phase={s.phase}
             >
-              <Card flush lift pad="small" className="hf-takes-card">
-                <div className="hf-panel-head">
-                  <span className="hf-panel-title">Takes</span>
-                  <span className="hf-panel-meta">
-                    <Count value={s.takes} /> / {TAKES.length}
-                  </span>
-                </div>
-                <div className="hf-takes-list">
-                  {TAKES.map((take, i) => (
-                    <Collapse key={take.name} open={s.takes > i} reveal="clip">
-                      <Row
-                        pad={10}
-                        lead={<Avatar name={take.name} size={22} tone="person" />}
-                        title={take.name}
-                        subtitle={take.line}
-                        meta={<span className="hf-take-block">{take.block}</span>}
-                      />
-                    </Collapse>
-                  ))}
-                </div>
-                {s.takes > 0 && (
-                  <div className="hf-takes-foot">
-                    <Facepile
-                      names={TAKES.slice(0, s.takes).map((t) => t.name)}
-                      size={20}
+              <div className="hf-hub">
+                <Card lift pad="small" gap={8} className="hf-hub-card">
+                  {s.phase === "agents" && hubAgent ? (
+                    <>
+                      <Spinner size={22} />
+                      <Text className="hf-hub-label">{hubAgent.name}</Text>
+                      <span className="hf-hub-sub">{hubAgent.run}</span>
+                    </>
+                  ) : s.phase === "agents" && allDone ? (
+                    <>
+                      <Check on size={22} />
+                      <Text className="hf-hub-label">Ready</Text>
+                      <span className="hf-hub-sub">3 reports</span>
+                    </>
+                  ) : s.phase === "reports" ? (
+                    <>
+                      <Check on size={22} />
+                      <Text className="hf-hub-label">Reports</Text>
+                      <span className="hf-hub-sub">
+                        <Count value={s.reports} /> ready
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Facepile names={[...PEOPLE].slice(0, 4)} size={26} />
+                      <span className="hf-hub-label">
+                        <Count value={Math.max(s.takes, s.orbiting ? PEOPLE.length : 0)} />{" "}
+                        {s.takes > 0 ? "takes" : "peers"}
+                      </span>
+                    </>
+                  )}
+                </Card>
+              </div>
+
+              {/* Named agents as floating tokens around the hub */}
+              <div
+                className="hf-agents"
+                data-on={
+                  s.phase === "agents" || s.phase === "reports" || undefined
+                }
+              >
+                {AGENTS.map((agent, i) => {
+                  const status = s.agentStatus[i]!
+                  return (
+                    <div
+                      key={agent.name}
+                      className="hf-agent"
+                      data-i={i}
+                      data-status={status}
+                      data-in={s.agents > i || undefined}
+                    >
+                      <span className="hf-agent-mark" aria-hidden>
+                        {status === "run" ? (
+                          <Spinner size={14} />
+                        ) : status === "done" ? (
+                          <Check on size={14} />
+                        ) : null}
+                      </span>
+                      <span className="hf-agent-name">{agent.name}</span>
+                      <span className="hf-agent-out">
+                        {status === "done" ? agent.done : status === "run" ? "…" : ""}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+
+              <div className="hf-orbit" aria-hidden>
+                <div className="hf-orbit-ring" data-spin={s.orbiting || undefined} />
+                <div className="hf-orbit-faces" data-spin={s.orbiting || undefined}>
+                  {PEOPLE.map((name, i) => (
+                    <OrbitNode
+                      key={name}
+                      name={name}
+                      index={i}
+                      total={PEOPLE.length}
+                      active={s.takes > i || allDone}
                     />
-                    <Text className="hf-panel-meta">peers who ran it</Text>
-                  </div>
-                )}
-              </Card>
-            </div>
-
-            {/* Agent desk — right */}
-            <div
-              className="hf-agents"
-              data-on={showAgents || undefined}
-              data-phase={s.phase}
-            >
-              <Card flush lift pad="small" className="hf-agents-card">
-                <div className="hf-panel-head">
-                  <span className="hf-panel-title">Agents</span>
-                  <span className="hf-panel-meta">
-                    {s.agentStatus.filter((x) => x === "done").length} of 3
-                  </span>
-                </div>
-                <div className="hf-agents-list">
-                  {AGENTS.map((agent, i) => (
-                    <Collapse key={agent.name} open={s.agents > i} reveal="clip">
-                      <AgentRow agent={agent} status={s.agentStatus[i]!} />
-                    </Collapse>
                   ))}
                 </div>
-              </Card>
+              </div>
+
+              {/* Takes as quiet notes drifting toward the hub */}
+              <div
+                className="hf-takes"
+                data-on={
+                  s.phase === "takes" ||
+                  s.phase === "agents" ||
+                  s.phase === "reports" ||
+                  undefined
+                }
+              >
+                {TAKES.map((item, i) => (
+                  <div
+                    key={item.name}
+                    className="hf-take"
+                    style={{ ["--hf-i" as string]: String(i) }}
+                    data-in={s.takes > i || undefined}
+                  >
+                    <Avatar name={item.name} size={18} tone="person" />
+                    <span>{item.note}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Findings — one board, three different evidence types */}
-            <div className="hf-findings" data-on={showFindings || undefined}>
-              <Card lift pad="medium" gap={0} className="hf-findings-card">
-                <div className="hf-findings-head">
-                  <div>
-                    <div className="hf-findings-title">Findings</div>
-                    <div className="hf-findings-sub">Checkout redesign · from 14 takes</div>
-                  </div>
-                  <Badge tone="success" dot>
-                    Ready for critique
-                  </Badge>
-                </div>
-
-                <div className="hf-findings-body">
-                  <Collapse open={s.findings >= 1} reveal="clip">
-                    <div className="hf-finding">
-                      <div className="hf-finding-label">
-                        <span>First click</span>
-                        <span className="hf-finding-by">Click map</span>
+            <div className="hf-reports" data-on={showReports || undefined}>
+              {REPORTS.map((report, i) => (
+                <Collapse key={report.title} open={s.reports > i} reveal="drop" from="below">
+                  <Card lift pad="small" gap={10} className="hf-report">
+                    <div className="hf-report-head">
+                      <div>
+                        <span className="hf-report-title">{report.title}</span>
+                        <span className="hf-report-by">{report.by}</span>
                       </div>
-                      <div className="hf-heat" aria-hidden>
-                        <span className="hf-heat-pin" style={{ left: "22%", top: "38%" }}>
-                          9
-                        </span>
-                        <span className="hf-heat-pin" data-soft style={{ left: "68%", top: "18%" }}>
-                          3
-                        </span>
-                        <span className="hf-heat-pin" data-soft style={{ left: "48%", top: "72%" }}>
-                          2
-                        </span>
-                        <Bar w={96} h={8} tone={2} style={{ position: "absolute", left: 16, top: 14 }} />
-                        <Bar w={72} h={8} tone={1} style={{ position: "absolute", left: 16, top: 30 }} />
-                        <Bar
-                          w={88}
-                          h={28}
-                          r={6}
-                          tone={3}
-                          style={{ position: "absolute", right: 18, bottom: 16 }}
-                        />
-                      </div>
-                      <p className="hf-finding-note">Most people hit the cart first.</p>
+                      <Badge tone={report.tone}>{report.badge}</Badge>
                     </div>
-                  </Collapse>
-
-                  <Collapse open={s.findings >= 2} reveal="clip">
-                    <div className="hf-finding">
-                      <div className="hf-finding-label">
-                        <span>Task</span>
-                        <span className="hf-finding-by">Task path</span>
-                      </div>
-                      <div className="hf-stat">
-                        <span className="hf-stat-num">11/14</span>
-                        <span className="hf-stat-unit">finished</span>
-                      </div>
-                      <Meter value={0.79} tone="accent" />
-                      <p className="hf-finding-note">Shipping step slowed four people.</p>
-                    </div>
-                  </Collapse>
-
-                  <Collapse open={s.findings >= 3} reveal="clip">
-                    <div className="hf-finding">
-                      <div className="hf-finding-label">
-                        <span>Preference</span>
-                        <span className="hf-finding-by">Preference</span>
-                      </div>
-                      <div className="hf-pref">
-                        <div className="hf-pref-col">
-                          <span className="hf-pref-letter">A</span>
-                          <Meter value={0.36} tone="ink" />
-                          <span className="hf-pref-n">5</span>
-                        </div>
-                        <div className="hf-pref-col" data-win>
-                          <span className="hf-pref-letter">B</span>
-                          <Meter value={0.64} tone="accent" />
-                          <span className="hf-pref-n">9</span>
-                        </div>
-                      </div>
-                      <p className="hf-finding-note">
-                        <Stream text={FINDING_QUOTE} count={s.findingWords} />
-                      </p>
-                    </div>
-                  </Collapse>
-                </div>
-              </Card>
+                    <ReportBody report={report} show={s.reports > i} />
+                  </Card>
+                </Collapse>
+              ))}
             </div>
           </>
         )
