@@ -281,10 +281,10 @@ export function HeroFlow() {
 
             {s.phone === "test" && (
               <div className="hf-test">
-                <div className="hf-test-kicker">Live test</div>
+                <div className="hf-test-kicker">Live test · Jordan</div>
                 <div className="hf-test-title">Checkout redesign</div>
                 <div className="hf-test-body">
-                  3 blocks · ~4 min. Finish to unlock a credit.
+                  Passed recruiting · 3 blocks · ~4 min
                 </div>
                 <div className="hf-test-task">
                   <div className="hf-test-task-label">Block 1 · First click</div>
@@ -299,6 +299,12 @@ export function HeroFlow() {
                 >
                   Start block
                 </Button>
+                {/* Filler below stays in the stage crop */}
+                <div className="hf-test-fill" aria-hidden>
+                  <Bar w={120} h={8} tone={1} style={{ marginTop: 22 }} />
+                  <Bar w={160} h={8} tone={1} style={{ marginTop: 8 }} />
+                  <Bar w={100} h={8} tone={1} style={{ marginTop: 8 }} />
+                </div>
               </div>
             )}
           </Phone>

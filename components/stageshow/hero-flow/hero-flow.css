@@ -190,7 +190,7 @@
 
 .hf-phone {
   position: absolute;
-  top: 56px;
+  top: 40px;
   right: var(--gutter);
   box-shadow: var(--ss-shadow-satellite), 0 28px 48px -18px rgba(15, 15, 13, 0.28);
 }
@@ -275,7 +275,7 @@
 }
 
 .hf-test-task {
-  margin-top: auto;
+  margin-top: 4px;
   padding: 12px;
   border-radius: var(--ss-radius-md);
   background: var(--ss-surface);
