@@ -1,0 +1,56 @@
+{
+ "direction": "Twin sky",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "1.64 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "10.46:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "3.75:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.990",
+   "pass_at": "traced from mine twin-ascent",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.9904,
+   "ref": "refs/mine/ad297759-f385-43b4-ae37-e7a3257e4942.png"
+  },
+  {
+   "score": 0.2522,
+   "ref": "refs/arena/gd-logos-marks-symbols/1801359.png"
+  },
+  {
+   "score": 0.2286,
+   "ref": "refs/arena/marks-monograms-symbols/25706784.jpg"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.3272,
+  "32": 0.3222,
+  "64": 0.3227,
+  "512": 0.3227
+ },
+ "ok": true
+}

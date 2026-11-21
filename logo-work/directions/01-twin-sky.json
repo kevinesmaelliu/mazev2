@@ -1,0 +1,14 @@
+{
+  "name": "Skye",
+  "title": "Twin sky",
+  "idea": "Two ascending wings with a circular sky bite between them — lift into open air.",
+  "traced_from": "mine twin-ascent",
+  "grid": 48,
+  "mark": [
+    {"shape": "trace", "file": "../trace/twin.svg", "x": 2, "y": 4, "size": 44},
+    {"op": "cut", "shape": "circle", "cx": 24, "cy": 20, "r": 5}
+  ],
+  "wordmark": {"text": "Skye", "font": "Syne", "weight": 700, "tracking": -20},
+  "lockup": {"mark_scale": 1.8, "gap": 0.65},
+  "palette": {"ink": "#163A6B", "paper": "#F3F6FA", "accent": "#4F9AD8", "neutral": "#7B8FA3", "tint": "#D5E3F2"}
+}

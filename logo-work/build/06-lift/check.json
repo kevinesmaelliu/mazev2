@@ -1,0 +1,56 @@
+{
+ "direction": "Lift",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "2.82 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "11.69:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "4.34:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.050",
+   "pass_at": "< 0.795",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.0496,
+   "ref": "refs/world/cloud-logos/35186587.png"
+  },
+  {
+   "score": 0.0461,
+   "ref": "refs/arena/logotype-logomark/43496809.png"
+  },
+  {
+   "score": 0.0334,
+   "ref": "refs/world/abstract-logotypes-symbols-pictograms/23512321.jpg"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.3294,
+  "32": 0.3305,
+  "64": 0.3304,
+  "512": 0.3318
+ },
+ "ok": true
+}

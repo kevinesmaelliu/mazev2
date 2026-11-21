@@ -1,0 +1,14 @@
+{
+  "name": "Skye",
+  "title": "Flight cut",
+  "idea": "A paper-plane silhouette with its nose softened by a circular sky bite — direction with air.",
+  "traced_from": "mine flight-plane",
+  "grid": 48,
+  "mark": [
+    {"shape": "trace", "file": "../trace/plane.svg", "x": 4, "y": 8, "size": 40, "rotate": -12},
+    {"op": "cut", "shape": "circle", "cx": 38, "cy": 14, "r": 7}
+  ],
+  "wordmark": {"text": "Skye", "font": "Unbounded", "weight": 600, "tracking": -10},
+  "lockup": {"mark_scale": 1.7, "gap": 0.7},
+  "palette": {"ink": "#0E3D5C", "paper": "#F5F8FB", "accent": "#3D9FD6", "neutral": "#6E8598", "tint": "#D2E6F4"}
+}

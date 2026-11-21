@@ -1,0 +1,56 @@
+{
+ "direction": "Day window",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "3.83 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "9.75:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "3.95:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.080",
+   "pass_at": "< 0.795",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.0795,
+   "ref": "refs/arena/marks-monograms-symbols/14716742.jpg"
+  },
+  {
+   "score": 0.0765,
+   "ref": "refs/world/abstract-logotypes-symbols-pictograms/23512294.jpg"
+  },
+  {
+   "score": 0.0501,
+   "ref": "refs/arena/logotype-logomark/32404301.jpg"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.58,
+  "32": 0.579,
+  "64": 0.5788,
+  "512": 0.5781
+ },
+ "ok": true
+}

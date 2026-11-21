@@ -1,0 +1,56 @@
+{
+ "direction": "Letter S",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "4.34 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "9.85:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "4.07:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.372",
+   "pass_at": "< 0.795",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.3719,
+   "ref": "refs/world/abstract-logotypes-symbols-pictograms/25116974.jpg"
+  },
+  {
+   "score": 0.2854,
+   "ref": "refs/arena/marks-monograms-symbols/40416719.jpg"
+  },
+  {
+   "score": 0.2349,
+   "ref": "refs/world/abstract-logotypes-symbols-pictograms/23512337.jpg"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.6203,
+  "32": 0.6194,
+  "64": 0.6203,
+  "512": 0.624
+ },
+ "ok": true
+}

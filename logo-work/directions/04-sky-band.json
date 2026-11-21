@@ -1,0 +1,15 @@
+{
+  "name": "Skye",
+  "title": "Day window",
+  "idea": "A rounded tile with two soft bites taken out — a window of clear sky.",
+  "grid": 48,
+  "mark": [
+    {"shape": "rect", "x": 6, "y": 6, "w": 36, "h": 36, "r": 10},
+    {"op": "cut", "shape": "circle", "cx": 6, "cy": 24, "r": 10},
+    {"op": "cut", "shape": "circle", "cx": 42, "cy": 24, "r": 10},
+    {"op": "cut", "shape": "circle", "cx": 24, "cy": 8, "r": 6}
+  ],
+  "wordmark": {"text": "Skye", "font": "Bricolage Grotesque", "weight": 700, "tracking": -25},
+  "lockup": {"mark_scale": 1.85, "gap": 0.65},
+  "palette": {"ink": "#12406E", "paper": "#F2F6FA", "accent": "#57A5DE", "neutral": "#74899D", "tint": "#D0E0F0"}
+}

@@ -1,0 +1,55 @@
+{
+ "name": "Skye",
+ "grid": 48,
+ "mark_box": [
+  5.0,
+  6.0,
+  43.0,
+  39.0
+ ],
+ "guides": {
+  "x": [
+   5.0,
+   8.0,
+   12.0,
+   16.0,
+   21.0,
+   24.0,
+   27.0,
+   32.0,
+   36.0,
+   40.0,
+   43.0
+  ],
+  "y": [
+   6.0,
+   17.0,
+   18.0,
+   26.0,
+   28.0,
+   30.0,
+   38.0,
+   39.0
+  ]
+ },
+ "wordmark": {
+  "text": "Skye",
+  "font": "Fraunces",
+  "weight": 700,
+  "cap": 1400,
+  "licence": "/agent/repos/mazev2/logo-work/fonts/fraunces/OFL.txt",
+  "reserved_names": []
+ },
+ "fonts": {
+  "Fraunces": "/agent/repos/mazev2/logo-work/fonts/fraunces/OFL.txt"
+ },
+ "title": "Cumulus",
+ "idea": "Three overlapping discs stacked as a bold cloud \u2014 sky as a solid, friendly mass.",
+ "palette": {
+  "ink": "#1A4A7A",
+  "paper": "#F7F9FC",
+  "accent": "#6BB0E8",
+  "neutral": "#8196AA",
+  "tint": "#DCE8F5"
+ }
+}

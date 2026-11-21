@@ -1,0 +1,43 @@
+{
+ "name": "Skye",
+ "grid": 48,
+ "mark_box": [
+  3.833,
+  13.781,
+  44.169,
+  38.219
+ ],
+ "guides": {
+  "x": [
+   19.0,
+   24.0,
+   29.0
+  ],
+  "y": [
+   15.0,
+   20.0,
+   25.0
+  ]
+ },
+ "wordmark": {
+  "text": "Skye",
+  "font": "Syne",
+  "weight": 700,
+  "cap": 650,
+  "licence": "/agent/repos/mazev2/logo-work/fonts/syne/OFL.txt",
+  "reserved_names": []
+ },
+ "fonts": {
+  "Syne": "/agent/repos/mazev2/logo-work/fonts/syne/OFL.txt"
+ },
+ "title": "Twin sky",
+ "idea": "Two ascending wings with a circular sky bite between them \u2014 lift into open air.",
+ "palette": {
+  "ink": "#163A6B",
+  "paper": "#F3F6FA",
+  "accent": "#4F9AD8",
+  "neutral": "#7B8FA3",
+  "tint": "#D5E3F2"
+ },
+ "traced_from": "mine twin-ascent"
+}

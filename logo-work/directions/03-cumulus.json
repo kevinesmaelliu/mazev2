@@ -1,0 +1,15 @@
+{
+  "name": "Skye",
+  "title": "Cumulus",
+  "idea": "Three overlapping discs stacked as a bold cloud — sky as a solid, friendly mass.",
+  "grid": 48,
+  "mark": [
+    {"shape": "circle", "cx": 16, "cy": 28, "r": 11},
+    {"shape": "circle", "cx": 32, "cy": 28, "r": 11},
+    {"shape": "circle", "cx": 24, "cy": 18, "r": 12},
+    {"shape": "rect", "x": 8, "y": 26, "w": 32, "h": 12, "r": 2}
+  ],
+  "wordmark": {"text": "Skye", "font": "Fraunces", "weight": 700, "tracking": -15},
+  "lockup": {"mark_scale": 1.9, "gap": 0.6},
+  "palette": {"ink": "#1A4A7A", "paper": "#F7F9FC", "accent": "#6BB0E8", "neutral": "#8196AA", "tint": "#DCE8F5"}
+}

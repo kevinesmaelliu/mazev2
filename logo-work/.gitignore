@@ -1,0 +1,12 @@
+refs/
+photos/
+fonts/
+.venv/
+node_modules/
+package-lock.json
+measured.png
+measurements.json
+calibration.json
+__pycache__/
+*.pyc
+book/pages/
