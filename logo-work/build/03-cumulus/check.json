@@ -1,0 +1,56 @@
+{
+ "direction": "Cumulus",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "8.81 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "8.64:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "3.91:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.202",
+   "pass_at": "< 0.795",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.2024,
+   "ref": "refs/arena/marks-monograms-symbols/21635536.jpg"
+  },
+  {
+   "score": 0.0871,
+   "ref": "refs/world/abstract-logotypes-symbols-pictograms/23512324.jpg"
+  },
+  {
+   "score": 0.0634,
+   "ref": "refs/world/cloud-logos/8153473.png"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.6822,
+  "32": 0.6824,
+  "64": 0.6809,
+  "512": 0.6819
+ },
+ "ok": true
+}

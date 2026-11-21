@@ -1,0 +1,15 @@
+{
+  "name": "Skye",
+  "title": "Lift",
+  "idea": "Three open rising strokes under a sun disc — weather lifting, peers lifting each other.",
+  "grid": 48,
+  "mark": [
+    {"shape": "arc", "cx": 24, "cy": 34, "r": 18, "width": 5.5, "start": 210, "end": 330},
+    {"shape": "arc", "cx": 24, "cy": 28, "r": 13, "width": 5.5, "start": 210, "end": 330},
+    {"shape": "arc", "cx": 24, "cy": 22, "r": 8, "width": 5.5, "start": 210, "end": 330},
+    {"shape": "circle", "cx": 24, "cy": 10, "r": 3.5}
+  ],
+  "wordmark": {"text": "Skye", "font": "Instrument Sans", "weight": 600, "tracking": -30},
+  "lockup": {"mark_scale": 1.75, "gap": 0.7},
+  "palette": {"ink": "#0F3558", "paper": "#F4F7FA", "accent": "#48A0D4", "neutral": "#6F8497", "tint": "#D1E3F1"}
+}

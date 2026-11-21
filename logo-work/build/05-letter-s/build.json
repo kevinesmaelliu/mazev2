@@ -1,0 +1,34 @@
+{
+ "name": "Skye",
+ "grid": 48,
+ "mark_box": [
+  6.893,
+  3.653,
+  37.041,
+  40.149
+ ],
+ "guides": {
+  "x": [],
+  "y": []
+ },
+ "wordmark": {
+  "text": "Skye",
+  "font": "Bagel Fat One",
+  "weight": 400,
+  "cap": 726,
+  "licence": "/agent/repos/mazev2/logo-work/fonts/bagelfatone/OFL.txt",
+  "reserved_names": []
+ },
+ "fonts": {
+  "Bagel Fat One": "/agent/repos/mazev2/logo-work/fonts/bagelfatone/OFL.txt"
+ },
+ "title": "Letter S",
+ "idea": "The first letter set heavy as the mark \u2014 a sky-blue monogram that stands alone.",
+ "palette": {
+  "ink": "#1C3F72",
+  "paper": "#F6F8FB",
+  "accent": "#5AA8E3",
+  "neutral": "#7D91A5",
+  "tint": "#D8E5F3"
+ }
+}

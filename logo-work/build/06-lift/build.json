@@ -1,0 +1,56 @@
+{
+ "name": "Skye",
+ "grid": 48,
+ "mark_box": [
+  8.412,
+  6.5,
+  39.588,
+  27.75
+ ],
+ "guides": {
+  "x": [
+   6.0,
+   11.0,
+   16.0,
+   20.5,
+   24.0,
+   27.5,
+   32.0,
+   37.0,
+   42.0
+  ],
+  "y": [
+   6.5,
+   10.0,
+   13.5,
+   14.0,
+   15.0,
+   16.0,
+   22.0,
+   28.0,
+   30.0,
+   34.0,
+   41.0
+  ]
+ },
+ "wordmark": {
+  "text": "Skye",
+  "font": "Instrument Sans",
+  "weight": 600,
+  "cap": 720,
+  "licence": "/agent/repos/mazev2/logo-work/fonts/instrumentsans/OFL.txt",
+  "reserved_names": []
+ },
+ "fonts": {
+  "Instrument Sans": "/agent/repos/mazev2/logo-work/fonts/instrumentsans/OFL.txt"
+ },
+ "title": "Lift",
+ "idea": "Three open rising strokes under a sun disc \u2014 weather lifting, peers lifting each other.",
+ "palette": {
+  "ink": "#0F3558",
+  "paper": "#F4F7FA",
+  "accent": "#48A0D4",
+  "neutral": "#6F8497",
+  "tint": "#D1E3F1"
+ }
+}

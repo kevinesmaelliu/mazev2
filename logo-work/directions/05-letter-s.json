@@ -1,0 +1,12 @@
+{
+  "name": "Skye",
+  "title": "Letter S",
+  "idea": "The first letter set heavy as the mark — a sky-blue monogram that stands alone.",
+  "grid": 48,
+  "mark": [
+    {"shape": "glyph", "text": "S", "font": "Bagel Fat One", "weight": 400, "x": 6, "y": 40, "cap": 36}
+  ],
+  "wordmark": {"text": "Skye", "font": "Bagel Fat One", "weight": 400, "tracking": 0},
+  "lockup": {"mark_scale": 1.6, "gap": 0.55},
+  "palette": {"ink": "#1C3F72", "paper": "#F6F8FB", "accent": "#5AA8E3", "neutral": "#7D91A5", "tint": "#D8E5F3"}
+}

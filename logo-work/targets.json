@@ -1,0 +1,64 @@
+{
+  "name": "Skye",
+  "lean": "Bold simple geometric marks with flight/ascent energy. Prefer open twin-forms and plane silhouettes over solid filled triangles. Heavy stroke, low complexity, 1\u20133 components, few or no counters. Sky/cloud idea as geometry, not thin outline pictograms.",
+  "disagreement": "Solid triangle (solidity ~1) vs open twin chevrons/plane (coverage ~0.35\u20130.40). Leaned open/flight to match blue-sky idea.",
+  "from_mine": {
+    "aspect": 1.143,
+    "coverage": 0.404,
+    "solidity": 0.686,
+    "stroke": 228.4,
+    "components": 2,
+    "counters": 0,
+    "compactness": 4.15,
+    "corners": 5
+  },
+  "range_from_arena_marks": {
+    "aspect": {
+      "p10": 0.72,
+      "med": 1.095,
+      "p90": 2.143
+    },
+    "coverage": {
+      "p10": 0.1866,
+      "med": 0.368,
+      "p90": 0.6416
+    },
+    "solidity": {
+      "p10": 0.2308,
+      "med": 0.4843,
+      "p90": 0.7462
+    },
+    "stroke": {
+      "p10": 14.0,
+      "med": 66.3,
+      "p90": 210.8
+    },
+    "components": {
+      "p10": 1,
+      "med": 4,
+      "p90": 23
+    },
+    "counters": {
+      "p10": 0,
+      "med": 2,
+      "p90": 14
+    },
+    "compactness": {
+      "p10": 7.15,
+      "med": 22.96,
+      "p90": 104.55
+    },
+    "corners": {
+      "p10": 9,
+      "med": 49,
+      "p90": 264
+    }
+  },
+  "palette_default": {
+    "ink": "#1B4F8A",
+    "paper": "#F4F7FB",
+    "accent": "#5BA3E0",
+    "neutral": "#7A8FA6",
+    "tint": "#D6E4F2"
+  }
+}

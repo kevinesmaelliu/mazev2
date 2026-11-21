@@ -1,0 +1,56 @@
+{
+ "direction": "Flight cut",
+ "checks": [
+  {
+   "check": "stroke at 16 px",
+   "value": "3.47 px",
+   "pass_at": ">= 1.5 px",
+   "ok": true
+  },
+  {
+   "check": "counters at 16 px",
+   "value": "0 of 0",
+   "pass_at": "same as at 512 px",
+   "ok": true
+  },
+  {
+   "check": "ink on paper",
+   "value": "10.70:1",
+   "pass_at": ">= 4.5:1",
+   "ok": true
+  },
+  {
+   "check": "accent against paper or ink",
+   "value": "3.87:1",
+   "pass_at": ">= 3:1",
+   "ok": true
+  },
+  {
+   "check": "nearest reference",
+   "value": "0.052",
+   "pass_at": "traced from mine flight-plane",
+   "ok": true
+  }
+ ],
+ "nearest": [
+  {
+   "score": 0.0517,
+   "ref": "refs/arena/logotype-logomark/32404294.jpg"
+  },
+  {
+   "score": 0.037,
+   "ref": "refs/arena/logotype-logomark/32404301.jpg"
+  },
+  {
+   "score": 0.031,
+   "ref": "refs/mine/18ec80a7-410d-4f7b-a343-642b8b9ddbab.png"
+  }
+ ],
+ "ink_share_by_size": {
+  "16": 0.3438,
+  "32": 0.3436,
+  "64": 0.3435,
+  "512": 0.3434
+ },
+ "ok": true
+}

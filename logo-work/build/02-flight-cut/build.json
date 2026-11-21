@@ -1,0 +1,43 @@
+{
+ "name": "Skye",
+ "grid": 48,
+ "mark_box": [
+  2.919,
+  10.876,
+  37.15,
+  42.811
+ ],
+ "guides": {
+  "x": [
+   31.0,
+   38.0,
+   45.0
+  ],
+  "y": [
+   7.0,
+   14.0,
+   21.0
+  ]
+ },
+ "wordmark": {
+  "text": "Skye",
+  "font": "Unbounded",
+  "weight": 600,
+  "cap": 750,
+  "licence": "/agent/repos/mazev2/logo-work/fonts/unbounded/OFL.txt",
+  "reserved_names": []
+ },
+ "fonts": {
+  "Unbounded": "/agent/repos/mazev2/logo-work/fonts/unbounded/OFL.txt"
+ },
+ "title": "Flight cut",
+ "idea": "A paper-plane silhouette with its nose softened by a circular sky bite \u2014 direction with air.",
+ "palette": {
+  "ink": "#0E3D5C",
+  "paper": "#F5F8FB",
+  "accent": "#3D9FD6",
+  "neutral": "#6E8598",
+  "tint": "#D2E6F4"
+ },
+ "traced_from": "mine flight-plane"
+}
