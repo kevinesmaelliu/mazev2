@@ -1,23 +1,54 @@
 /* Landing CTA: Feral “Blue sky” behind Lime’s glass hover sheen.
  * Colours: MISTED SKY #E6F2FF, #B3D9FF · SKY HAZE #80B3FF · RIVER INDIGO #6699E6
- * Glass stays in .glow::before’s upper layers; sky is the body + lit tokens. */
+ *
+ * Feral’s Sky preset is animated; the CSS export is a still. For a button we
+ * approximate cloud drift with layered gradients (no video / JS). Export MP4
+ * only if you want the studio’s exact fluid mesh.
+ */
 
 .gradient-blue-sky {
-  /* Lit body tokens the glow stack already reads */
+  /* Rest sits closer to hover sky so the crossfade isn’t a hard jump */
+  --glow-from: #7eb6f5;
+  --glow-to: #b9d9ff;
   --glow-from-lit: #e6f2ff;
   --glow-to-lit: #6699e6;
   --glow-edge-lit: rgb(255 255 255 / 0.92);
   --glow-bloom-lit: rgb(230 242 255 / 0.55);
   --glow-cast: 102 153 230;
+  --cta-sky-fade: 640ms;
+  --cta-sky-ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Replace the 2-stop lit body with Kevin’s 4-stop sky; keep glass sheens above it */
+/* Longer, softer power-up than Lime’s default --dur-base (200ms) */
 .gradient-blue-sky.glow::before {
+  transition: opacity var(--cta-sky-fade) var(--cta-sky-ease);
+  /* Glass sheens + soft cloud blobs + sky field (blobs/field drift) */
   background-image:
     linear-gradient(180deg, rgb(255 255 255 / calc(0.38 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 48%),
     radial-gradient(110% 95% at 22% 0%, rgb(255 255 255 / calc(0.3 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 62%),
     radial-gradient(75% 65% at 50% 115%, rgb(255 255 255 / calc(0.42 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 72%),
+    radial-gradient(ellipse 55% 45% at 18% 35%, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 70%),
+    radial-gradient(ellipse 50% 40% at 78% 55%, rgb(230 242 255 / 0.5) 0%, rgb(255 255 255 / 0) 68%),
+    radial-gradient(ellipse 40% 35% at 48% 78%, rgb(179 217 255 / 0.45) 0%, rgb(255 255 255 / 0) 65%),
     linear-gradient(135deg, #e6f2ff 12.5%, #b3d9ff 37.5%, #80b3ff 62.5%, #6699e6 87.5%);
+  background-size:
+    auto,
+    auto,
+    auto,
+    160% 140%,
+    170% 150%,
+    140% 130%,
+    220% 220%;
+  background-position:
+    center,
+    center,
+    center,
+    0% 40%,
+    100% 60%,
+    40% 100%,
+    0% 50%;
+  animation: cta-sky-drift 22s var(--cta-sky-ease) infinite alternate;
+  animation-play-state: paused;
 }
 
 @supports (background: linear-gradient(in oklab, #000, #fff)) {
@@ -26,11 +57,27 @@
       linear-gradient(180deg, rgb(255 255 255 / calc(0.38 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 48%),
       radial-gradient(110% 95% at 22% 0%, rgb(255 255 255 / calc(0.3 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 62%),
       radial-gradient(75% 65% at 50% 115%, rgb(255 255 255 / calc(0.42 * var(--glow-light, 1))) 0%, rgb(255 255 255 / 0) 72%),
+      radial-gradient(ellipse 55% 45% at 18% 35%, rgb(255 255 255 / 0.55) 0%, rgb(255 255 255 / 0) 70%),
+      radial-gradient(ellipse 50% 40% at 78% 55%, rgb(230 242 255 / 0.5) 0%, rgb(255 255 255 / 0) 68%),
+      radial-gradient(ellipse 40% 35% at 48% 78%, rgb(179 217 255 / 0.45) 0%, rgb(255 255 255 / 0) 65%),
       linear-gradient(135deg in oklab, #e6f2ff 12.5%, #b3d9ff 37.5%, #80b3ff 62.5%, #6699e6 87.5%);
   }
 }
 
-/* Soft grain over the sky, under the label — fades in with the lit layer */
+@keyframes cta-sky-drift {
+  to {
+    background-position:
+      center,
+      center,
+      center,
+      85% 55%,
+      15% 35%,
+      70% 20%,
+      100% 40%;
+  }
+}
+
+/* Soft grain — fades with the lit layer, crawls slowly for texture life */
 .gradient-blue-sky.glow::after {
   content: "";
   position: absolute;
@@ -39,27 +86,54 @@
   border-radius: inherit;
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--dur-base) var(--ease-out);
+  transition: opacity var(--cta-sky-fade) var(--cta-sky-ease);
   background: url("/textures/sky-grain.png") repeat;
   background-size: 64px 64px;
   image-rendering: pixelated;
   mix-blend-mode: overlay;
+  animation: cta-sky-grain 28s linear infinite;
+  animation-play-state: paused;
 }
 
-@media (hover: hover) {
-  .gradient-blue-sky.glow:not(.glow-still):hover::after {
-    opacity: 0.04;
+@keyframes cta-sky-grain {
+  to {
+    background-position: 64px 48px;
   }
 }
 
+@media (hover: hover) {
+  .gradient-blue-sky.glow:not(.glow-still):hover::before,
+  .gradient-blue-sky.glow:not(.glow-still):hover::after {
+    animation-play-state: running;
+  }
+
+  .gradient-blue-sky.glow:not(.glow-still):hover::after {
+    opacity: 0.045;
+  }
+}
+
+.gradient-blue-sky.glow:not(.glow-still)[data-force-hover]::before,
 .gradient-blue-sky.glow:not(.glow-still)[data-force-hover]::after {
-  opacity: 0.04;
+  animation-play-state: running;
+}
+
+.gradient-blue-sky.glow:not(.glow-still)[data-force-hover]::after {
+  opacity: 0.045;
 }
 
 .gradient-blue-sky.glow:not(.glow-still):is(:active, [data-force-active])::after {
   opacity: 0;
+  animation-play-state: paused;
 }
 
 .gradient-blue-sky.glow:is(:disabled, [data-disabled], [aria-disabled="true"])::after {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gradient-blue-sky.glow::before,
+  .gradient-blue-sky.glow::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+  }
 }
