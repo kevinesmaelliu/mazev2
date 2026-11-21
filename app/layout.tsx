@@ -1,11 +1,18 @@
 import type { Metadata } from "next"
 import localFont from "next/font/local"
 import { Toaster } from "sonner"
-import { LimePortalProvider } from "@/lib/lime/portal"
+import "@fontsource/figtree/400.css"
+import "@fontsource/figtree/500.css"
+import "@fontsource/figtree/600.css"
+import "@fontsource/figtree/700.css"
+import "@fontsource/source-serif-4/400.css"
+import "@fontsource/source-serif-4/600.css"
+import "@fontsource/source-serif-4/700.css"
 import "@/components/lime/styles.css"
 import "./layers.css"
 import "./globals.css"
 import { Providers } from "./providers"
+import { LimePortalProvider } from "@/lib/lime/portal"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
