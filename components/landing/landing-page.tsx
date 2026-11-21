@@ -1,10 +1,27 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import Link from "next/link"
 import { Button } from "@/components/lime/ui/button"
 import { Separator } from "@/components/lime/ui/separator"
 import { ProductWindow } from "@/components/landing/product-window"
+
+/** Client-only: Stageshow Stage measures the DOM and conflicts with SSR/film hooks. */
+const HeroFlow = dynamic(
+  () =>
+    import("@/components/stageshow/hero-flow/HeroFlow").then((m) => m.HeroFlow),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="w-full bg-surface"
+        style={{ aspectRatio: "900 / 420" }}
+        aria-hidden
+      />
+    ),
+  },
+)
 
 /**
  * Plan (taste-skill software + Lime tokens)
@@ -113,18 +130,10 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div
-            className={`mt-8 min-h-0 flex-1 transition-[opacity,transform] duration-(--dur-slow) ease-out ${
-              entered
-                ? "translate-y-0 opacity-100"
-                : "translate-y-4 opacity-0"
-            }`}
-          >
+          {/* Keep the stageshow visible from first paint (poster / film / LCP). */}
+          <div className="mt-8 min-h-0 flex-1">
             <div className="relative max-h-dvh overflow-hidden">
-              <ProductWindow
-                loop
-                label="Luma studio building a checkout first-click test"
-              />
+              <HeroFlow />
             </div>
           </div>
         </section>

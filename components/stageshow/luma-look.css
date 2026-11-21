@@ -1,0 +1,30 @@
+/* Luma / Lime tokens mapped onto the Stageshow kit. */
+.look-luma .ss-stage {
+  --ss-canvas: #ffffff;
+  --ss-surface: #f6f5f2;
+  --ss-chrome: #efeeea;
+  --ss-well: #f6f5f2;
+  --ss-raised: #ffffff;
+  --ss-line: #e6e4df;
+  --ss-line-faint: #efeeea;
+  --ss-text-strong: #0f0f0d;
+  --ss-text: #4a4943;
+  --ss-text-faint: #6b6a63;
+  --ss-icon: #4a4943;
+  --ss-icon-faint: #a6a49b;
+  --ss-accent: #38bdf8;
+  --ss-accent-2: #0ea5e9;
+  --ss-accent-soft: #e0f2fe;
+  --ss-accent-text: #0f0f0d;
+  --ss-success: #1e8e4a;
+  --ss-success-soft: #e5f5ea;
+  --ss-success-text: #17703a;
+  --ss-font: "Hanken Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+  --ss-radius-sm: 6px;
+  --ss-radius-md: 8px;
+  --ss-radius-lg: 10px;
+  --ss-radius-window: 12px;
+  --ss-control: 32px;
+  --ss-row: 28px;
+}
