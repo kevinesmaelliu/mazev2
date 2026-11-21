@@ -25,7 +25,7 @@ import "./hero-flow.css"
  * Luma hero stageshow: compose blocks → share → abstract network orbit →
  * feedback returns → digest spin → pretty report cards.
  *
- * No browser Window chrome, no Phone. Kit surfaces only.
+ * No browser Window chrome, no Phone, no demo cursor — timed scene cuts only.
  */
 
 type Phase = "compose" | "network" | "feedback" | "digest" | "reports"
@@ -111,38 +111,25 @@ const POSTER: S = {
   reports: 3,
 }
 
-const REST = { wide: { x: 450, y: 300 }, compact: { x: 180, y: 340 } }
-
 async function script(a: Act<S>) {
-  await a.wait(650)
+  await a.wait(700)
 
-  // Beat 1 — compose: add blocks
+  // Beat 1 — compose: blocks open on their own (no cursor)
   a.mark("compose")
-  await a.move("add")
-  await a.wait(240)
-  await a.click()
   await a.set({ blocks: 2, hot: 1 })
-  await a.wait(550)
-
-  await a.move("add")
-  await a.wait(200)
-  await a.click()
+  await a.wait(700)
   await a.set({ blocks: 3, hot: 2 })
-  await a.wait(600)
+  await a.wait(750)
 
   // Beat 2 — share
   a.mark("share")
-  await a.move("share")
-  await a.wait(260)
-  await a.click()
   await a.set({ shared: true, hot: -1 })
-  await a.wait(500)
+  await a.wait(650)
 
   // Beat 3 — send into a network; orbit clockwise
   a.mark("network")
   await a.set({ phase: "network", orbiting: true })
-  await a.move("rest")
-  await a.wait(1400)
+  await a.wait(1500)
 
   // Beat 4 — feedback returns from the ring
   a.mark("feedback")
@@ -225,30 +212,18 @@ export function HeroFlow() {
       initial={initial}
       poster={POSTER}
       script={script}
-      cursor={{ at: REST }}
       theme="light"
       palette="accent"
       fidelity="standard"
       className="look-luma hf-section"
     >
-      {(s, _rect, layout) => {
+      {(s) => {
         const showCompose = s.phase === "compose"
         const showNetwork = s.phase !== "compose"
         const showReports = s.phase === "reports" && s.reports > 0
 
         return (
           <>
-            <span
-              data-target="rest"
-              style={{
-                position: "absolute",
-                left: REST[layout].x,
-                top: REST[layout].y,
-                width: 1,
-                height: 1,
-              }}
-            />
-
             {/* Compose surface — Card, not Window */}
             <div
               className="hf-compose"
@@ -289,7 +264,6 @@ export function HeroFlow() {
 
                 <div className="hf-compose-actions">
                   <Button
-                    data-target="add"
                     variant="secondary"
                     size="medium"
                     style={{ flex: 1, justifyContent: "center" }}
@@ -297,7 +271,6 @@ export function HeroFlow() {
                     Add block
                   </Button>
                   <Button
-                    data-target="share"
                     variant="primary"
                     size="medium"
                     style={{ flex: 1, justifyContent: "center" }}
@@ -317,7 +290,7 @@ export function HeroFlow() {
               data-digested={s.digested || undefined}
               data-phase={s.phase}
             >
-              <div className="hf-hub" data-target="hub">
+              <div className="hf-hub">
                 <Card lift pad="small" gap={8} className="hf-hub-card">
                   {s.digesting ? (
                     <>

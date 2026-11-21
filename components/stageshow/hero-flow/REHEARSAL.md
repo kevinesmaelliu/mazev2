@@ -2,9 +2,9 @@
 
 Abstract kit story (no browser Window, no Phone). Surfaces: `Card`, `Avatar`, `Facepile`, `Chart`, `Meter`, `Badge`, `Button`, `Collapse`, `Roll`, `Spinner`, `Check`, `Count`.
 
-Beats:
-1. Compose — Add block → second block opens
-2. Compose — Add block → third block opens
+Beats (no demo cursor — timed `set` cuts only):
+1. Compose — second block opens on its own
+2. Compose — third block opens
 3. Share → Draft → Live on the compose Card
 4. Network — hub + clockwise avatar orbit (people ring)
 5. Feedback — chips return from the ring toward the hub
