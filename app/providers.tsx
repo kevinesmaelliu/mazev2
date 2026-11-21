@@ -6,6 +6,7 @@ import { Theme } from "@astryxdesign/core/theme"
 import { themes, defaultThemeSlug } from "@/astryx-themes"
 import { AuthProvider } from "@/lib/auth/auth-context"
 import { PreviewModeBanner } from "@/components/preview-mode-banner"
+import { AgentationToolbar } from "@/components/agentation-toolbar"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -16,6 +17,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           {children}
         </AuthProvider>
       </LinkProvider>
+      <AgentationToolbar />
     </Theme>
   )
 }
